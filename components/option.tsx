@@ -14,6 +14,9 @@ interface OptionProps {
   href1?: string;
   href2?: string;
   href3?: string;
+  onClick1?: () => void;
+  onClick2?: () => void;
+  onClick3?: () => void;
 }
 
 const buttonStyle: React.CSSProperties = {
@@ -48,7 +51,32 @@ export default function Option({
   href1 = "/",
   href2 = "/",
   href3 = "/",
+  onClick1,
+  onClick2,
+  onClick3,
 }: OptionProps) {
+  const renderButton = (
+    text: string,
+    icon: React.ReactNode,
+    href: string,
+    onClick?: () => void
+  ) => {
+    if (onClick) {
+      return (
+        <button onClick={onClick} style={{ ...buttonStyle, border: "none", cursor: "pointer" }}>
+          <div style={{ color: "white", display: "flex" }}>{icon}</div>
+          <div style={textStyle}>{text}</div>
+        </button>
+      );
+    }
+    return (
+      <Link href={href} style={buttonStyle}>
+        <div style={{ color: "white", display: "flex" }}>{icon}</div>
+        <div style={textStyle}>{text}</div>
+      </Link>
+    );
+  };
+
   return (
     <div
       style={{
@@ -62,24 +90,9 @@ export default function Option({
         boxSizing: "border-box",
       }}
     >
-      {buttons >= 1 && (
-        <Link href={href1} style={buttonStyle}>
-          <div style={{ color: "white", display: "flex" }}>{icon1}</div>
-          <div style={textStyle}>{text1}</div>
-        </Link>
-      )}
-      {buttons >= 2 && (
-        <Link href={href2} style={buttonStyle}>
-          <div style={{ color: "white", display: "flex" }}>{icon2}</div>
-          <div style={textStyle}>{text2}</div>
-        </Link>
-      )}
-      {buttons >= 3 && (
-        <Link href={href3} style={buttonStyle}>
-          <div style={{ color: "white", display: "flex" }}>{icon3}</div>
-          <div style={textStyle}>{text3}</div>
-        </Link>
-      )}
+      {buttons >= 1 && renderButton(text1, icon1, href1, onClick1)}
+      {buttons >= 2 && renderButton(text2, icon2, href2, onClick2)}
+      {buttons >= 3 && renderButton(text3, icon3, href3, onClick3)}
     </div>
   );
 }

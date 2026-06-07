@@ -25,6 +25,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     checkAuth();
+
+    // Listen for auth state changes (e.g. after OAuth redirect)
+    let unsubscribe: (() => void) | null = null;
+    getSupabaseClient().then((supabase) => {
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+        if (session?.user) {
+          const { data: profile } = await supabase
+            .from("user_profiles")
+            .select("*")
+            .eq("user_id", session.user.id)
+            .single();
+          setUser({
+            id: session.user.id,
+            email: session.user.email || "",
+            name: profile?.name,
+            avatar_url: profile?.avatar_url,
+          });
+        } else {
+          setUser(null);
+        }
+        setLoading(false);
+      });
+      unsubscribe = () => subscription.unsubscribe();
+    });
+
+    return () => { if (unsubscribe) unsubscribe(); };
   }, []);
 
   const checkAuth = async () => {

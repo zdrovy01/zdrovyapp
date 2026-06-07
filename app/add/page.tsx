@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import ToolbarWin from "@/components/toolbarwin";
 import Space from "@/components/space";
 import Option from "@/components/option";
@@ -12,6 +13,7 @@ import { useProtectedRoute } from "@/hooks/use-protected-route";
 
 export default function AddPage() {
   useProtectedRoute();
+  const router = useRouter();
   const [foodLog, setFoodLog] = useState<FoodLog | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -63,7 +65,7 @@ export default function AddPage() {
       if (dbError) throw dbError;
 
       setFoodLog(null);
-      window.location.href = "/foodlog";
+      router.push("/foodlog");
     } catch (err) {
       setError("Failed to save log");
       console.error(err);

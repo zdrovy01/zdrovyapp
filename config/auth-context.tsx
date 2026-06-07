@@ -29,7 +29,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Listen for auth state changes (e.g. after OAuth redirect)
     let unsubscribe: (() => void) | null = null;
     getSupabaseClient().then((supabase) => {
-      const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event: string, session) => {
         if (session?.user) {
           const { data: profile } = await supabase
             .from("user_profiles")

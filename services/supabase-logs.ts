@@ -55,7 +55,7 @@ export async function getUserTodayStats(): Promise<UserStats> {
   }
 
   const stats = data?.reduce(
-    (acc, log) => ({
+    (acc: { totalKcal: number; totalProtein: number; totalCarbs: number; totalFat: number; logCount: number }, log: { kcal?: number; protein?: number; carbs?: number; fat?: number }) => ({
       totalKcal: acc.totalKcal + (log.kcal || 0),
       totalProtein: acc.totalProtein + (log.protein || 0),
       totalCarbs: acc.totalCarbs + (log.carbs || 0),

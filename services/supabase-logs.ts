@@ -9,7 +9,7 @@ export interface UserStats {
 }
 
 export async function getUserTodayStats(): Promise<UserStats> {
-  const supabase = await getSupabaseClient();
+  const supabase = getSupabaseClient();
 
   const {
     data: { user },

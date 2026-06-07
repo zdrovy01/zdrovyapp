@@ -10,7 +10,7 @@ export default function AuthCallbackPage() {
   useEffect(() => {
     const handleCallback = async () => {
       try {
-        const supabase = await getSupabaseClient();
+        const supabase = getSupabaseClient();
 
         // Get the session from the callback
         const {

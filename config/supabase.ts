@@ -11,19 +11,17 @@ if (!SUPABASE_ANON_KEY) {
   console.warn("SUPABASE_ANON_KEY is not set in .env.local");
 }
 
-// Initialize Supabase client (for client-side)
-let supabaseClient: any = null;
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
-export const getSupabaseClient = async () => {
+// Initialize Supabase client (singleton)
+let supabaseClient: SupabaseClient | null = null;
+
+export const getSupabaseClient = (): SupabaseClient => {
   if (!supabaseClient) {
-    const { createClient } = await import("@supabase/supabase-js");
-
     if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
       throw new Error("Supabase is not configured properly");
     }
-
     supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   }
-
   return supabaseClient;
 };

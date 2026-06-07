@@ -37,7 +37,7 @@ export default function AddPage() {
     if (!foodLog) return;
 
     try {
-      const supabase = await getSupabaseClient();
+      const supabase = getSupabaseClient();
       const {
         data: { user },
       } = await supabase.auth.getUser();

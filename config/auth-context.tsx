@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { Session } from "@supabase/supabase-js";
 import { getSupabaseClient } from "@/config/supabase";
 
 interface User {
@@ -24,12 +25,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    checkAuth();
+    const supabase = getSupabaseClient();
 
-    // Listen for auth state changes (e.g. after OAuth redirect)
-    let unsubscribe: (() => void) | null = null;
-    getSupabaseClient().then((supabase) => {
-      const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event: string, session: import("@supabase/supabase-js").Session | null) => {
+    // Listen for auth state changes (handles OAuth redirect)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (_event: string, session: Session | null) => {
         if (session?.user) {
           const { data: profile } = await supabase
             .from("user_profiles")
@@ -46,52 +46,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setUser(null);
         }
         setLoading(false);
-      });
-      unsubscribe = () => subscription.unsubscribe();
-    });
-
-    return () => { if (unsubscribe) unsubscribe(); };
-  }, []);
-
-  const checkAuth = async () => {
-    try {
-      const supabase = await getSupabaseClient();
-      const {
-        data: { user: authUser },
-      } = await supabase.auth.getUser();
-
-      if (authUser) {
-        // Fetch user profile
-        const { data: profile } = await supabase
-          .from("user_profiles")
-          .select("*")
-          .eq("user_id", authUser.id)
-          .single();
-
-        setUser({
-          id: authUser.id,
-          email: authUser.email || "",
-          name: profile?.name,
-          avatar_url: profile?.avatar_url,
-        });
       }
-    } catch (err) {
-      console.error("Auth check failed:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    );
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const loginWithGoogle = async () => {
     try {
-      const supabase = await getSupabaseClient();
+      const supabase = getSupabaseClient();
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
           redirectTo: `${window.location.origin}/auth/callback`,
         },
       });
-
       if (error) throw error;
     } catch (err) {
       console.error("Login failed:", err);
@@ -101,7 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = async () => {
     try {
-      const supabase = await getSupabaseClient();
+      const supabase = getSupabaseClient();
       await supabase.auth.signOut();
       setUser(null);
     } catch (err) {

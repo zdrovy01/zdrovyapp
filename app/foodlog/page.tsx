@@ -34,7 +34,7 @@ export default function FoodlogPage() {
   const loadLogs = async (selectedDate: Date) => {
     setLoading(true);
     try {
-      const supabase = await getSupabaseClient();
+      const supabase = getSupabaseClient();
       const {
         data: { user },
       } = await supabase.auth.getUser();

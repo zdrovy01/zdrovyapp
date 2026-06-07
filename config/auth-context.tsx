@@ -27,7 +27,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const supabase = getSupabaseClient();
 
-    // Listen for auth state changes (handles OAuth redirect)
+    // Fallback: if onAuthStateChange doesn't fire within 3s, stop loading
+    const fallback = setTimeout(() => setLoading(false), 3000);
+
+    // Check existing session immediately
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (session?.user) {
+        const { data: profile } = await supabase
+          .from("user_profiles")
+          .select("*")
+          .eq("user_id", session.user.id)
+          .single();
+        setUser({
+          id: session.user.id,
+          email: session.user.email || "",
+          name: profile?.name,
+          avatar_url: profile?.avatar_url,
+        });
+      }
+      clearTimeout(fallback);
+      setLoading(false);
+    });
+
+    // Also listen for future auth state changes (OAuth redirect, logout, etc.)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event: string, session: Session | null) => {
         if (session?.user) {
@@ -45,11 +67,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } else {
           setUser(null);
         }
+        clearTimeout(fallback);
         setLoading(false);
       }
     );
 
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(fallback);
+    };
   }, []);
 
   const loginWithGoogle = async () => {

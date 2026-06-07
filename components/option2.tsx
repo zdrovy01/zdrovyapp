@@ -7,9 +7,10 @@ interface Option2Props {
   icon?: React.ReactNode;
   href?: string;
   onClick?: () => void;
+  style?: React.CSSProperties;
 }
 
-export default function Option2({ text = "Text", icon, href, onClick }: Option2Props) {
+export default function Option2({ text = "Text", icon, href, onClick, style: styleProp }: Option2Props) {
   const style = {
     width: "100%",
     height: 64,
@@ -45,9 +46,11 @@ export default function Option2({ text = "Text", icon, href, onClick }: Option2P
     </>
   );
 
+  const mergedStyle = { ...style, ...styleProp };
+
   if (href) {
-    return <Link href={href} style={style}>{content}</Link>;
+    return <Link href={href} style={mergedStyle}>{content}</Link>;
   }
 
-  return <button onClick={onClick} style={style}>{content}</button>;
+  return <button onClick={onClick} style={mergedStyle}>{content}</button>;
 }

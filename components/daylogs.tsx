@@ -85,6 +85,27 @@ export default function DayLogs({ date }: DayLogsProps) {
     }
   };
 
+  const handleDelete = async (id: string) => {
+    const prev = logs;
+    setLogs((cur) => cur.filter((l) => l.id !== id));
+    try {
+      const supabase = getSupabaseClient();
+      const { error } = await supabase.from("food_logs").delete().eq("id", id);
+      if (error) {
+        console.error("Failed to delete log:", {
+          message: error.message,
+          code: error.code,
+          details: error.details,
+          hint: error.hint,
+        });
+        setLogs(prev); // revert on failure
+      }
+    } catch (err) {
+      console.error("Failed to delete log:", err);
+      setLogs(prev);
+    }
+  };
+
   const formatTime = (dateString: string) =>
     new Date(dateString).toLocaleTimeString("en-US", {
       hour: "2-digit",
@@ -134,6 +155,7 @@ export default function DayLogs({ date }: DayLogsProps) {
               carbs={log.carbs}
               fat={log.fat}
               time={formatTime(log.created_at)}
+              onDelete={() => handleDelete(log.id)}
             />
           ))}
         </div>

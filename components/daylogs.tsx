@@ -94,10 +94,10 @@ export default function DayLogs({ date }: DayLogsProps) {
   const title = isSameDay(date, new Date())
     ? "Today's Calories"
     : date.toLocaleDateString("en-US", {
-        weekday: "long",
-        month: "short",
-        day: "numeric",
-      });
+      weekday: "long",
+      month: "short",
+      day: "numeric",
+    });
 
   return (
     <div>
@@ -122,8 +122,7 @@ export default function DayLogs({ date }: DayLogsProps) {
           style={{
             display: "flex",
             flexDirection: "column",
-            gap: 10,
-            padding: "0 20px",
+            padding: "0 0px",
           }}
         >
           {logs.map((log) => (

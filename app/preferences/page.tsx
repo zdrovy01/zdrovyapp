@@ -67,10 +67,9 @@ export default function PreferencesPage() {
         <>
           <Option2
             text={user.email}
-            onClick={() => {}}
+            onClick={() => { }}
             style={{ cursor: "default" }}
           />
-          <Space size={10} />
           <Option2
             text="Sign Out"
             onClick={logout}

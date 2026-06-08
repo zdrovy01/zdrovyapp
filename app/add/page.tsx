@@ -81,7 +81,7 @@ export default function AddPage() {
       if (dbError) throw dbError;
       setFoodLog(null);
       setPhotoPreview(null);
-      router.push("/foodlog");
+      router.push("/log");
     } catch (err) {
       setError("Failed to save log");
       console.error(err);

@@ -10,6 +10,14 @@ import Title from "@/components/title";
 import { getSupabaseClient } from "@/config/supabase";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
 
+function isSameDay(a: Date, b: Date) {
+  return (
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate()
+  );
+}
+
 interface FoodLogItem {
   id: string;
   name: string;
@@ -100,7 +108,17 @@ export default function FoodlogPage() {
       } />
 
       <Space size={20} />
-      <Title text="Today's Calories" />
+      <Title
+        text={
+          isSameDay(date, new Date())
+            ? "Today's Calories"
+            : date.toLocaleDateString("en-US", {
+                weekday: "long",
+                month: "short",
+                day: "numeric",
+              })
+        }
+      />
 
       {loading ? (
         <div style={{ padding: "0 20px", color: "rgba(235,235,245,0.6)" }}>

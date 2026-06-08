@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface DateTimeProps {
   date?: Date;
@@ -8,8 +8,21 @@ interface DateTimeProps {
   showTime?: boolean;
 }
 
+// Format a Date as YYYY-MM-DD using LOCAL time (not UTC) for the native input.
+function toLocalDateValue(d: Date) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
 export default function DateTime({ date = new Date(), onChange, showTime = false }: DateTimeProps) {
   const [selected, setSelected] = useState(date);
+
+  // Keep in sync if the parent changes the date externally.
+  useEffect(() => {
+    setSelected(date);
+  }, [date]);
 
   const handleDateChange = (newDate: Date) => {
     setSelected(newDate);
@@ -63,9 +76,11 @@ export default function DateTime({ date = new Date(), onChange, showTime = false
           onClick={() => {
             const input = document.createElement("input");
             input.type = "date";
-            input.value = selected.toISOString().split("T")[0];
+            input.value = toLocalDateValue(selected);
             input.onchange = (e: any) => {
-              const newDate = new Date(e.target.value);
+              const [y, m, d] = e.target.value.split("-").map(Number);
+              // Construct a LOCAL date to avoid UTC day-shift.
+              const newDate = new Date(y, m - 1, d);
               handleDateChange(newDate);
             };
             input.click();

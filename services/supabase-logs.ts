@@ -8,7 +8,9 @@ export interface UserStats {
   logCount: number;
 }
 
-export async function getUserTodayStats(): Promise<UserStats> {
+export async function getUserStatsForDate(
+  date: Date = new Date()
+): Promise<UserStats> {
   const supabase = getSupabaseClient();
 
   const {
@@ -25,8 +27,8 @@ export async function getUserTodayStats(): Promise<UserStats> {
     };
   }
 
-  // Local day boundaries (start of today -> start of tomorrow), as absolute UTC instants
-  const start = new Date();
+  // Local day boundaries for the given date, as absolute UTC instants
+  const start = new Date(date);
   start.setHours(0, 0, 0, 0);
   const end = new Date(start);
   end.setDate(end.getDate() + 1);
@@ -72,4 +74,9 @@ export async function getUserTodayStats(): Promise<UserStats> {
   };
 
   return stats;
+}
+
+// Backwards-compatible alias
+export async function getUserTodayStats(): Promise<UserStats> {
+  return getUserStatsForDate(new Date());
 }

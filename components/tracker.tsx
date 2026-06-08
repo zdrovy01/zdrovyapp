@@ -1,9 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getUserTodayStats } from "@/services/supabase-logs";
+import { getUserStatsForDate } from "@/services/supabase-logs";
 
-export default function Tracker() {
+interface TrackerProps {
+  date?: Date;
+}
+
+export default function Tracker({ date }: TrackerProps) {
   const [stats, setStats] = useState({
     totalKcal: 0,
     totalProtein: 0,
@@ -12,13 +16,17 @@ export default function Tracker() {
   });
   const [loading, setLoading] = useState(true);
 
+  const dateKey = date ? date.toDateString() : "today";
+
   useEffect(() => {
     loadStats();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dateKey]);
 
   const loadStats = async () => {
+    setLoading(true);
     try {
-      const data = await getUserTodayStats();
+      const data = await getUserStatsForDate(date || new Date());
       setStats({
         totalKcal: data.totalKcal,
         totalProtein: data.totalProtein,

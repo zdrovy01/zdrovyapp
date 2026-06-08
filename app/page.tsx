@@ -39,7 +39,7 @@ export default function DashboardPage() {
         </svg>
         } />
 
-      <Space size={24} />
+      <Space size={10} />
       <div
         data-layer="Textinput"
         className="Textinput"

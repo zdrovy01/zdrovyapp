@@ -27,7 +27,6 @@ export default function DashboardPage() {
       </svg>
       } />
       <Space size={10} />
-      <DateStrip selected={selectedDate} onSelect={setSelectedDate} />
       <Space size={16} />
       <Tracker date={selectedDate} />
       <Space size={10} />
@@ -46,8 +45,6 @@ export default function DashboardPage() {
         } />
 
       <Space size={24} />
-      <DayLogs date={selectedDate} />
-      <Space size={40} />
     </div>
   );
 }

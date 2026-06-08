@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useAuth } from "@/config/auth-context";
 import { useRouter } from "next/navigation";
 import Space from "@/components/space";
+import Logo3D from "@/components/logo3d";
 
 export default function AuthPage() {
   const { loginWithGoogle } = useAuth();
@@ -28,78 +29,114 @@ export default function AuthPage() {
       style={{
         width: "100%",
         minHeight: "100vh",
-        background: "#000",
+        background: "#000000",
         display: "flex",
         flexDirection: "column",
-        justifyContent: "center",
+        justifyContent: "space-between",
         alignItems: "center",
-        padding: "20px",
+        padding: "0 0 48px",
         boxSizing: "border-box",
       }}
     >
+      {/* Top: logo card filling space from top of screen to titles */}
       <div
         style={{
-          maxWidth: 340,
+          flex: 1,
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "#0A0A0A",
+          borderRadius: "0 0 64px 64px",
+        }}
+      >
+        <Logo3D width={220} />
+      </div>
+
+      <Space size={32} />
+
+      {/* Bottom: title + subtitle + Google sign in */}
+      <div
+        style={{
+          maxWidth: 360,
           width: "100%",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          gap: 24,
+          padding: "0 24px",
+          boxSizing: "border-box",
         }}
       >
-        {/* Logo / Title */}
-        <div style={{ textAlign: "center" }}>
-          <div
-            style={{
-              fontSize: 32,
-              fontWeight: 700,
-              color: "#F5F5F5",
-              marginBottom: 8,
-            }}
-          >
-            Zdrovy
-          </div>
-          <div
-            style={{
-              fontSize: 14,
-              color: "rgba(235,235,245,0.6)",
-            }}
-          >
-            Nutrition Tracker
-          </div>
-        </div>
+        {/* Title */}
+        <h1
+          style={{
+            fontSize: 34,
+            fontWeight: 800,
+            color: "#FFFFFF",
+            textAlign: "center",
+            lineHeight: 1.15,
+            margin: 0,
+            letterSpacing: "-0.5px",
+          }}
+        >
+          Healthy food.
+          <br />
+          Real prices.
+        </h1>
 
-        <Space size={40} />
+        <Space size={16} />
 
-        {/* Sign In Button */}
+        {/* Subtitle */}
+        <p
+          style={{
+            fontSize: 16,
+            color: "rgba(235,235,245,0.55)",
+            textAlign: "center",
+            lineHeight: 1.45,
+            margin: 0,
+            maxWidth: 320,
+          }}
+        >
+          See what every meal costs — from stores you already shop at.
+        </p>
+
+        <Space size={32} />
+
+        {/* Google Sign In Button */}
         <button
           onClick={handleGoogleLogin}
           disabled={loading}
           style={{
             width: "100%",
-            height: 56,
-            borderRadius: 12,
-            background: "#F5F5F5",
+            height: 64,
+            borderRadius: 999,
+            background: "#FFFFFF",
             border: "none",
             cursor: loading ? "not-allowed" : "pointer",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             gap: 12,
-            fontSize: 16,
+            fontSize: 17,
             fontWeight: 600,
             color: "#000",
             opacity: loading ? 0.6 : 1,
-            transition: "all 0.2s",
+            transition: "transform 0.15s, opacity 0.2s",
           }}
           onMouseEnter={(e) => {
-            if (!loading) e.currentTarget.style.opacity = "0.9";
+            if (!loading) e.currentTarget.style.opacity = "0.92";
           }}
           onMouseLeave={(e) => {
             if (!loading) e.currentTarget.style.opacity = "1";
           }}
+          onMouseDown={(e) => {
+            if (!loading) e.currentTarget.style.transform = "scale(0.98)";
+          }}
+          onMouseUp={(e) => {
+            if (!loading) e.currentTarget.style.transform = "scale(1)";
+          }}
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
             <path
               d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
               fill="#4285F4"
@@ -117,24 +154,28 @@ export default function AuthPage() {
               fill="#EA4335"
             />
           </svg>
-          {loading ? "Signing in..." : "Sign in with Google"}
+          {loading ? "Signing in..." : "Continue with Google"}
         </button>
 
         {/* Error Message */}
         {error && (
-          <div
-            style={{
-              color: "#FF453A",
-              fontSize: 14,
-              textAlign: "center",
-              padding: "12px 16px",
-              background: "rgba(255,69,58,0.1)",
-              borderRadius: 8,
-              width: "100%",
-            }}
-          >
-            {error}
-          </div>
+          <>
+            <Space size={16} />
+            <div
+              style={{
+                color: "#FF453A",
+                fontSize: 14,
+                textAlign: "center",
+                padding: "12px 16px",
+                background: "rgba(255,69,58,0.1)",
+                borderRadius: 12,
+                width: "100%",
+                boxSizing: "border-box",
+              }}
+            >
+              {error}
+            </div>
+          </>
         )}
       </div>
     </div>

@@ -3,7 +3,6 @@ const HIDE_TABBAR_ON: string[] = [
   "/search",
   "/camera",
   "/add",
-  "/recipe",
   "/cook",
   "/auth",
 ];

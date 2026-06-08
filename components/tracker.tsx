@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
 import { getUserStatsForDate } from "@/services/supabase-logs";
 
 interface TrackerProps {
   date?: Date;
+  href?: string;
 }
 
 // Smoothly animates a number from its previous value to the target.
@@ -44,7 +46,7 @@ function useCountUp(target: number, duration = 900) {
   return display;
 }
 
-export default function Tracker({ date }: TrackerProps) {
+export default function Tracker({ date, href = "/log" }: TrackerProps) {
   const [stats, setStats] = useState({
     totalKcal: 0,
     totalProtein: 0,
@@ -96,7 +98,8 @@ export default function Tracker({ date }: TrackerProps) {
         display: "flex",
       }}
     >
-      <div
+      <Link
+        href={href}
         style={{
           flex: "1 1 0",
           background: "#0A0A0A",
@@ -105,12 +108,14 @@ export default function Tracker({ date }: TrackerProps) {
           boxSizing: "border-box",
           display: "flex",
           gap: 14,
+          textDecoration: "none",
+          cursor: "pointer",
         }}
       >
         {items.map((m) => (
           <TrackerItem key={m.label} {...m} />
         ))}
-      </div>
+      </Link>
     </div>
   );
 }

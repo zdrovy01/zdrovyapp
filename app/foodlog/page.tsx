@@ -4,93 +4,13 @@ import Toolbar from "@/components/toolbar";
 import Space from "@/components/space";
 import Option from "@/components/option";
 import DateTime from "@/components/datetime";
-import { useState, useEffect } from "react";
-import Log from "@/components/log";
-import Title from "@/components/title";
-import { getSupabaseClient } from "@/config/supabase";
+import DayLogs from "@/components/daylogs";
+import { useState } from "react";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
-
-function isSameDay(a: Date, b: Date) {
-  return (
-    a.getFullYear() === b.getFullYear() &&
-    a.getMonth() === b.getMonth() &&
-    a.getDate() === b.getDate()
-  );
-}
-
-interface FoodLogItem {
-  id: string;
-  name: string;
-  kcal: number;
-  protein: number;
-  carbs: number;
-  fat: number;
-  price: number;
-  created_at: string;
-}
 
 export default function FoodlogPage() {
   useProtectedRoute();
   const [date, setDate] = useState(new Date());
-  const [logs, setLogs] = useState<FoodLogItem[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    loadLogs(date);
-  }, [date]);
-
-  const loadLogs = async (selectedDate: Date) => {
-    setLoading(true);
-    try {
-      const supabase = getSupabaseClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (!user) {
-        setLogs([]);
-        setLoading(false);
-        return;
-      }
-
-      // Day boundaries for the selected date
-      const start = new Date(selectedDate);
-      start.setHours(0, 0, 0, 0);
-      const end = new Date(start);
-      end.setDate(end.getDate() + 1);
-
-      const { data, error } = await supabase
-        .from("food_logs")
-        .select("*")
-        .eq("user_id", user.id)
-        .gte("created_at", start.toISOString())
-        .lt("created_at", end.toISOString())
-        .order("created_at", { ascending: false });
-
-      if (error) {
-        console.error("Failed to load logs:", {
-          message: error.message,
-          code: error.code,
-          details: error.details,
-          hint: error.hint,
-        });
-        setLogs([]);
-      } else {
-        setLogs(data || []);
-      }
-    } catch (err) {
-      console.error("Failed to load logs:", err);
-      setLogs([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const formatTime = (dateString: string) =>
-    new Date(dateString).toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
 
   return (
     <div>
@@ -107,55 +27,8 @@ export default function FoodlogPage() {
       </svg>
       } />
 
-      <Space size={20} />
-      <Title
-        text={
-          isSameDay(date, new Date())
-            ? "Today's Calories"
-            : date.toLocaleDateString("en-US", {
-                weekday: "long",
-                month: "short",
-                day: "numeric",
-              })
-        }
-      />
-
-      {loading ? (
-        <div style={{ padding: "0 20px", color: "rgba(235,235,245,0.6)" }}>
-          Loading...
-        </div>
-      ) : logs.length === 0 ? (
-        <div
-          style={{
-            padding: "30px 20px",
-            color: "rgba(235,235,245,0.5)",
-            textAlign: "center",
-          }}
-        >
-          No food logs for this day. Tap “Add new log”.
-        </div>
-      ) : (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 10,
-            padding: "0 20px",
-          }}
-        >
-          {logs.map((log) => (
-            <Log
-              key={log.id}
-              title={log.name}
-              kcal={log.kcal}
-              protein={log.protein}
-              carbs={log.carbs}
-              fat={log.fat}
-              time={formatTime(log.created_at)}
-            />
-          ))}
-        </div>
-      )}
+      <Space size={24} />
+      <DayLogs date={date} />
     </div>
   );
 }

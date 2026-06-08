@@ -6,6 +6,7 @@ import Space from "@/components/space";
 import Title from "@/components/title";
 import Option from "@/components/option";
 import DateStrip from "@/components/datestrip";
+import DayLogs from "@/components/daylogs";
 import { useState } from "react";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
 
@@ -44,7 +45,9 @@ export default function DashboardPage() {
         </svg>
         } />
 
-
+      <Space size={24} />
+      <DayLogs date={selectedDate} />
+      <Space size={40} />
     </div>
   );
 }

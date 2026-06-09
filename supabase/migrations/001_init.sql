@@ -34,12 +34,16 @@ CREATE TABLE IF NOT EXISTS user_profiles (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   name TEXT,
+  username TEXT,
   avatar_url TEXT,
   language TEXT DEFAULT 'en-US',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   UNIQUE(user_id)
 );
+
+-- Ensure username column exists on existing installs
+ALTER TABLE user_profiles ADD COLUMN IF NOT EXISTS username TEXT;
 
 -- Recipes Table
 CREATE TABLE IF NOT EXISTS recipes (

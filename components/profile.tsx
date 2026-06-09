@@ -9,6 +9,8 @@ export default function Profile() {
     return null;
   }
 
+  const initial = (user.name || user.email || "?").trim().charAt(0).toUpperCase();
+
   return (
     <div
       style={{
@@ -18,52 +20,64 @@ export default function Profile() {
         backdropFilter: "blur(20px)",
         border: "1px solid rgba(235,235,245,0.1)",
         marginBottom: "20px",
+        display: "flex",
+        alignItems: "center",
+        gap: 16,
       }}
     >
-      <div style={{ marginBottom: "16px" }}>
-        <div
-          style={{
-            fontSize: "12px",
-            color: "rgba(235,235,245,0.6)",
-            marginBottom: "4px",
-            textTransform: "uppercase",
-            letterSpacing: "0.5px",
-          }}
-        >
-          Name
-        </div>
-        <div
-          style={{
-            fontSize: "16px",
-            fontWeight: 600,
-            color: "#F5F5F5",
-          }}
-        >
-          {user.name || "Not set"}
-        </div>
+      {/* Avatar */}
+      <div
+        style={{
+          width: 64,
+          height: 64,
+          borderRadius: "50%",
+          flexShrink: 0,
+          overflow: "hidden",
+          background: "rgba(120,120,128,0.3)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        {user.avatar_url ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={user.avatar_url}
+            alt="Avatar"
+            referrerPolicy="no-referrer"
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          />
+        ) : (
+          <span style={{ fontSize: 26, fontWeight: 700, color: "#F5F5F5" }}>
+            {initial}
+          </span>
+        )}
       </div>
 
-      <div>
+      {/* Name + email */}
+      <div style={{ minWidth: 0 }}>
         <div
           style={{
-            fontSize: "12px",
-            color: "rgba(235,235,245,0.6)",
-            marginBottom: "4px",
-            textTransform: "uppercase",
-            letterSpacing: "0.5px",
+            fontSize: 18,
+            fontWeight: 700,
+            color: "#F5F5F5",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
           }}
         >
-          User ID
+          {user.name || "User"}
         </div>
         <div
           style={{
-            fontSize: "12px",
-            fontFamily: "monospace",
-            color: "rgba(10,132,255,0.8)",
-            wordBreak: "break-all",
+            fontSize: 13,
+            color: "rgba(235,235,245,0.55)",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
           }}
         >
-          {user.id}
+          @{user.username}
         </div>
       </div>
     </div>

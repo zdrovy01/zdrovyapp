@@ -8,6 +8,7 @@ interface User {
   id: string;
   email: string;
   name?: string;
+  username?: string;
   avatar_url?: string;
 }
 
@@ -16,6 +17,7 @@ interface AuthContextType {
   loading: boolean;
   loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -27,11 +29,17 @@ async function buildUser(session: Session) {
     .select("*")
     .eq("user_id", session.user.id)
     .single();
+  const meta = session.user.user_metadata || {};
+  const email = session.user.email || "";
+  // Default handle derived from the email local part
+  const fallbackHandle = email.split("@")[0] || "user";
   return {
     id: session.user.id,
-    email: session.user.email || "",
-    name: profile?.name,
-    avatar_url: profile?.avatar_url,
+    email,
+    name: profile?.name || meta.name || meta.full_name,
+    username: profile?.username || fallbackHandle,
+    // Prefer the saved profile avatar, fall back to the Google one
+    avatar_url: profile?.avatar_url || meta.avatar_url || meta.picture,
   };
 }
 
@@ -85,8 +93,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   };
 
+  const refreshUser = async () => {
+    const supabase = getSupabaseClient();
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.user) {
+      setUser(await buildUser(session));
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, loginWithGoogle, logout }}>
+    <AuthContext.Provider value={{ user, loading, loginWithGoogle, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );

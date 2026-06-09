@@ -15,10 +15,9 @@ export default function Profile() {
     <div
       style={{
         padding: "20px",
-        borderRadius: "12px",
-        background: "rgba(60,60,70,0.5)",
+        borderRadius: "20px",
+        background: "#0A0A0A",
         backdropFilter: "blur(20px)",
-        border: "1px solid rgba(235,235,245,0.1)",
         marginBottom: "20px",
         display: "flex",
         alignItems: "center",

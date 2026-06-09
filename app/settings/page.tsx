@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth } from "@/config/auth-context";
+import { useLanguage } from "@/config/language-context";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
 import { getSupabaseClient } from "@/config/supabase";
 import ToolbarWin from "@/components/toolbarwin";
@@ -8,17 +9,188 @@ import Space from "@/components/space";
 import Option2 from "@/components/option2";
 import { useRef, useState, useEffect } from "react";
 
-export default function PreferencesPage() {
+const LANGUAGES = [
+  { label: "English", code: "en-US" },
+  { label: "Українська", code: "uk-UA" },
+  { label: "Polski", code: "pl-PL" },
+  { label: "Русский", code: "ru-RU" },
+];
+
+const CURRENCIES = [
+  { label: "US Dollar ($)", code: "USD" },
+  { label: "Euro (€)", code: "EUR" },
+  { label: "Hryvnia (₴)", code: "UAH" },
+  { label: "Zloty (zł)", code: "PLN" },
+];
+
+const THEMES = [
+  { label: "Dark", code: "dark" },
+  { label: "Light", code: "light" },
+];
+
+function SectionHeader({ text }: { text: string }) {
+  return (
+    <div style={{ padding: "0 20px" }}>
+      <div
+        style={{
+          color: "rgba(235,235,245,0.6)",
+          fontSize: 13,
+          fontWeight: 600,
+          marginBottom: 12,
+          textTransform: "uppercase",
+          letterSpacing: 0.5,
+        }}
+      >
+        {text}
+      </div>
+    </div>
+  );
+}
+
+function Check() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+      <path
+        d="M3.5 9.5L7 13L14.5 5"
+        stroke="#0A84FF"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+interface SelectRowProps {
+  label: string;
+  value: string;
+  open: boolean;
+  onToggle: () => void;
+  options: { label: string; code: string }[];
+  selectedCode: string;
+  onSelect: (code: string) => void;
+}
+
+function SelectRow({
+  label,
+  value,
+  open,
+  onToggle,
+  options,
+  selectedCode,
+  onSelect,
+}: SelectRowProps) {
+  return (
+    <div>
+      <button
+        onClick={onToggle}
+        style={{
+          width: "100%",
+          height: 56,
+          padding: "0 20px",
+          background: "#0A0A0A",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          border: "none",
+          cursor: "pointer",
+          boxSizing: "border-box",
+        }}
+      >
+        <span style={{ color: "#fff", fontSize: 16, fontWeight: 600 }}>
+          {label}
+        </span>
+        <span
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            color: "rgba(235,235,245,0.5)",
+            fontSize: 15,
+          }}
+        >
+          {value}
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 12 12"
+            fill="none"
+            style={{
+              transform: open ? "rotate(180deg)" : "rotate(0deg)",
+              transition: "transform 0.2s",
+            }}
+          >
+            <path
+              d="M2 4L6 8L10 4"
+              stroke="rgba(235,235,245,0.5)"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </span>
+      </button>
+
+      {open && (
+        <div style={{ background: "#060606" }}>
+          {options.map((opt) => {
+            const active = opt.code === selectedCode;
+            return (
+              <button
+                key={opt.code}
+                onClick={() => onSelect(opt.code)}
+                style={{
+                  width: "100%",
+                  height: 48,
+                  padding: "0 20px 0 32px",
+                  background: "transparent",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  border: "none",
+                  cursor: "pointer",
+                  boxSizing: "border-box",
+                }}
+              >
+                <span
+                  style={{
+                    color: active ? "#fff" : "rgba(235,235,245,0.75)",
+                    fontSize: 15,
+                    fontWeight: active ? 600 : 400,
+                  }}
+                >
+                  {opt.label}
+                </span>
+                {active && <Check />}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default function SettingsPage() {
   useProtectedRoute();
   const { user, loading, loginWithGoogle, logout, refreshUser } = useAuth();
+  const { lang, setLang } = useLanguage();
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [usernameInput, setUsernameInput] = useState("");
   const [savingUsername, setSavingUsername] = useState(false);
 
+  const [openRow, setOpenRow] = useState<string | null>(null);
+  const [currency, setCurrency] = useState("USD");
+  const [theme, setTheme] = useState("dark");
+
   useEffect(() => {
     if (user?.username) setUsernameInput(user.username);
   }, [user?.username]);
+
+  const toggleRow = (id: string) =>
+    setOpenRow((cur) => (cur === id ? null : id));
 
   const handleSaveUsername = async () => {
     if (!user) return;
@@ -32,10 +204,9 @@ export default function PreferencesPage() {
     setSavingUsername(true);
     try {
       const supabase = getSupabaseClient();
-      const { error } = await supabase.from("user_profiles").upsert(
-        { user_id: user.id, username: clean },
-        { onConflict: "user_id" }
-      );
+      const { error } = await supabase
+        .from("user_profiles")
+        .upsert({ user_id: user.id, username: clean }, { onConflict: "user_id" });
       if (error) {
         console.error("Failed to update username:", error);
         alert("Failed to update username");
@@ -47,28 +218,25 @@ export default function PreferencesPage() {
     }
   };
 
-  const handleAvatarSelect = async (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleAvatarSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !user) return;
-
-    // Basic size guard (~1.5MB) to keep the data URL reasonable
     if (file.size > 1.5 * 1024 * 1024) {
       alert("Image is too large. Please pick one under 1.5MB.");
       return;
     }
-
     setUploading(true);
     const reader = new FileReader();
     reader.onload = async () => {
       try {
         const dataUrl = reader.result as string;
         const supabase = getSupabaseClient();
-        const { error } = await supabase.from("user_profiles").upsert(
-          { user_id: user.id, avatar_url: dataUrl },
-          { onConflict: "user_id" }
-        );
+        const { error } = await supabase
+          .from("user_profiles")
+          .upsert(
+            { user_id: user.id, avatar_url: dataUrl },
+            { onConflict: "user_id" }
+          );
         if (error) {
           console.error("Failed to update avatar:", error);
           alert("Failed to update avatar");
@@ -87,6 +255,12 @@ export default function PreferencesPage() {
     .charAt(0)
     .toUpperCase();
 
+  const langLabel =
+    LANGUAGES.find((l) => l.code === lang)?.label || "English";
+  const currencyLabel =
+    CURRENCIES.find((c) => c.code === currency)?.label.split(" ")[0] || "USD";
+  const themeLabel = THEMES.find((t) => t.code === theme)?.label || "Dark";
+
   if (loading) {
     return <div style={{ color: "white", padding: 20 }}>Loading...</div>;
   }
@@ -97,52 +271,43 @@ export default function PreferencesPage() {
       <ToolbarWin title="Settings" />
       <Space size={20} />
 
-      {/* Language Section */}
-      <div style={{ paddingLeft: 20, paddingRight: 20 }}>
-        <div
-          style={{
-            color: "rgba(235,235,245,0.6)",
-            fontSize: 13,
-            fontWeight: 600,
-            marginBottom: 12,
-            textTransform: "uppercase",
-            letterSpacing: 0.5,
-          }}
-        >
-          Language
-        </div>
-      </div>
+      {/* Preferences */}
+      <SectionHeader text="Preferences" />
+      <SelectRow
+        label="Speech Language"
+        value={langLabel}
+        open={openRow === "lang"}
+        onToggle={() => toggleRow("lang")}
+        options={LANGUAGES}
+        selectedCode={lang}
+        onSelect={(code) => setLang(code)}
+      />
+      <SelectRow
+        label="Currency"
+        value={currencyLabel}
+        open={openRow === "currency"}
+        onToggle={() => toggleRow("currency")}
+        options={CURRENCIES}
+        selectedCode={currency}
+        onSelect={(code) => setCurrency(code)}
+      />
+      <SelectRow
+        label="Theme"
+        value={themeLabel}
+        open={openRow === "theme"}
+        onToggle={() => toggleRow("theme")}
+        options={THEMES}
+        selectedCode={theme}
+        onSelect={(code) => setTheme(code)}
+      />
 
-      {["English", "Українська", "Polski", "Русский"].map((lang, idx) => (
-        <Option2
-          key={lang}
-          text={lang}
-          onClick={() => console.log(`Selected: ${lang}`)}
-          style={{ marginBottom: idx < 3 ? 0 : 16 }}
-        />
-      ))}
+      <Space size={28} />
 
-      <Space size={20} />
-
-      {/* Account Section */}
-      <div style={{ paddingLeft: 20, paddingRight: 20 }}>
-        <div
-          style={{
-            color: "rgba(235,235,245,0.6)",
-            fontSize: 13,
-            fontWeight: 600,
-            marginBottom: 12,
-            textTransform: "uppercase",
-            letterSpacing: 0.5,
-          }}
-        >
-          Account
-        </div>
-      </div>
+      {/* Account */}
+      <SectionHeader text="Account" />
 
       {user ? (
         <>
-          {/* Avatar + email + ID */}
           <input
             ref={fileInputRef}
             type="file"
@@ -150,6 +315,8 @@ export default function PreferencesPage() {
             onChange={handleAvatarSelect}
             style={{ display: "none" }}
           />
+
+          {/* Avatar + email + ID */}
           <div
             style={{
               display: "flex",
@@ -159,7 +326,6 @@ export default function PreferencesPage() {
               marginBottom: 16,
             }}
           >
-            {/* Avatar (click to change) */}
             <div
               onClick={() => !uploading && fileInputRef.current?.click()}
               style={{
@@ -192,7 +358,6 @@ export default function PreferencesPage() {
                   {initial}
                 </span>
               )}
-              {/* Edit badge */}
               <div
                 style={{
                   position: "absolute",
@@ -213,7 +378,6 @@ export default function PreferencesPage() {
               </div>
             </div>
 
-            {/* Email + ID */}
             <div style={{ minWidth: 0 }}>
               <div
                 style={{
@@ -320,14 +484,14 @@ export default function PreferencesPage() {
           <Option2
             text="Sign Out"
             onClick={logout}
-            style={{
-              color: "#FF453A",
-            }}
+            style={{ color: "#FF453A" }}
           />
         </>
       ) : (
         <Option2 text="Sign in with Google" onClick={loginWithGoogle} />
       )}
+
+      <Space size={40} />
     </>
   );
 }

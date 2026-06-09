@@ -18,11 +18,18 @@ export default function AuthCallbackPage() {
         } = await supabase.auth.getSession();
 
         if (session?.user) {
-          // Create or update user profile (best-effort, must not block login)
+          // Create profile ONLY if it doesn't exist yet — never overwrite
+          // a user's custom avatar/name/username on subsequent logins.
           try {
-            const meta = session.user.user_metadata || {};
-            const { error } = await supabase.from("user_profiles").upsert(
-              {
+            const { data: existing } = await supabase
+              .from("user_profiles")
+              .select("user_id")
+              .eq("user_id", session.user.id)
+              .maybeSingle();
+
+            if (!existing) {
+              const meta = session.user.user_metadata || {};
+              const { error } = await supabase.from("user_profiles").insert({
                 user_id: session.user.id,
                 name:
                   meta.name ||
@@ -30,20 +37,19 @@ export default function AuthCallbackPage() {
                   session.user.email?.split("@")[0] ||
                   "User",
                 avatar_url: meta.avatar_url || meta.picture || null,
-              },
-              { onConflict: "user_id" }
-            );
-
-            if (error) {
-              console.error("Failed to create profile:", {
-                message: error.message,
-                code: error.code,
-                details: error.details,
-                hint: error.hint,
               });
+
+              if (error) {
+                console.error("Failed to create profile:", {
+                  message: error.message,
+                  code: error.code,
+                  details: error.details,
+                  hint: error.hint,
+                });
+              }
             }
           } catch (profileErr) {
-            console.error("Profile upsert threw:", profileErr);
+            console.error("Profile create threw:", profileErr);
           }
 
           // Redirect to home regardless of profile result

@@ -6,7 +6,7 @@ const HIDE_TABBAR_ON: string[] = [
   "/cook",
   "/auth",
   "/log",
-  "/preferences"
+  "/settings"
 ];
 
 export default HIDE_TABBAR_ON;

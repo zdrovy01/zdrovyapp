@@ -79,6 +79,34 @@ export default function AccountSettingsPage() {
     reader.readAsDataURL(file);
   };
 
+  const [deleting, setDeleting] = useState(false);
+
+  const handleDeleteAccount = async () => {
+    if (!user) return;
+    const confirmed = window.confirm(
+      "Delete your account permanently? This removes all your data and cannot be undone."
+    );
+    if (!confirmed) return;
+
+    setDeleting(true);
+    try {
+      const supabase = getSupabaseClient();
+      const { error } = await supabase.rpc("delete_user");
+      if (error) {
+        console.error("Failed to delete account:", error);
+        alert("Failed to delete account. Please try again.");
+        setDeleting(false);
+        return;
+      }
+      await logout();
+      window.location.href = "/auth";
+    } catch (err) {
+      console.error("Delete account threw:", err);
+      alert("Failed to delete account. Please try again.");
+      setDeleting(false);
+    }
+  };
+
   const initial = (user?.name || user?.email || "?")
     .trim()
     .charAt(0)
@@ -269,8 +297,12 @@ export default function AccountSettingsPage() {
         </div>
       </div>
 
-      {/* Action (placeholder) */}
-      <Option2 text="Action" onClick={() => {}} />
+      {/* Delete account */}
+      <Option2
+        text={deleting ? "Deleting..." : "Delete account"}
+        onClick={deleting ? () => {} : handleDeleteAccount}
+        style={{ color: "#FF453A" }}
+      />
 
       <Space size={20} />
 

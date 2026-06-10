@@ -182,3 +182,18 @@ CREATE TRIGGER update_recipes_updated_at
   BEFORE UPDATE ON recipes
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at();
+
+-- Allow a logged-in user to delete their own account.
+-- All related rows (food_logs, recipes, etc.) cascade via ON DELETE CASCADE.
+CREATE OR REPLACE FUNCTION public.delete_user()
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+  DELETE FROM auth.users WHERE id = auth.uid();
+END;
+$$;
+
+GRANT EXECUTE ON FUNCTION public.delete_user() TO authenticated;

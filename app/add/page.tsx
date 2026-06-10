@@ -9,6 +9,7 @@ import TextInput from "@/components/textinput";
 import LogInfo from "@/components/loginfo";
 import { analyzeFoodWithGemini, analyzeFoodWithGeminiPhoto, FoodLog } from "@/services/gemini-food";
 import { getSupabaseClient } from "@/config/supabase";
+import { compressImage } from "@/services/image-compress";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
 
 export default function AddPage() {
@@ -41,23 +42,19 @@ export default function AddPage() {
 
     setError("");
     setFoodLog(null);
-    setPhotoPreview(URL.createObjectURL(file));
-
-    const reader = new FileReader();
-    reader.onload = async () => {
-      const base64 = (reader.result as string).split(",")[1];
-      setLoading(true);
-      try {
-        const result = await analyzeFoodWithGeminiPhoto(base64, file.type);
-        setFoodLog(result);
-      } catch (err) {
-        setError("Failed to analyze photo. Try again.");
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    reader.readAsDataURL(file);
+    setLoading(true);
+    try {
+      const dataUrl = await compressImage(file, { maxBytes: 3 * 1024 * 1024 });
+      setPhotoPreview(dataUrl);
+      const base64 = dataUrl.split(",")[1];
+      const result = await analyzeFoodWithGeminiPhoto(base64, "image/jpeg");
+      setFoodLog(result);
+    } catch (err) {
+      setError("Failed to analyze photo. Try again.");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSaveLog = async () => {

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import ToolbarWin from "@/components/toolbarwin";
 import Space from "@/components/space";
 import { getSupabaseClient } from "@/config/supabase";
+import { compressImage } from "@/services/image-compress";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
 
 const labelStyle: React.CSSProperties = {
@@ -55,17 +56,17 @@ export default function CreateRecipePage() {
   const updateStep = (i: number, value: string) =>
     setSteps((s) => s.map((step, idx) => (idx === i ? value : step)));
 
-  const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 1.5 * 1024 * 1024) {
-      setError("Image is too large. Please pick one under 1.5MB.");
-      return;
-    }
     setError("");
-    const reader = new FileReader();
-    reader.onload = () => setPhoto(reader.result as string);
-    reader.readAsDataURL(file);
+    try {
+      const compressed = await compressImage(file, { maxBytes: 3 * 1024 * 1024 });
+      setPhoto(compressed);
+    } catch (err) {
+      console.error("Failed to process image:", err);
+      setError("Failed to process image. Try another photo.");
+    }
   };
 
   const handleSave = async () => {

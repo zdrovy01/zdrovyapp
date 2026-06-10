@@ -3,6 +3,7 @@
 import { useAuth } from "@/config/auth-context";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
 import { getSupabaseClient } from "@/config/supabase";
+import { compressImage } from "@/services/image-compress";
 import ToolbarWin from "@/components/toolbarwin";
 import Space from "@/components/space";
 import Option2 from "@/components/option2";
@@ -50,33 +51,32 @@ export default function AccountSettingsPage() {
   const handleAvatarSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !user) return;
-    if (file.size > 1.5 * 1024 * 1024) {
-      alert("Image is too large. Please pick one under 1.5MB.");
-      return;
-    }
     setUploading(true);
-    const reader = new FileReader();
-    reader.onload = async () => {
-      try {
-        const dataUrl = reader.result as string;
-        const supabase = getSupabaseClient();
-        const { error } = await supabase
-          .from("user_profiles")
-          .upsert(
-            { user_id: user.id, avatar_url: dataUrl },
-            { onConflict: "user_id" }
-          );
-        if (error) {
-          console.error("Failed to update avatar:", error);
-          alert("Failed to update avatar");
-        } else {
-          await refreshUser();
-        }
-      } finally {
-        setUploading(false);
+    try {
+      // Avatars can be smaller; cap around 0.8MB at 512px
+      const dataUrl = await compressImage(file, {
+        maxDimension: 512,
+        maxBytes: 0.8 * 1024 * 1024,
+      });
+      const supabase = getSupabaseClient();
+      const { error } = await supabase
+        .from("user_profiles")
+        .upsert(
+          { user_id: user.id, avatar_url: dataUrl },
+          { onConflict: "user_id" }
+        );
+      if (error) {
+        console.error("Failed to update avatar:", error);
+        alert("Failed to update avatar");
+      } else {
+        await refreshUser();
       }
-    };
-    reader.readAsDataURL(file);
+    } catch (err) {
+      console.error("Failed to process avatar:", err);
+      alert("Failed to process image");
+    } finally {
+      setUploading(false);
+    }
   };
 
   const [deleting, setDeleting] = useState(false);

@@ -5,6 +5,7 @@ import Space from "@/components/space";
 import RecipeCard from "@/components/recipecard";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
 import { getSupabaseClient } from "@/config/supabase";
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
 interface Recipe {
@@ -20,6 +21,7 @@ interface Recipe {
 
 export default function RecipePage() {
   useProtectedRoute();
+  const router = useRouter();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -109,6 +111,7 @@ export default function RecipePage() {
               carbs={r.carbs}
               fat={r.fat}
               price={r.price}
+              onClick={() => router.push(`/recipe/${r.id}`)}
             />
           ))}
         </div>

@@ -62,6 +62,24 @@ CREATE TABLE IF NOT EXISTS recipes (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- Saved Recipes Table (a user can save recipes)
+CREATE TABLE IF NOT EXISTS saved_recipes (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  recipe_id UUID NOT NULL REFERENCES recipes(id) ON DELETE CASCADE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  UNIQUE(user_id, recipe_id)
+);
+
+ALTER TABLE saved_recipes ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "sr_select" ON saved_recipes;
+CREATE POLICY "sr_select" ON saved_recipes FOR SELECT USING (auth.uid() = user_id);
+DROP POLICY IF EXISTS "sr_insert" ON saved_recipes;
+CREATE POLICY "sr_insert" ON saved_recipes FOR INSERT WITH CHECK (auth.uid() = user_id);
+DROP POLICY IF EXISTS "sr_delete" ON saved_recipes;
+CREATE POLICY "sr_delete" ON saved_recipes FOR DELETE USING (auth.uid() = user_id);
+
 -- Create indexes
 CREATE INDEX IF NOT EXISTS idx_food_logs_user_id ON food_logs(user_id);
 CREATE INDEX IF NOT EXISTS idx_food_logs_created_at ON food_logs(created_at);

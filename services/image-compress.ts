@@ -6,6 +6,7 @@ interface CompressOptions {
   maxDimension?: number; // longest edge in px
   maxBytes?: number; // target max size of the resulting data URL
   quality?: number; // initial JPEG quality (0..1)
+  square?: boolean; // center-crop to a square
 }
 
 const dataUrlBytes = (dataUrl: string) => {
@@ -23,6 +24,7 @@ export async function compressImage(
     maxDimension = 1280,
     maxBytes = 3 * 1024 * 1024,
     quality = 0.82,
+    square = false,
   } = options;
 
   const objectUrl = URL.createObjectURL(file);
@@ -34,19 +36,36 @@ export async function compressImage(
       i.src = objectUrl;
     });
 
-    let { width, height } = img;
-    if (width > maxDimension || height > maxDimension) {
-      const scale = maxDimension / Math.max(width, height);
-      width = Math.round(width * scale);
-      height = Math.round(height * scale);
-    }
-
     const canvas = document.createElement("canvas");
-    canvas.width = width;
-    canvas.height = height;
     const ctx = canvas.getContext("2d");
     if (!ctx) return await fileToDataUrl(file);
-    ctx.drawImage(img, 0, 0, width, height);
+
+    let width: number;
+    let height: number;
+
+    if (square) {
+      // Center-crop the source to a square, then scale to maxDimension
+      const side = Math.min(img.width, img.height);
+      const sx = (img.width - side) / 2;
+      const sy = (img.height - side) / 2;
+      const target = Math.min(side, maxDimension);
+      width = target;
+      height = target;
+      canvas.width = target;
+      canvas.height = target;
+      ctx.drawImage(img, sx, sy, side, side, 0, 0, target, target);
+    } else {
+      width = img.width;
+      height = img.height;
+      if (width > maxDimension || height > maxDimension) {
+        const scale = maxDimension / Math.max(width, height);
+        width = Math.round(width * scale);
+        height = Math.round(height * scale);
+      }
+      canvas.width = width;
+      canvas.height = height;
+      ctx.drawImage(img, 0, 0, width, height);
+    }
 
     // Reduce quality until it fits under maxBytes (floor at 0.4)
     let q = quality;
@@ -60,7 +79,14 @@ export async function compressImage(
     if (dataUrlBytes(dataUrl) > maxBytes) {
       canvas.width = Math.round(width * 0.7);
       canvas.height = Math.round(height * 0.7);
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      if (square) {
+        const side = Math.min(img.width, img.height);
+        const sx = (img.width - side) / 2;
+        const sy = (img.height - side) / 2;
+        ctx.drawImage(img, sx, sy, side, side, 0, 0, canvas.width, canvas.height);
+      } else {
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      }
       dataUrl = canvas.toDataURL("image/jpeg", 0.7);
     }
 

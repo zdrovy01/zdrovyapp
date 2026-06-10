@@ -61,7 +61,10 @@ export default function CreateRecipePage() {
     if (!file) return;
     setError("");
     try {
-      const compressed = await compressImage(file, { maxBytes: 3 * 1024 * 1024 });
+      const compressed = await compressImage(file, {
+        maxBytes: 3 * 1024 * 1024,
+        square: true,
+      });
       setPhoto(compressed);
     } catch (err) {
       console.error("Failed to process image:", err);
@@ -142,7 +145,7 @@ export default function CreateRecipePage() {
             onClick={() => fileInputRef.current?.click()}
             style={{
               width: "100%",
-              height: 180,
+              aspectRatio: "1 / 1",
               borderRadius: 14,
               background: "rgba(118,118,128,0.24)",
               border: photo ? "none" : "1.5px dashed rgba(235,235,245,0.3)",

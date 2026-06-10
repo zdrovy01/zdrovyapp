@@ -13,6 +13,7 @@ interface FoodLogItem {
   carbs: number;
   fat: number;
   price: number;
+  image_url: string | null;
   created_at: string;
 }
 
@@ -143,13 +144,15 @@ export default function DayLogs({ date }: DayLogsProps) {
           style={{
             display: "flex",
             flexDirection: "column",
-            padding: "0 0px",
+            gap: 10,
+            padding: "0 20px",
           }}
         >
           {logs.map((log) => (
             <Log
               key={log.id}
               title={log.name}
+              image={log.image_url}
               kcal={log.kcal}
               protein={log.protein}
               carbs={log.carbs}

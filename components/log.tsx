@@ -1,9 +1,11 @@
 "use client";
 
 import { useRef, useState } from "react";
+import FoodCard from "@/components/foodcard";
 
 interface LogProps {
   title?: string;
+  image?: string | null;
   kcal?: number;
   protein?: number;
   carbs?: number;
@@ -18,6 +20,7 @@ const OPEN_THRESHOLD = 44;
 
 export default function Log({
   title = "Meal",
+  image,
   kcal = 0,
   protein = 0,
   carbs = 0,
@@ -74,6 +77,7 @@ export default function Log({
         width: "100%",
         overflow: "hidden",
         background: "#FF3B30",
+        borderRadius: 16,
       }}
     >
       {/* Delete button revealed underneath */}
@@ -102,7 +106,14 @@ export default function Log({
       )}
 
       {/* Foreground draggable card */}
-      <div
+      <FoodCard
+        title={title}
+        image={image}
+        kcal={kcal}
+        protein={protein}
+        carbs={carbs}
+        fat={fat}
+        time={time}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
@@ -110,69 +121,13 @@ export default function Log({
         onClick={handleCardClick}
         style={{
           position: "relative",
-          width: "100%",
-          height: 64,
-          paddingLeft: 20,
-          paddingRight: 20,
-          background: "#0A0A0A",
-          justifyContent: "space-between",
-          alignItems: "center",
-          gap: 10,
-          display: "flex",
-          boxSizing: "border-box",
           transform: `translateX(${offset}px)`,
           transition: dragging ? "none" : "transform 0.25s ease",
           cursor: onClick ? "pointer" : "default",
           touchAction: "pan-y",
           userSelect: "none",
         }}
-      >
-        {/* Left: Content */}
-        <div style={{ flex: "1 1 0", textAlign: "left" }}>
-          <div
-            style={{
-              color: "white",
-              fontSize: 16,
-              fontFamily:
-                "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif",
-              fontWeight: 600,
-              marginBottom: 4,
-            }}
-          >
-            {title}
-          </div>
-          <div
-            style={{
-              color: "rgba(235,235,245,0.6)",
-              fontSize: 12,
-              fontFamily:
-                "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif",
-              fontWeight: 400,
-              display: "flex",
-              gap: 12,
-            }}
-          >
-            <span>{kcal} kcal</span>
-            <span>p {protein}</span>
-            <span>c {carbs}</span>
-            <span>f {fat}</span>
-          </div>
-        </div>
-
-        {/* Right: Time */}
-        <div
-          style={{
-            color: "rgba(235,235,245,0.5)",
-            fontSize: 13,
-            fontFamily:
-              "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif",
-            fontWeight: 500,
-            flexShrink: 0,
-          }}
-        >
-          {time}
-        </div>
-      </div>
+      />
     </div>
   );
 }

@@ -7,7 +7,8 @@ const HIDE_TABBAR_ON: string[] = [
   "/auth",
   "/log",
   "/settings",
-  "/accountsettings"
+  "/accountsettings",
+  "/createrecipe"
 ];
 
 export default HIDE_TABBAR_ON;

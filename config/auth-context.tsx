@@ -62,24 +62,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let initialised = false;
 
     // Listen for auth state changes — fires immediately with INITIAL_SESSION
+    // Seed from localStorage before subscribing so first render has user
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user && !initialised) {
+        buildUser(session).then((u) => { setUser(u); setLoading(false); });
+      }
+    });
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event: string, session: Session | null) => {
         if (session?.user) {
           const u = await buildUser(session);
           setUser(u);
-        } else {
-          // Only sign out if we already know who the user is,
-          // or if this is an explicit SIGNED_OUT (not just a cold start with no session)
-          if (initialised || event === "SIGNED_OUT") {
-            setUser(null);
-          }
+          setLoading(false);
+        } else if (event === "SIGNED_OUT") {
+          setUser(null);
+          setLoading(false);
+        } else if (!initialised) {
+          // First fire with no session — not logged in
+          setLoading(false);
         }
         initialised = true;
-        setLoading(false);
       }
     );
 
-    // Safety fallback in case onAuthStateChange never fires
     const fallback = setTimeout(() => setLoading(false), 5000);
 
     return () => {

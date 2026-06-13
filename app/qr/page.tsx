@@ -128,7 +128,9 @@ export default function QrPage() {
           if (videoRef.current) {
             videoRef.current.srcObject = stream;
             videoRef.current.play().catch(() => {});
-            videoRef.current.onloadedmetadata = () => startScanLoop();
+            const v = videoRef.current;
+            const tryStart = () => { if (v.readyState >= 2) startScanLoop(); else v.onloadeddata = () => startScanLoop(); };
+            if (v.readyState >= 2) startScanLoop(); else v.onloadedmetadata = tryStart;
           }
         })
         .catch((err) => console.error("Camera error:", err));
@@ -149,7 +151,7 @@ export default function QrPage() {
   if (!user) return null;
 
   const username = user.username || "user";
-  const link = `app.zdrovy.com/@${username}`;
+  const link = `app.zdrovy.com/${username}`;
   const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=520x520&ecc=H&margin=0&data=${encodeURIComponent(
     `https://${link}`
   )}`;

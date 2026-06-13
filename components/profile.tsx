@@ -15,6 +15,7 @@ export default function Profile() {
 
   return (
     <div
+      onClick={() => router.push(`/profile/${user.id}`)}
       style={{
         padding: "20px",
         borderRadius: "20px",
@@ -24,6 +25,7 @@ export default function Profile() {
         display: "flex",
         alignItems: "center",
         gap: 16,
+        cursor: "pointer",
       }}
     >
       {/* Avatar */}

@@ -1,10 +1,24 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import ToolbarWin from "@/components/toolbarwin";
 import Space from "@/components/space";
 import { useAuth } from "@/config/auth-context";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
+
+const ZDROVY_HOSTS = ["app.zdrovy.com", "zdrovy.com"];
+
+function resolveZdrovyUrl(raw: string): string | null {
+  try {
+    const url = new URL(raw);
+    if (!ZDROVY_HOSTS.includes(url.hostname)) return null;
+    if (url.hostname === "app.zdrovy.com") return url.pathname || "/";
+    return null; // zdrovy.com links open externally
+  } catch {
+    return null;
+  }
+}
 
 type Mode = "qr" | "scan";
 
@@ -29,41 +43,104 @@ const ScanIcon = ({ color = "#fff" }: { color?: string }) => (
 export default function QrPage() {
   useProtectedRoute();
   const { user, loading } = useAuth();
+  const router = useRouter();
   const [mode, setMode] = useState<Mode>("qr");
+  const [scanResult, setScanResult] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const rafRef = useRef<number | null>(null);
+  const scannedRef = useRef(false);
+
+  const stopCamera = useCallback(() => {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = null;
+    streamRef.current?.getTracks().forEach((t) => t.stop());
+    streamRef.current = null;
+  }, []);
+
+  const handleDetected = useCallback((data: string) => {
+    if (scannedRef.current) return;
+    scannedRef.current = true;
+    stopCamera();
+
+    const internalPath = resolveZdrovyUrl(data);
+    if (internalPath) {
+      setScanResult(null);
+      router.push(internalPath);
+    } else {
+      setScanResult(data);
+    }
+  }, [router, stopCamera]);
+
+  // Scan loop using BarcodeDetector or jsQR
+  const startScanLoop = useCallback(async () => {
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    if (!video || !canvas) return;
+
+    // Try native BarcodeDetector first
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const BarcodeDetector = (window as any).BarcodeDetector;
+    if (BarcodeDetector) {
+      const detector = new BarcodeDetector({ formats: ["qr_code"] });
+      const tick = async () => {
+        if (scannedRef.current || !videoRef.current) return;
+        try {
+          const codes = await detector.detect(video);
+          if (codes.length > 0) { handleDetected(codes[0].rawValue); return; }
+        } catch { /* ignore */ }
+        rafRef.current = requestAnimationFrame(tick);
+      };
+      rafRef.current = requestAnimationFrame(tick);
+      return;
+    }
+
+    // Fallback: jsQR
+    const jsQR = (await import("jsqr")).default;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    const tick = () => {
+      if (scannedRef.current || !videoRef.current) return;
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0);
+      const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const code = jsQR(img.data, img.width, img.height);
+      if (code) { handleDetected(code.data); return; }
+      rafRef.current = requestAnimationFrame(tick);
+    };
+    rafRef.current = requestAnimationFrame(tick);
+  }, [handleDetected]);
 
   // Manage the camera stream when in scan mode
   useEffect(() => {
     let cancelled = false;
-    const stop = () => {
-      streamRef.current?.getTracks().forEach((t) => t.stop());
-      streamRef.current = null;
-    };
+    scannedRef.current = false;
+    setScanResult(null);
 
     if (mode === "scan") {
       navigator.mediaDevices
         ?.getUserMedia({ video: { facingMode: "environment" } })
         .then((stream) => {
-          if (cancelled) {
-            stream.getTracks().forEach((t) => t.stop());
-            return;
-          }
+          if (cancelled) { stream.getTracks().forEach((t) => t.stop()); return; }
           streamRef.current = stream;
           if (videoRef.current) {
             videoRef.current.srcObject = stream;
             videoRef.current.play().catch(() => {});
+            videoRef.current.onloadedmetadata = () => startScanLoop();
           }
         })
         .catch((err) => console.error("Camera error:", err));
     } else {
-      stop();
+      stopCamera();
     }
 
     return () => {
       cancelled = true;
-      stop();
+      stopCamera();
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode]);
 
   if (loading) {
@@ -188,12 +265,26 @@ export default function QrPage() {
               </div>
             </div>
           ) : (
-            <video
-              ref={videoRef}
-              muted
-              playsInline
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
-            />
+            <>
+              <video
+                ref={videoRef}
+                muted
+                playsInline
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              />
+              <canvas ref={canvasRef} style={{ display: "none" }} />
+              {/* scan frame overlay */}
+              <div style={{
+                position: "absolute", inset: 0, pointerEvents: "none",
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}>
+                <div style={{
+                  width: 180, height: 180, borderRadius: 16,
+                  boxShadow: "0 0 0 2000px rgba(0,0,0,0.45)",
+                  border: "2px solid rgba(255,255,255,0.6)",
+                }} />
+              </div>
+            </>
           )}
         </div>
 
@@ -215,14 +306,17 @@ export default function QrPage() {
             : "Point the camera at a Zdrovy code to open someone's profile"}
         </div>
         {mode === "qr" && (
-          <div
-            style={{
-              color: "rgba(235,235,245,0.45)",
-              fontSize: 14,
-              marginTop: 8,
-            }}
-          >
+          <div style={{ color: "rgba(235,235,245,0.45)", fontSize: 14, marginTop: 8 }}>
             {link}
+          </div>
+        )}
+        {mode === "scan" && scanResult && (
+          <div style={{
+            marginTop: 16, padding: "12px 16px", borderRadius: 14,
+            background: "rgba(255,255,255,0.08)", maxWidth: BOX,
+            color: "rgba(235,235,245,0.7)", fontSize: 13, wordBreak: "break-all", textAlign: "center",
+          }}>
+            {scanResult}
           </div>
         )}
 

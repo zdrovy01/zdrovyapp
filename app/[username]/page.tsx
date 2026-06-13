@@ -62,11 +62,21 @@ export default function ProfilePage() {
     try {
       const supabase = getSupabaseClient();
 
-      const { data: profileData } = await supabase
+      let { data: profileData } = await supabase
         .from("user_profiles")
         .select("*")
         .eq("username", username)
         .single();
+
+      // fallback: treat the param as user_id
+      if (!profileData) {
+        const { data: byId } = await supabase
+          .from("user_profiles")
+          .select("*")
+          .eq("user_id", username)
+          .single();
+        profileData = byId;
+      }
 
       if (!profileData) { setProfile(null); setLoading(false); return; }
 

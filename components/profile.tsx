@@ -15,7 +15,7 @@ export default function Profile() {
 
   return (
     <div
-      onClick={() => router.push(`/profile/${user.id}`)}
+      onClick={() => router.push(`/${user.username || user.id}`)}
       style={{
         padding: "20px",
         borderRadius: "20px",

@@ -31,14 +31,24 @@ async function buildUser(session: Session) {
     .single();
   const meta = session.user.user_metadata || {};
   const email = session.user.email || "";
-  // Default handle derived from the email local part
-  const fallbackHandle = email.split("@")[0] || "user";
+  const fallbackHandle = email.split("@")[0].replace(/[^a-z0-9_]/gi, "") || "user";
+  const name = profile?.name || meta.name || meta.full_name || "";
+
+  // Auto-create profile row if missing
+  if (!profile) {
+    await supabase.from("user_profiles").upsert({
+      user_id: session.user.id,
+      username: fallbackHandle,
+      name,
+      avatar_url: meta.avatar_url || meta.picture || null,
+    }, { onConflict: "user_id" });
+  }
+
   return {
     id: session.user.id,
     email,
-    name: profile?.name || meta.name || meta.full_name,
+    name,
     username: profile?.username || fallbackHandle,
-    // Prefer the saved profile avatar, fall back to the Google one
     avatar_url: profile?.avatar_url || meta.avatar_url || meta.picture,
   };
 }

@@ -34,13 +34,13 @@ async function buildUser(session: Session) {
   const fallbackHandle = email.split("@")[0].replace(/[^a-z0-9_]/gi, "") || "user";
   const name = profile?.name || meta.name || meta.full_name || "";
 
-  // Auto-create profile row if missing
-  if (!profile) {
+  // Auto-create profile row or fill missing username
+  if (!profile || !profile.username) {
     await supabase.from("user_profiles").upsert({
       user_id: session.user.id,
-      username: fallbackHandle,
-      name,
-      avatar_url: meta.avatar_url || meta.picture || null,
+      username: profile?.username || fallbackHandle,
+      name: profile?.name || name,
+      avatar_url: profile?.avatar_url || meta.avatar_url || meta.picture || null,
     }, { onConflict: "user_id" });
   }
 

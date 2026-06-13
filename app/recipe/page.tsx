@@ -63,6 +63,19 @@ export default function RecipePage() {
     load();
   }, []);
 
+  const handleDelete = async (id: string) => {
+    const prev = recipes;
+    setRecipes((cur) => cur.filter((r) => r.id !== id));
+    try {
+      const supabase = getSupabaseClient();
+      const { error } = await supabase.from("recipes").delete().eq("id", id);
+      if (error) { console.error("Failed to delete recipe:", error); setRecipes(prev); }
+    } catch (err) {
+      console.error("Failed to delete recipe:", err);
+      setRecipes(prev);
+    }
+  };
+
   return (
     <>
       <Space size={40} />
@@ -112,6 +125,7 @@ export default function RecipePage() {
               fat={r.fat}
               price={r.price}
               onClick={() => router.push(`/recipe/${r.id}`)}
+              onDelete={() => handleDelete(r.id)}
             />
           ))}
         </div>

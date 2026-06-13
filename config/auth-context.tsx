@@ -25,14 +25,14 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const CACHE_KEY = "zdrovy_user";
 
 function readCache(): User | null {
-  try { return JSON.parse(sessionStorage.getItem(CACHE_KEY) || "null"); }
+  try { return JSON.parse(localStorage.getItem(CACHE_KEY) || "null"); }
   catch { return null; }
 }
 
 function writeCache(u: User | null) {
   try {
-    if (u) sessionStorage.setItem(CACHE_KEY, JSON.stringify(u));
-    else sessionStorage.removeItem(CACHE_KEY);
+    if (u) localStorage.setItem(CACHE_KEY, JSON.stringify(u));
+    else localStorage.removeItem(CACHE_KEY);
   } catch { /* ignore */ }
 }
 

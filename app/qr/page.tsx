@@ -273,17 +273,6 @@ export default function QrPage() {
                 style={{ width: "100%", height: "100%", objectFit: "cover" }}
               />
               <canvas ref={canvasRef} style={{ display: "none" }} />
-              {/* scan frame overlay */}
-              <div style={{
-                position: "absolute", inset: 0, pointerEvents: "none",
-                display: "flex", alignItems: "center", justifyContent: "center",
-              }}>
-                <div style={{
-                  width: 180, height: 180, borderRadius: 16,
-                  boxShadow: "0 0 0 2000px rgba(0,0,0,0.45)",
-                  border: "2px solid rgba(255,255,255,0.6)",
-                }} />
-              </div>
             </>
           )}
         </div>

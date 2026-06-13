@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Space from "@/components/space";
 import ToolbarWin from "@/components/toolbarwin";
 import { getSupabaseClient } from "@/config/supabase";
@@ -42,6 +42,7 @@ const btnStyle = (bg: string, color: string, disabled = false): React.CSSPropert
 export default function ProfilePage() {
   useProtectedRoute();
   const { user: me } = useAuth();
+  const router = useRouter();
   const { id } = useParams<{ id: string }>();
 
   const [profile, setProfile] = useState<ProfileData | null>(null);
@@ -173,11 +174,13 @@ export default function ProfilePage() {
 
           {/* Stats */}
           {[
-            { label: "Recipes", value: profile.recipes_count },
-            { label: "Followers", value: profile.followers_count },
-            { label: "Following", value: profile.following_count },
+            { label: "Recipes", value: profile.recipes_count, href: null },
+            { label: "Followers", value: profile.followers_count, href: `/followers/${profile.username}` },
+            { label: "Following", value: profile.following_count, href: `/following/${profile.username}` },
           ].map((s) => (
-            <div key={s.label} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
+            <div key={s.label}
+              onClick={() => s.href && router.push(s.href)}
+              style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 2, cursor: s.href ? "pointer" : "default" }}>
               <span style={{ color: "#F5F5F5", fontSize: 20, fontWeight: 700, fontFamily: FONT }}>{s.value}</span>
               <span style={{ color: "rgba(235,235,245,0.5)", fontSize: 12, fontFamily: FONT }}>{s.label}</span>
             </div>

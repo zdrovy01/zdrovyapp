@@ -16,7 +16,6 @@ interface LogProps {
 }
 
 const DELETE_WIDTH = 88;
-const OPEN_THRESHOLD = 44;
 
 export default function Log({
   title = "Meal",
@@ -31,39 +30,47 @@ export default function Log({
 }: LogProps) {
   const [offset, setOffset] = useState(0);
   const [dragging, setDragging] = useState(false);
-  const baseRef = useRef(0);
-  const startXRef = useRef(0);
-  const movedRef = useRef(false);
+  const startX = useRef(0);
+  const startY = useRef(0);
+  const currentOffset = useRef(0);
+  const isHorizontal = useRef<boolean | null>(null);
 
-  const handlePointerDown = (e: React.PointerEvent) => {
+  const onTouchStart = (e: React.TouchEvent) => {
     if (!onDelete) return;
-    startXRef.current = e.clientX;
-    movedRef.current = false;
+    startX.current = e.touches[0].clientX;
+    startY.current = e.touches[0].clientY;
+    isHorizontal.current = null;
     setDragging(true);
-    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
   };
 
-  const handlePointerMove = (e: React.PointerEvent) => {
-    if (!dragging) return;
-    const delta = e.clientX - startXRef.current;
-    if (Math.abs(delta) > 4) movedRef.current = true;
-    const next = Math.max(-DELETE_WIDTH, Math.min(0, baseRef.current + delta));
+  const onTouchMove = (e: React.TouchEvent) => {
+    if (!onDelete || !dragging) return;
+    const dx = e.touches[0].clientX - startX.current;
+    const dy = e.touches[0].clientY - startY.current;
+
+    // Determine direction on first significant move
+    if (isHorizontal.current === null && (Math.abs(dx) > 4 || Math.abs(dy) > 4)) {
+      isHorizontal.current = Math.abs(dx) > Math.abs(dy);
+    }
+
+    if (!isHorizontal.current) return; // vertical scroll — don't interfere
+
+    e.preventDefault(); // block scroll during horizontal swipe
+    const next = Math.max(-DELETE_WIDTH, Math.min(0, currentOffset.current + dx));
     setOffset(next);
   };
 
-  const handlePointerUp = () => {
+  const onTouchEnd = () => {
     if (!dragging) return;
     setDragging(false);
-    const opened = offset < -OPEN_THRESHOLD;
-    const snapped = opened ? -DELETE_WIDTH : 0;
-    baseRef.current = snapped;
+    const snapped = offset < -DELETE_WIDTH / 2 ? -DELETE_WIDTH : 0;
+    currentOffset.current = snapped;
     setOffset(snapped);
   };
 
   const handleCardClick = () => {
-    if (movedRef.current) return; // was a swipe, not a tap
     if (offset !== 0) {
-      baseRef.current = 0;
+      currentOffset.current = 0;
       setOffset(0);
       return;
     }
@@ -76,11 +83,11 @@ export default function Log({
         position: "relative",
         width: "100%",
         overflow: "hidden",
-        background: "#FF3B30",
         borderRadius: 16,
+        background: "#FF3B30",
       }}
     >
-      {/* Delete button revealed underneath */}
+      {/* Delete button */}
       {onDelete && (
         <button
           onClick={onDelete}
@@ -92,7 +99,7 @@ export default function Log({
             width: DELETE_WIDTH,
             background: "#FF3B30",
             border: "none",
-            color: "#FFFFFF",
+            color: "#fff",
             fontSize: 14,
             fontWeight: 600,
             cursor: "pointer",
@@ -105,7 +112,7 @@ export default function Log({
         </button>
       )}
 
-      {/* Foreground draggable card */}
+      {/* Swipeable card */}
       <FoodCard
         title={title}
         image={image}
@@ -114,18 +121,17 @@ export default function Log({
         carbs={carbs}
         fat={fat}
         time={time}
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        onPointerCancel={handlePointerUp}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
         onClick={handleCardClick}
         style={{
           position: "relative",
           transform: `translateX(${offset}px)`,
           transition: dragging ? "none" : "transform 0.25s ease",
-          cursor: onClick ? "pointer" : "default",
           touchAction: "pan-y",
           userSelect: "none",
+          cursor: onClick ? "pointer" : "default",
         }}
       />
     </div>

@@ -86,7 +86,7 @@ export default function Profile() {
 
       {/* QR button */}
       <button
-        onClick={() => router.push("/qr")}
+        onClick={(e) => { e.stopPropagation(); router.push("/qr"); }}
         aria-label="Show my QR code"
         style={{
           width: 40,

@@ -25,13 +25,13 @@ export default function NotificationsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) { setLoading(false); return; }
     loadNotifications();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const loadNotifications = async () => {
-    if (!user) return;
+    if (!user) { setLoading(false); return; }
     setLoading(true);
     try {
       const supabase = getSupabaseClient();

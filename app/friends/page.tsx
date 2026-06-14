@@ -26,7 +26,7 @@ export default function FriendsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) { setLoading(false); return; }
     const load = async () => {
       const supabase = getSupabaseClient();
 

@@ -227,6 +227,8 @@ export default function SettingsPage() {
         onSelect={(code) => setTheme(code)}
       />
 
+      <Option2 text="Shops" href="/shops" />
+
       <Space size={28} />
 
       {/* Account */}

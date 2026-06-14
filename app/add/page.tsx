@@ -113,18 +113,6 @@ export default function AddPage() {
         onSend={handleFoodAnalysis}
       />
 
-      {/* Photo preview */}
-      {photoPreview && (
-        <div style={{ padding: "12px 20px 0" }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={photoPreview}
-            alt="Food preview"
-            style={{ width: "100%", height: 200, objectFit: "cover", borderRadius: 16 }}
-          />
-        </div>
-      )}
-
       {error && (
         <div style={{ paddingLeft: 20, paddingRight: 20, marginTop: 12, color: "#FF453A", fontSize: 13 }}>
           {error}
@@ -147,7 +135,8 @@ export default function AddPage() {
               protein={foodLog.protein}
               carbs={foodLog.carbs}
               fat={foodLog.fat}
-              price={foodLog.price}
+              image={photoPreview || undefined}
+              onNameChange={(n) => setFoodLog({ ...foodLog, name: n })}
               buttons={[{ text: "Save Log", onClick: handleSaveLog }]}
             />
           </div>

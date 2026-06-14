@@ -39,14 +39,12 @@ Return ONLY valid JSON with no other text:
   "kcal": 0,
   "protein": 0,
   "carbs": 0,
-  "fat": 0,
-  "price": 0
+  "fat": 0
 }
 
 Rules:
-- All numbers must be integers except price (decimal)
+- All numbers must be integers
 - Estimate realistic nutrition facts for a typical serving shown
-- Price is approximate USD cost
 - No markdown, no explanations, just JSON`,
               },
             ],
@@ -112,14 +110,12 @@ Return ONLY valid JSON with no other text:
   "kcal": 0,
   "protein": 0,
   "carbs": 0,
-  "fat": 0,
-  "price": 0
+  "fat": 0
 }
 
 Rules:
-- All numbers must be integers except price (decimal)
+- All numbers must be integers
 - Estimate realistic nutrition facts
-- Price is approximate USD cost
 - No markdown, no explanations, just JSON`,
                 },
               ],

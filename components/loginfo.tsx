@@ -1,5 +1,7 @@
 "use client";
 
+import { useRef } from "react";
+
 const FONT = "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif";
 
 interface ButtonConfig {
@@ -15,6 +17,7 @@ interface LogInfoProps {
   fat?: number;
   image?: string;
   onNameChange?: (name: string) => void;
+  onImageAdd?: (dataUrl: string) => void;
   buttons?: [ButtonConfig] | [ButtonConfig, ButtonConfig];
 }
 
@@ -26,8 +29,19 @@ export default function LogInfo({
   fat = 0,
   image,
   onNameChange,
+  onImageAdd,
   buttons,
 }: LogInfoProps) {
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !onImageAdd) return;
+    const reader = new FileReader();
+    reader.onload = () => onImageAdd(reader.result as string);
+    reader.readAsDataURL(file);
+  };
+
   return (
     <div style={{
       width: "100%",
@@ -40,10 +54,25 @@ export default function LogInfo({
       gap: 16,
     }}>
       {/* Photo */}
-      {image && (
+      {image ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={image} alt="Food" style={{ width: "100%", height: 180, objectFit: "cover", borderRadius: 14 }} />
-      )}
+      ) : onImageAdd ? (
+        <>
+          <input ref={fileRef} type="file" accept="image/*" capture="environment" onChange={handleFile} style={{ display: "none" }} />
+          <button onClick={() => fileRef.current?.click()} style={{
+            alignSelf: "flex-start", display: "flex", alignItems: "center", gap: 6,
+            background: "rgba(255,255,255,0.07)", border: "none", borderRadius: 10,
+            padding: "6px 12px", cursor: "pointer", color: "rgba(235,235,245,0.5)",
+            fontSize: 13, fontFamily: FONT, fontWeight: 500,
+          }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+            </svg>
+            Add photo
+          </button>
+        </>
+      ) : null}
 
       {/* Editable title */}
       {onNameChange ? (

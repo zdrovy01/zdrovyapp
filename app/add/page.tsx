@@ -137,6 +137,7 @@ export default function AddPage() {
               fat={foodLog.fat}
               image={photoPreview || undefined}
               onNameChange={(n) => setFoodLog({ ...foodLog, name: n })}
+              onImageAdd={(dataUrl) => setPhotoPreview(dataUrl)}
               buttons={[{ text: "Save Log", onClick: handleSaveLog }]}
             />
           </div>

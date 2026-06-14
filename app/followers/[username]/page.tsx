@@ -5,7 +5,6 @@ import { useParams } from "next/navigation";
 import Space from "@/components/space";
 import ToolbarWin from "@/components/toolbarwin";
 import UserRow from "@/components/userrow";
-import { SkeletonList } from "@/components/skeleton";
 import { getSupabaseClient } from "@/config/supabase";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
 
@@ -56,7 +55,7 @@ export default function FollowersPage() {
       <ToolbarWin title="Followers" />
       <Space size={8} />
       {loading ? (
-        <SkeletonList rows={5} />
+        <div style={{ padding: "0 20px", color: "rgba(235,235,245,0.5)", fontFamily: FONT }}>Loading...</div>
       ) : users.length === 0 ? (
         <div style={{ padding: "40px 20px", textAlign: "center", color: "rgba(235,235,245,0.35)", fontFamily: FONT }}>No followers yet</div>
       ) : (

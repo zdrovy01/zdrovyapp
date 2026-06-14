@@ -22,21 +22,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const CACHE_KEY = "zdrovy_user";
-
-function readCache(): User | null {
-  try { return JSON.parse(localStorage.getItem(CACHE_KEY) || "null"); }
-  catch { return null; }
-}
-
-function writeCache(u: User | null) {
-  try {
-    if (u) localStorage.setItem(CACHE_KEY, JSON.stringify(u));
-    else localStorage.removeItem(CACHE_KEY);
-  } catch { /* ignore */ }
-}
-
-async function buildUser(session: Session): Promise<User> {
+async function buildUser(session: Session) {
   const supabase = getSupabaseClient();
   const { data: profile } = await supabase
     .from("user_profiles")
@@ -48,6 +34,7 @@ async function buildUser(session: Session): Promise<User> {
   const fallbackHandle = email.split("@")[0].replace(/[^a-z0-9_]/gi, "") || "user";
   const name = profile?.name || meta.name || meta.full_name || "";
 
+  // Auto-create profile row or fill missing username
   if (!profile || !profile.username) {
     await supabase.from("user_profiles").upsert({
       user_id: session.user.id,
@@ -67,46 +54,38 @@ async function buildUser(session: Session): Promise<User> {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  // Seed from sessionStorage cache for instant render — no loading flicker
-  const cached = typeof window !== "undefined" ? readCache() : null;
-  const [user, setUser] = useState<User | null>(cached);
-  const [loading, setLoading] = useState(!cached);
-
-  const setAndCache = (u: User | null) => { setUser(u); writeCache(u); };
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const supabase = getSupabaseClient();
     let initialised = false;
 
-    // Validate session in background
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user && !initialised) {
-        buildUser(session).then((u) => { setAndCache(u); setLoading(false); });
-      } else if (!initialised) {
-        // No session but don't clear cache yet — wait for onAuthStateChange
-        setLoading(false);
-      }
-    });
-
+    // Listen for auth state changes — fires immediately with INITIAL_SESSION
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event: string, session: Session | null) => {
         if (session?.user) {
           const u = await buildUser(session);
-          setAndCache(u);
-          setLoading(false);
-        } else if (event === "SIGNED_OUT") {
-          setAndCache(null);
-          setLoading(false);
-        } else if (!initialised) {
-          setLoading(false);
+          setUser(u);
+        } else {
+          // Only sign out if we already know who the user is,
+          // or if this is an explicit SIGNED_OUT (not just a cold start with no session)
+          if (initialised || event === "SIGNED_OUT") {
+            setUser(null);
+          }
         }
         initialised = true;
+        setLoading(false);
       }
     );
 
+    // Safety fallback in case onAuthStateChange never fires
     const fallback = setTimeout(() => setLoading(false), 5000);
-    return () => { subscription.unsubscribe(); clearTimeout(fallback); };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(fallback);
+    };
   }, []);
 
   const loginWithGoogle = async () => {
@@ -121,13 +100,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = async () => {
     const supabase = getSupabaseClient();
     await supabase.auth.signOut();
-    setAndCache(null);
+    setUser(null);
   };
 
   const refreshUser = async () => {
     const supabase = getSupabaseClient();
     const { data: { session } } = await supabase.auth.getSession();
-    if (session?.user) setAndCache(await buildUser(session));
+    if (session?.user) {
+      setUser(await buildUser(session));
+    }
   };
 
   return (

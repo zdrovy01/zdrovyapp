@@ -7,7 +7,6 @@ import ToolbarWin from "@/components/toolbarwin";
 import { getSupabaseClient } from "@/config/supabase";
 import { useAuth } from "@/config/auth-context";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
-import { SkeletonList } from "@/components/skeleton";
 
 interface Friend {
   user_id: string;
@@ -26,7 +25,7 @@ export default function FriendsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) { setLoading(false); return; }
+    if (!user) return;
     const load = async () => {
       const supabase = getSupabaseClient();
 
@@ -61,7 +60,7 @@ export default function FriendsPage() {
       <Space size={8} />
 
       {loading ? (
-        <SkeletonList rows={5} />
+        <div style={{ padding: "0 20px", color: "rgba(235,235,245,0.5)", fontFamily: FONT }}>Loading...</div>
       ) : friends.length === 0 ? (
         <div style={{ padding: "40px 20px", textAlign: "center", color: "rgba(235,235,245,0.35)", fontFamily: FONT }}>No friends yet</div>
       ) : (

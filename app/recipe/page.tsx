@@ -4,7 +4,6 @@ import Toolbar from "@/components/toolbar";
 import Space from "@/components/space";
 import RecipeCard from "@/components/recipecard";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
-import { useAuth } from "@/config/auth-context";
 import { getSupabaseClient } from "@/config/supabase";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
@@ -22,23 +21,34 @@ interface Recipe {
 
 export default function RecipePage() {
   useProtectedRoute();
-  const { user } = useAuth();
   const router = useRouter();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) { setLoading(false); return; }
     const load = async () => {
       try {
         const supabase = getSupabaseClient();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (!user) {
+          setRecipes([]);
+          setLoading(false);
+          return;
+        }
         const { data, error } = await supabase
           .from("recipes")
           .select("*")
           .eq("user_id", user.id)
           .order("created_at", { ascending: false });
         if (error) {
-          console.error("Failed to load recipes:", error.message);
+          console.error("Failed to load recipes:", {
+            message: error.message,
+            code: error.code,
+            details: error.details,
+            hint: error.hint,
+          });
           setRecipes([]);
         } else {
           setRecipes(data || []);
@@ -51,7 +61,7 @@ export default function RecipePage() {
       }
     };
     load();
-  }, [user]);
+  }, []);
 
   const handleDelete = async (id: string) => {
     const prev = recipes;
@@ -81,12 +91,29 @@ export default function RecipePage() {
       />
       <Space size={16} />
 
-      {loading ? null : recipes.length === 0 ? (
-        <div style={{ padding: "30px 20px", color: "rgba(235,235,245,0.5)", textAlign: "center" }}>
+      {loading ? (
+        <div style={{ padding: "0 20px", color: "rgba(235,235,245,0.6)" }}>
+          Loading...
+        </div>
+      ) : recipes.length === 0 ? (
+        <div
+          style={{
+            padding: "30px 20px",
+            color: "rgba(235,235,245,0.5)",
+            textAlign: "center",
+          }}
+        >
           No recipes yet. Tap + to create one.
         </div>
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: 10, padding: "0 20px" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 10,
+            padding: "0 20px",
+          }}
+        >
           {recipes.map((r) => (
             <RecipeCard
               key={r.id}

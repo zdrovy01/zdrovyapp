@@ -6,7 +6,6 @@ import ToolbarWin from "@/components/toolbarwin";
 import Space from "@/components/space";
 import { getSupabaseClient } from "@/config/supabase";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
-import { useAuth } from "@/config/auth-context";
 
 interface Recipe {
   id: string;
@@ -24,7 +23,6 @@ interface Recipe {
 
 export default function RecipeDetailPage() {
   useProtectedRoute();
-  const { user } = useAuth();
   const params = useParams();
   const router = useRouter();
   const id = params?.id as string;
@@ -40,6 +38,10 @@ export default function RecipeDetailPage() {
     const load = async () => {
       try {
         const supabase = getSupabaseClient();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+
         const { data, error } = await supabase
           .from("recipes")
           .select("*")
@@ -85,6 +87,9 @@ export default function RecipeDetailPage() {
     setSavingState(true);
     try {
       const supabase = getSupabaseClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) return;
 
       if (saved) {

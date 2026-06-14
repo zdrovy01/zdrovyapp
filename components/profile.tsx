@@ -21,7 +21,7 @@ export default function Profile() {
         borderRadius: "20px",
         background: "#0A0A0A",
         backdropFilter: "blur(20px)",
-        marginBottom: "20px",
+        marginBottom: "0px",
         display: "flex",
         alignItems: "center",
         gap: 16,

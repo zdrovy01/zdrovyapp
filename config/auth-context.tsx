@@ -78,12 +78,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const supabase = getSupabaseClient();
     let initialised = false;
 
-    // Validate session in background; if cached user already shown, no loading state needed
+    // Validate session in background
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user && !initialised) {
         buildUser(session).then((u) => { setAndCache(u); setLoading(false); });
-      } else if (!session && !initialised) {
-        setAndCache(null);
+      } else if (!initialised) {
+        // No session but don't clear cache yet — wait for onAuthStateChange
         setLoading(false);
       }
     });

@@ -3,7 +3,6 @@
 import Toolbar from "@/components/toolbar";
 import Space from "@/components/space";
 import RecipeCard from "@/components/recipecard";
-import { SkeletonList } from "@/components/skeleton";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
 import { useAuth } from "@/config/auth-context";
 import { getSupabaseClient } from "@/config/supabase";
@@ -29,7 +28,7 @@ export default function RecipePage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) { setLoading(false); return; }
     const load = async () => {
       try {
         const supabase = getSupabaseClient();
@@ -82,9 +81,7 @@ export default function RecipePage() {
       />
       <Space size={16} />
 
-      {loading ? (
-        <SkeletonList rows={4} />
-      ) : recipes.length === 0 ? (
+      {loading ? null : recipes.length === 0 ? (
         <div style={{ padding: "30px 20px", color: "rgba(235,235,245,0.5)", textAlign: "center" }}>
           No recipes yet. Tap + to create one.
         </div>

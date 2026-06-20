@@ -83,7 +83,7 @@ export default function Log({
         position: "relative",
         width: "100%",
         overflow: "hidden",
-        borderRadius: 16,
+        borderRadius: 20,
         background: "#FF3B30",
       }}
     >
@@ -127,6 +127,7 @@ export default function Log({
         onClick={handleCardClick}
         style={{
           position: "relative",
+          borderRadius: 0,
           transform: `translateX(${offset}px)`,
           transition: dragging ? "none" : "transform 0.25s ease",
           touchAction: "pan-y",

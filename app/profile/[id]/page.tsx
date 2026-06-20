@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Space from "@/components/space";
 import ToolbarWin from "@/components/toolbarwin";
+import AvatarViewer from "@/components/avatarviewer";
 import { getSupabaseClient } from "@/config/supabase";
 import { useAuth } from "@/config/auth-context";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
@@ -158,19 +159,7 @@ export default function ProfilePage() {
         {/* Avatar + stats row */}
         <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
           {/* Avatar */}
-          <div style={{
-            width: 80, height: 80, borderRadius: "50%", flexShrink: 0,
-            background: "rgba(120,120,128,0.3)", overflow: "hidden",
-            display: "flex", alignItems: "center", justifyContent: "center",
-          }}>
-            {profile.avatar_url ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={profile.avatar_url} alt="Avatar" referrerPolicy="no-referrer"
-                style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-            ) : (
-              <span style={{ fontSize: 32, fontWeight: 700, color: "#F5F5F5", fontFamily: FONT }}>{initial}</span>
-            )}
-          </div>
+          <AvatarViewer src={profile.avatar_url} initial={initial} size={80} />
 
           {/* Stats */}
           {[

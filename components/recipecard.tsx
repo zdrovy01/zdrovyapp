@@ -70,7 +70,7 @@ export default function RecipeCard({
   };
 
   return (
-    <div style={{ position: "relative", width: "100%", overflow: "hidden", borderRadius: 16, background: "#FF3B30" }}>
+    <div style={{ position: "relative", width: "100%", overflow: "hidden", borderRadius: 20, background: "#FF3B30" }}>
       {onDelete && (
         <button
           onClick={onDelete}
@@ -102,6 +102,7 @@ export default function RecipeCard({
         onTouchEnd={onTouchEnd}
         style={{
           position: "relative",
+          borderRadius: 0,
           transform: `translateX(${offset}px)`,
           transition: dragging ? "none" : "transform 0.25s ease",
           touchAction: "pan-y",

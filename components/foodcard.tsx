@@ -39,7 +39,7 @@ export default function FoodCard({
         alignItems: "center",
         gap: 12,
         background: "#0A0A0A",
-        borderRadius: 16,
+        borderRadius: 20,
         padding: 12,
         ...style,
       }}

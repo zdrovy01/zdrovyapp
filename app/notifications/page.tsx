@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Space from "@/components/space";
 import ToolbarWin from "@/components/toolbarwin";
 import { getSupabaseClient } from "@/config/supabase";
@@ -17,6 +17,86 @@ interface Notification {
 }
 
 const FONT = "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif";
+const DELETE_WIDTH = 88;
+
+function SwipeRow({
+  children,
+  onDelete,
+}: {
+  children: React.ReactNode;
+  onDelete: () => void;
+}) {
+  const [offset, setOffset] = useState(0);
+  const [dragging, setDragging] = useState(false);
+  const startX = useRef(0);
+  const startY = useRef(0);
+  const current = useRef(0);
+  const horizontal = useRef<boolean | null>(null);
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    startX.current = e.touches[0].clientX;
+    startY.current = e.touches[0].clientY;
+    horizontal.current = null;
+    setDragging(true);
+  };
+  const onTouchMove = (e: React.TouchEvent) => {
+    if (!dragging) return;
+    const dx = e.touches[0].clientX - startX.current;
+    const dy = e.touches[0].clientY - startY.current;
+    if (horizontal.current === null && (Math.abs(dx) > 4 || Math.abs(dy) > 4)) {
+      horizontal.current = Math.abs(dx) > Math.abs(dy);
+    }
+    if (!horizontal.current) return;
+    const next = Math.max(-DELETE_WIDTH, Math.min(0, current.current + dx));
+    setOffset(next);
+  };
+  const onTouchEnd = () => {
+    if (!dragging) return;
+    setDragging(false);
+    const snapped = offset < -DELETE_WIDTH / 2 ? -DELETE_WIDTH : 0;
+    current.current = snapped;
+    setOffset(snapped);
+  };
+
+  return (
+    <div style={{ position: "relative", width: "100%", overflow: "hidden" }}>
+      <button
+        onClick={onDelete}
+        style={{
+          position: "absolute",
+          top: 0,
+          right: 0,
+          height: "100%",
+          width: DELETE_WIDTH,
+          background: "#FF3B30",
+          border: "none",
+          color: "#fff",
+          fontSize: 14,
+          fontWeight: 600,
+          fontFamily: FONT,
+          cursor: "pointer",
+        }}
+      >
+        Delete
+      </button>
+      <div
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+        style={{
+          position: "relative",
+          transform: `translateX(${offset}px)`,
+          transition: dragging ? "none" : "transform 0.25s ease",
+          background: "#0A0A0A",
+          borderBottom: "1px solid rgba(235,235,245,0.06)",
+          touchAction: "pan-y",
+        }}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
 
 export default function NotificationsPage() {
   useProtectedRoute();
@@ -43,7 +123,6 @@ export default function NotificationsPage() {
 
       if (!data) { setNotifications([]); return; }
 
-      // Load sender profiles
       const withProfiles = await Promise.all(
         data.map(async (n) => {
           const { data: p } = await supabase
@@ -90,6 +169,32 @@ export default function NotificationsPage() {
     setNotifications((prev) => prev.filter((n) => n.id !== notif.id));
   };
 
+  const handleDelete = async (id: string) => {
+    const prev = notifications;
+    setNotifications((cur) => cur.filter((n) => n.id !== id));
+    const supabase = getSupabaseClient();
+    const { error } = await supabase.from("notifications").delete().eq("id", id);
+    if (error) {
+      console.error("Failed to delete notification:", error);
+      setNotifications(prev);
+    }
+  };
+
+  const handleClearAll = async () => {
+    if (!user || notifications.length === 0) return;
+    const prev = notifications;
+    setNotifications([]);
+    const supabase = getSupabaseClient();
+    const { error } = await supabase
+      .from("notifications")
+      .delete()
+      .eq("user_id", user.id);
+    if (error) {
+      console.error("Failed to clear notifications:", error);
+      setNotifications(prev);
+    }
+  };
+
   return (
     <>
       <Space size={40} />
@@ -103,78 +208,101 @@ export default function NotificationsPage() {
           No notifications
         </div>
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: 10, padding: "0 20px" }}>
-          {notifications.map((n) => {
-            const name = n.from_profile?.name || "Someone";
-            const initial = name.charAt(0).toUpperCase();
-            const isPending = n.status === "pending";
-            const isAccepted = n.status === "accepted";
+        <>
+          <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
+            {notifications.map((n) => {
+              const name = n.from_profile?.name || "Someone";
+              const initial = name.charAt(0).toUpperCase();
+              const isPending = n.status === "pending";
+              const isAccepted = n.status === "accepted";
 
-            return (
-              <div key={n.id} style={{
-                background: "#0A0A0A", borderRadius: 20, padding: "16px",
-                display: "flex", alignItems: "center", gap: 14,
-              }}>
-                {/* Avatar */}
-                <div style={{
-                  width: 48, height: 48, borderRadius: "50%", flexShrink: 0,
-                  background: "rgba(120,120,128,0.3)", overflow: "hidden",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                }}>
-                  {n.from_profile?.avatar_url ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={n.from_profile.avatar_url} alt={name} referrerPolicy="no-referrer"
-                      style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                  ) : (
-                    <span style={{ fontSize: 20, fontWeight: 700, color: "#F5F5F5", fontFamily: FONT }}>{initial}</span>
-                  )}
-                </div>
-
-                {/* Text */}
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ color: "#F5F5F5", fontSize: 15, fontWeight: 600, fontFamily: FONT }}>
-                    {name}
-                  </div>
-                  <div style={{ color: "rgba(235,235,245,0.5)", fontSize: 13, fontFamily: FONT }}>
-                    {n.type === "friend_request"
-                      ? isAccepted ? "You are now friends" : "sent you a friend request"
-                      : n.type}
-                  </div>
-                </div>
-
-                {/* Actions */}
-                {n.type === "friend_request" && isPending && (
-                  <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
-                    <button onClick={() => handleAccept(n)} style={{
-                      height: 36, padding: "0 16px", borderRadius: 10, border: "none",
-                      background: "#fff", color: "#000", fontSize: 14, fontWeight: 600,
-                      fontFamily: FONT, cursor: "pointer",
+              return (
+                <SwipeRow key={n.id} onDelete={() => handleDelete(n.id)}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 14, padding: "16px 20px" }}>
+                    {/* Avatar */}
+                    <div style={{
+                      width: 48, height: 48, borderRadius: "50%", flexShrink: 0,
+                      background: "rgba(120,120,128,0.3)", overflow: "hidden",
+                      display: "flex", alignItems: "center", justifyContent: "center",
                     }}>
-                      Accept
-                    </button>
-                    <button onClick={() => handleDecline(n)} style={{
-                      height: 36, padding: "0 16px", borderRadius: 10, border: "none",
-                      background: "rgba(255,255,255,0.1)", color: "#F5F5F5", fontSize: 14, fontWeight: 600,
-                      fontFamily: FONT, cursor: "pointer",
-                    }}>
-                      Decline
-                    </button>
-                  </div>
-                )}
+                      {n.from_profile?.avatar_url ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={n.from_profile.avatar_url} alt={name} referrerPolicy="no-referrer"
+                          style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      ) : (
+                        <span style={{ fontSize: 20, fontWeight: 700, color: "#F5F5F5", fontFamily: FONT }}>{initial}</span>
+                      )}
+                    </div>
 
-                {n.type === "friend_request" && isAccepted && (
-                  <div style={{
-                    height: 36, padding: "0 14px", borderRadius: 10,
-                    background: "rgba(255,255,255,0.06)", display: "flex", alignItems: "center",
-                    color: "rgba(235,235,245,0.5)", fontSize: 13, fontFamily: FONT, flexShrink: 0,
-                  }}>
-                    Friends ✓
+                    {/* Text */}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ color: "#F5F5F5", fontSize: 15, fontWeight: 600, fontFamily: FONT }}>
+                        {name}
+                      </div>
+                      <div style={{ color: "rgba(235,235,245,0.5)", fontSize: 13, fontFamily: FONT }}>
+                        {n.type === "friend_request"
+                          ? isAccepted ? "You are now friends" : "sent you a friend request"
+                          : n.type}
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    {n.type === "friend_request" && isPending && (
+                      <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
+                        <button onClick={() => handleAccept(n)} style={{
+                          height: 36, padding: "0 16px", borderRadius: 10, border: "none",
+                          background: "#fff", color: "#000", fontSize: 14, fontWeight: 600,
+                          fontFamily: FONT, cursor: "pointer",
+                        }}>
+                          Accept
+                        </button>
+                        <button onClick={() => handleDecline(n)} style={{
+                          height: 36, padding: "0 16px", borderRadius: 10, border: "none",
+                          background: "rgba(255,255,255,0.1)", color: "#F5F5F5", fontSize: 14, fontWeight: 600,
+                          fontFamily: FONT, cursor: "pointer",
+                        }}>
+                          Decline
+                        </button>
+                      </div>
+                    )}
+
+                    {n.type === "friend_request" && isAccepted && (
+                      <div style={{
+                        height: 36, padding: "0 14px", borderRadius: 10,
+                        background: "rgba(255,255,255,0.06)", display: "flex", alignItems: "center",
+                        color: "rgba(235,235,245,0.5)", fontSize: 13, fontFamily: FONT, flexShrink: 0,
+                      }}>
+                        Friends ✓
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
+                </SwipeRow>
+              );
+            })}
+          </div>
+
+          {/* Clear all */}
+          <Space size={24} />
+          <div style={{ padding: "0 20px" }}>
+            <button
+              onClick={handleClearAll}
+              style={{
+                width: "100%",
+                height: 52,
+                borderRadius: 14,
+                border: "none",
+                background: "rgba(255,69,58,0.12)",
+                color: "#FF453A",
+                fontSize: 16,
+                fontWeight: 600,
+                fontFamily: FONT,
+                cursor: "pointer",
+              }}
+            >
+              Clear all
+            </button>
+          </div>
+        </>
       )}
     </>
   );

@@ -1,12 +1,22 @@
 "use client";
 
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface SearchbarProps {
   placeholder?: string;
 }
 
 export default function Searchbar({ placeholder = "Search" }: SearchbarProps) {
+  const router = useRouter();
+
+  const handleClose = () => {
+    if (typeof window !== "undefined" && window.history.length > 1) {
+      router.back();
+    } else {
+      router.push("/");
+    }
+  };
+
   return (
     <div style={{
       width: "100%",
@@ -61,8 +71,9 @@ export default function Searchbar({ placeholder = "Search" }: SearchbarProps) {
       </div>
 
       {/* Close button */}
-      <Link
-        href="/"
+      <button
+        onClick={handleClose}
+        aria-label="Close"
         style={{
           width: 48,
           height: 48,
@@ -77,14 +88,13 @@ export default function Searchbar({ placeholder = "Search" }: SearchbarProps) {
           WebkitBackdropFilter: "blur(24px)",
           background: "rgba(30, 30, 30, 0.72)",
           boxShadow: "0 4px 32px rgba(0,0,0,0.28), inset 0 0.5px 0 rgba(255,255,255,0.12)",
-          textDecoration: "none",
         }}
       >
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
           <path d="M1 1L13 13M13 1L1 13"
             stroke="#F5F5F5" strokeWidth="1.8" strokeLinecap="round" />
         </svg>
-      </Link>
+      </button>
 
     </div>
   );

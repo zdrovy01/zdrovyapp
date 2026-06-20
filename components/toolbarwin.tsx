@@ -1,13 +1,26 @@
 "use client";
 
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface ToolbarWinProps {
   title?: string;
+  /** Optional explicit destination. If omitted, goes back to the previous page. */
   backHref?: string;
 }
 
-export default function ToolbarWin({ title = "Title", backHref = "/" }: ToolbarWinProps) {
+export default function ToolbarWin({ title = "Title", backHref }: ToolbarWinProps) {
+  const router = useRouter();
+
+  const handleBack = () => {
+    if (backHref) {
+      router.push(backHref);
+    } else if (typeof window !== "undefined" && window.history.length > 1) {
+      router.back();
+    } else {
+      router.push("/");
+    }
+  };
+
   return (
     <div
       style={{
@@ -23,8 +36,9 @@ export default function ToolbarWin({ title = "Title", backHref = "/" }: ToolbarW
       }}
     >
       {/* Back button */}
-      <Link
-        href={backHref}
+      <button
+        onClick={handleBack}
+        aria-label="Back"
         style={{
           height: 44,
           minWidth: 44,
@@ -32,7 +46,8 @@ export default function ToolbarWin({ title = "Title", backHref = "/" }: ToolbarW
           justifyContent: "center",
           alignItems: "center",
           display: "flex",
-          textDecoration: "none",
+          border: "none",
+          cursor: "pointer",
           flexShrink: 0,
           background: "linear-gradient(0deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.06) 100%), rgba(0,0,0,0.60)",
           boxShadow: "0px 8px 40px rgba(0,0,0,0.12)",
@@ -41,7 +56,7 @@ export default function ToolbarWin({ title = "Title", backHref = "/" }: ToolbarW
         <svg width="10" height="17" viewBox="0 0 10 17" fill="none">
           <path d="M8.5 15.5L1.5 8.5L8.5 1.5" stroke="#F5F5F5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
-      </Link>
+      </button>
 
       {/* Title — centered absolutely */}
       <div

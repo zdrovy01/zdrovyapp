@@ -72,6 +72,7 @@ export default function AddPage() {
         carbs: foodLog.carbs,
         fat: foodLog.fat,
         price: foodLog.price,
+        image_url: photoPreview, // photo it was calculated from (null for text)
         created_at: new Date().toISOString(),
       }]);
 

@@ -282,18 +282,18 @@ export default function NotificationsPage() {
           </div>
 
           {/* Clear all */}
-          <Space size={24} />
-          <div style={{ padding: "0 20px" }}>
+          <Space size={20} />
+          <div style={{ display: "flex", justifyContent: "center" }}>
             <button
               onClick={handleClearAll}
               style={{
-                width: "100%",
-                height: 52,
-                borderRadius: 14,
+                height: 36,
+                padding: "0 18px",
+                borderRadius: 18,
                 border: "none",
                 background: "rgba(255,69,58,0.12)",
                 color: "#FF453A",
-                fontSize: 16,
+                fontSize: 14,
                 fontWeight: 600,
                 fontFamily: FONT,
                 cursor: "pointer",

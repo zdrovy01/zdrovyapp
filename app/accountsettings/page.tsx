@@ -17,10 +17,38 @@ export default function AccountSettingsPage() {
   const [uploading, setUploading] = useState(false);
   const [usernameInput, setUsernameInput] = useState("");
   const [savingUsername, setSavingUsername] = useState(false);
+  const [nameInput, setNameInput] = useState("");
+  const [savingName, setSavingName] = useState(false);
 
   useEffect(() => {
     if (user?.username) setUsernameInput(user.username);
   }, [user?.username]);
+
+  useEffect(() => {
+    if (user?.name) setNameInput(user.name);
+  }, [user?.name]);
+
+  const handleSaveName = async () => {
+    if (!user) return;
+    const clean = nameInput.trim();
+    if (!clean || clean === user.name) return;
+
+    setSavingName(true);
+    try {
+      const supabase = getSupabaseClient();
+      const { error } = await supabase
+        .from("user_profiles")
+        .upsert({ user_id: user.id, name: clean }, { onConflict: "user_id" });
+      if (error) {
+        console.error("Failed to update name:", error);
+        alert("Failed to update name");
+      } else {
+        await refreshUser();
+      }
+    } finally {
+      setSavingName(false);
+    }
+  };
 
   const handleSaveUsername = async () => {
     if (!user) return;
@@ -218,6 +246,72 @@ export default function AccountSettingsPage() {
           >
             ID: {user.id}
           </div>
+        </div>
+      </div>
+
+      {/* Name editor */}
+      <div style={{ padding: "0 20px", marginBottom: 24 }}>
+        <div
+          style={{
+            color: "rgba(235,235,245,0.5)",
+            fontSize: 12,
+            marginBottom: 6,
+          }}
+        >
+          Name
+        </div>
+        <div style={{ display: "flex", gap: 8 }}>
+          <div
+            style={{
+              flex: 1,
+              display: "flex",
+              alignItems: "center",
+              background: "rgba(118,118,128,0.24)",
+              borderRadius: 10,
+              padding: "0 12px",
+              height: 44,
+            }}
+          >
+            <input
+              value={nameInput}
+              onChange={(e) => setNameInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleSaveName();
+              }}
+              placeholder="Your name"
+              style={{
+                flex: 1,
+                background: "transparent",
+                border: "none",
+                outline: "none",
+                color: "#F5F5F5",
+                fontSize: 16,
+              }}
+            />
+          </div>
+          <button
+            onClick={handleSaveName}
+            disabled={
+              savingName || !nameInput.trim() || nameInput.trim() === user.name
+            }
+            style={{
+              height: 44,
+              padding: "0 16px",
+              borderRadius: 10,
+              border: "none",
+              background: "#0A84FF",
+              color: "#fff",
+              fontSize: 15,
+              fontWeight: 600,
+              cursor: "pointer",
+              opacity:
+                savingName || !nameInput.trim() || nameInput.trim() === user.name
+                  ? 0.5
+                  : 1,
+            }}
+          >
+            {savingName ? "..." : "Save"}
+          </button>
         </div>
       </div>
 

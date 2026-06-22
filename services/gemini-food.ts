@@ -141,3 +141,100 @@ If quantities or units are given, use them exactly. If not, assume one typical s
     "text"
   );
 }
+
+// ---- Ingredient price estimation ----
+
+export interface PricedIngredient {
+  name: string;
+  price: number;
+}
+
+const PRICE_SCHEMA = {
+  type: "OBJECT",
+  properties: {
+    items: {
+      type: "ARRAY",
+      items: {
+        type: "OBJECT",
+        properties: {
+          name: { type: "STRING" },
+          price: { type: "NUMBER" },
+        },
+        required: ["name", "price"],
+      },
+    },
+    total: { type: "NUMBER" },
+  },
+  required: ["items", "total"],
+};
+
+export async function estimateIngredientPrices(
+  ingredients: { name: string; amount?: string; unit?: string }[]
+): Promise<{ items: PricedIngredient[]; total: number }> {
+  if (!GEMINI_API_KEY) throw new Error("Gemini API key not configured");
+
+  const list = ingredients
+    .map(
+      (i, idx) =>
+        `${idx + 1}. ${i.name}${i.amount ? ` — ${i.amount}${i.unit || ""}` : ""}`
+    )
+    .join("\n");
+
+  const body = JSON.stringify({
+    contents: [
+      {
+        parts: [
+          {
+            text: `Estimate the typical retail grocery cost in USD for the QUANTITY of each ingredient listed (not the full package, just the portion used). Be realistic.
+
+Ingredients:
+${list}
+
+Return JSON: { "items": [ { "name": <same name>, "price": <USD number> } ], "total": <sum> }.`,
+          },
+        ],
+      },
+    ],
+    generationConfig: {
+      temperature: 0,
+      responseMimeType: "application/json",
+      responseSchema: PRICE_SCHEMA,
+    },
+  });
+
+  const response = await fetch(ENDPOINT, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-goog-api-key": GEMINI_API_KEY,
+    },
+    body,
+  });
+
+  if (!response.ok) {
+    const errorData = await response.text();
+    console.error("Gemini price API error:", response.status, errorData);
+    throw new Error(`Gemini API error: ${response.status}`);
+  }
+
+  const data = await response.json();
+  const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
+  if (!content) throw new Error("Invalid response from Gemini");
+
+  const jsonMatch = content.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) throw new Error("Could not parse Gemini price response");
+
+  const parsed = JSON.parse(jsonMatch[0]);
+  const items: PricedIngredient[] = (parsed.items || []).map(
+    (it: { name?: string; price?: number }) => ({
+      name: it.name || "Ingredient",
+      price: parseFloat((it.price || 0).toFixed(2)),
+    })
+  );
+  const total =
+    parsed.total != null
+      ? parseFloat(parsed.total.toFixed(2))
+      : parseFloat(items.reduce((s, i) => s + i.price, 0).toFixed(2));
+
+  return { items, total };
+}

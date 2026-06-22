@@ -180,21 +180,6 @@ export default function NotificationsPage() {
     }
   };
 
-  const handleClearAll = async () => {
-    if (!user || notifications.length === 0) return;
-    const prev = notifications;
-    setNotifications([]);
-    const supabase = getSupabaseClient();
-    const { error } = await supabase
-      .from("notifications")
-      .delete()
-      .eq("user_id", user.id);
-    if (error) {
-      console.error("Failed to clear notifications:", error);
-      setNotifications(prev);
-    }
-  };
-
   return (
     <>
       <Space size={40} />
@@ -281,27 +266,6 @@ export default function NotificationsPage() {
             })}
           </div>
 
-          {/* Clear all */}
-          <Space size={20} />
-          <div style={{ display: "flex", justifyContent: "center" }}>
-            <button
-              onClick={handleClearAll}
-              style={{
-                height: 36,
-                padding: "0 18px",
-                borderRadius: 18,
-                border: "none",
-                background: "rgba(255,69,58,0.12)",
-                color: "#FF453A",
-                fontSize: 14,
-                fontWeight: 600,
-                fontFamily: FONT,
-                cursor: "pointer",
-              }}
-            >
-              Clear all
-            </button>
-          </div>
         </>
       )}
     </>

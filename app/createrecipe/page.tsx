@@ -6,7 +6,10 @@ import ToolbarWin from "@/components/toolbarwin";
 import Space from "@/components/space";
 import { getSupabaseClient } from "@/config/supabase";
 import { compressImage } from "@/services/image-compress";
+import { estimateIngredientPrices, PricedIngredient } from "@/services/gemini-food";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
+
+const FONT = "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif";
 
 const labelStyle: React.CSSProperties = {
   color: "rgba(235,235,245,0.5)",
@@ -25,23 +28,72 @@ const fieldStyle: React.CSSProperties = {
   fontSize: 16,
   padding: "12px 14px",
   boxSizing: "border-box",
-  fontFamily: "inherit",
+  fontFamily: FONT,
 };
+
+const cardStyle: React.CSSProperties = {
+  background: "#0A0A0A",
+  borderRadius: 20,
+  boxSizing: "border-box",
+};
+
+const primaryBtn: React.CSSProperties = {
+  flex: 1,
+  height: 52,
+  borderRadius: 14,
+  border: "none",
+  background: "#0A84FF",
+  color: "#fff",
+  fontSize: 16,
+  fontWeight: 600,
+  fontFamily: FONT,
+  cursor: "pointer",
+};
+
+const secondaryBtn: React.CSSProperties = {
+  flex: 1,
+  height: 52,
+  borderRadius: 14,
+  border: "none",
+  background: "rgba(118,118,128,0.24)",
+  color: "#F5F5F5",
+  fontSize: 16,
+  fontWeight: 600,
+  fontFamily: FONT,
+  cursor: "pointer",
+};
+
+interface Ingredient {
+  name: string;
+  amount: string;
+  unit: "g" | "ml";
+}
+
+interface Step {
+  text: string;
+  ingredientIndex: number | null;
+}
+
+const TITLES = ["Photo", "Ingredients", "Cooking steps", "Nutrition", "Review"];
 
 export default function CreateRecipePage() {
   useProtectedRoute();
   const router = useRouter();
-
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [step, setStep] = useState(1);
+
   const [photo, setPhoto] = useState<string | null>(null);
   const [name, setName] = useState("");
-  const [ingredients, setIngredients] = useState("");
-  const [steps, setSteps] = useState<string[]>([""]);
-  const [kcal, setKcal] = useState("");
+  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+  const [steps, setSteps] = useState<Step[]>([]);
   const [protein, setProtein] = useState("");
   const [carbs, setCarbs] = useState("");
   const [fat, setFat] = useState("");
-  const [showNutrition, setShowNutrition] = useState(false);
+  const [kcal, setKcal] = useState("");
+
+  const [prices, setPrices] = useState<{ items: PricedIngredient[]; total: number } | null>(null);
+  const [pricing, setPricing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -50,21 +102,13 @@ export default function CreateRecipePage() {
     return isNaN(n) ? 0 : n;
   };
 
-  const addStep = () => setSteps((s) => [...s, ""]);
-  const removeStep = (i: number) =>
-    setSteps((s) => s.filter((_, idx) => idx !== i));
-  const updateStep = (i: number, value: string) =>
-    setSteps((s) => s.map((step, idx) => (idx === i ? value : step)));
-
+  // ---- Photo ----
   const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setError("");
     try {
-      const compressed = await compressImage(file, {
-        maxBytes: 3 * 1024 * 1024,
-        square: true,
-      });
+      const compressed = await compressImage(file, { maxBytes: 3 * 1024 * 1024, square: true });
       setPhoto(compressed);
     } catch (err) {
       console.error("Failed to process image:", err);
@@ -72,48 +116,102 @@ export default function CreateRecipePage() {
     }
   };
 
+  // ---- Ingredients ----
+  const addIngredient = () =>
+    setIngredients((s) => [...s, { name: "", amount: "", unit: "g" }]);
+  const removeIngredient = (i: number) =>
+    setIngredients((s) => s.filter((_, idx) => idx !== i));
+  const updateIngredient = (i: number, patch: Partial<Ingredient>) =>
+    setIngredients((s) => s.map((ing, idx) => (idx === i ? { ...ing, ...patch } : ing)));
+
+  // ---- Steps ----
+  const addStep = () => setSteps((s) => [...s, { text: "", ingredientIndex: null }]);
+  const removeStep = (i: number) => setSteps((s) => s.filter((_, idx) => idx !== i));
+  const updateStep = (i: number, patch: Partial<Step>) =>
+    setSteps((s) => s.map((st, idx) => (idx === i ? { ...st, ...patch } : st)));
+
+  // ---- Validation per step ----
+  const canNext = () => {
+    if (step === 1) return !!photo && !!name.trim();
+    if (step === 2)
+      return ingredients.length > 0 && ingredients.every((i) => i.name.trim() && i.amount.trim());
+    if (step === 3) return steps.length > 0 && steps.every((s) => s.text.trim());
+    return true;
+  };
+
+  const goToReview = async () => {
+    setStep(5);
+    setPricing(true);
+    try {
+      const result = await estimateIngredientPrices(
+        ingredients.map((i) => ({ name: i.name, amount: i.amount, unit: i.unit }))
+      );
+      setPrices(result);
+    } catch (err) {
+      console.error("Pricing failed:", err);
+      setPrices({ items: ingredients.map((i) => ({ name: i.name, price: 0 })), total: 0 });
+    } finally {
+      setPricing(false);
+    }
+  };
+
+  const handleNext = () => {
+    setError("");
+    if (!canNext()) {
+      setError("Please fill in the required fields.");
+      return;
+    }
+    if (step === 4) {
+      goToReview();
+      return;
+    }
+    setStep((s) => s + 1);
+  };
+
+  const handleBack = () => {
+    setError("");
+    if (step === 1) {
+      router.back();
+    } else {
+      setStep((s) => s - 1);
+    }
+  };
+
   const handleSave = async () => {
-    if (!name.trim()) {
-      setError("Please enter a recipe name");
-      return;
-    }
-    if (!photo) {
-      setError("Please attach a photo");
-      return;
-    }
+    if (!photo) return;
     setSaving(true);
     setError("");
     try {
       const supabase = getSupabaseClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) {
-        setError("Please sign in first");
-        setSaving(false);
-        return;
-      }
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { setError("Please sign in first"); setSaving(false); return; }
 
-      const instructionsText = steps
-        .map((s) => s.trim())
-        .filter(Boolean)
-        .map((s, i) => `${i + 1}. ${s}`)
+      const ingredientsText = ingredients
+        .map((i) => `${i.name.trim()} — ${i.amount.trim()}${i.unit}`)
         .join("\n");
 
-      const { error: dbError } = await supabase.from("recipes").insert([
-        {
-          user_id: user.id,
-          name: name.trim(),
-          ingredients: ingredients.trim() || null,
-          instructions: instructionsText || null,
-          kcal: Math.round(num(kcal)),
-          protein: Math.round(num(protein)),
-          carbs: Math.round(num(carbs)),
-          fat: Math.round(num(fat)),
-          price: 0,
-          image_url: photo,
-        },
-      ]);
+      const instructionsText = steps
+        .map((s, i) => {
+          const attached =
+            s.ingredientIndex != null && ingredients[s.ingredientIndex]
+              ? ` (uses: ${ingredients[s.ingredientIndex].name.trim()})`
+              : "";
+          return `${i + 1}. ${s.text.trim()}${attached}`;
+        })
+        .join("\n");
+
+      const { error: dbError } = await supabase.from("recipes").insert([{
+        user_id: user.id,
+        name: name.trim(),
+        ingredients: ingredientsText || null,
+        instructions: instructionsText || null,
+        kcal: Math.round(num(kcal)),
+        protein: Math.round(num(protein)),
+        carbs: Math.round(num(carbs)),
+        fat: Math.round(num(fat)),
+        price: prices?.total || 0,
+        image_url: photo,
+      }]);
 
       if (dbError) throw dbError;
       router.push("/recipe");
@@ -127,252 +225,245 @@ export default function CreateRecipePage() {
   return (
     <>
       <Space size={40} />
-      <ToolbarWin title="Create recipe" />
-      <Space size={20} />
+      <ToolbarWin title={`${TITLES[step - 1]} · ${step}/5`} backHref={undefined} />
+      <Space size={16} />
 
-      <div style={{ padding: "0 20px", display: "flex", flexDirection: "column", gap: 16 }}>
-        {/* Photo (required) */}
-        <div>
-          <label style={labelStyle}>Photo *</label>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={handlePhotoSelect}
-            style={{ display: "none" }}
-          />
-          <div
-            onClick={() => fileInputRef.current?.click()}
-            style={{
-              width: "100%",
-              aspectRatio: "1 / 1",
-              borderRadius: 14,
-              background: "rgba(118,118,128,0.24)",
-              border: photo ? "none" : "1.5px dashed rgba(235,235,245,0.3)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-              overflow: "hidden",
-              boxSizing: "border-box",
-            }}
-          >
-            {photo ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={photo}
-                alt="Recipe"
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              />
-            ) : (
-              <span style={{ color: "rgba(235,235,245,0.5)", fontSize: 15 }}>
-                Tap to add a photo
-              </span>
-            )}
-          </div>
-        </div>
-
-        <div>
-          <label style={labelStyle}>Name</label>
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="e.g. Chicken salad"
-            style={fieldStyle}
-          />
-        </div>
-
-        <div>
-          <label style={labelStyle}>Ingredients</label>
-          <textarea
-            value={ingredients}
-            onChange={(e) => setIngredients(e.target.value)}
-            placeholder="List the ingredients..."
-            rows={4}
-            style={{ ...fieldStyle, resize: "vertical" }}
-          />
-        </div>
-
-        <div>
-          <label style={labelStyle}>Steps</label>
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {steps.map((step, i) => (
-              <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
-                <div
-                  style={{
-                    width: 28,
-                    height: 44,
-                    flexShrink: 0,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "rgba(235,235,245,0.6)",
-                    fontSize: 15,
-                    fontWeight: 700,
-                  }}
-                >
-                  {i + 1}.
-                </div>
-                <textarea
-                  value={step}
-                  onChange={(e) => updateStep(i, e.target.value)}
-                  placeholder={`Step ${i + 1}`}
-                  rows={1}
-                  style={{ ...fieldStyle, resize: "vertical", minHeight: 44 }}
-                />
-                {steps.length > 1 && (
-                  <button
-                    onClick={() => removeStep(i)}
-                    aria-label="Remove step"
-                    style={{
-                      width: 44,
-                      height: 44,
-                      flexShrink: 0,
-                      borderRadius: 10,
-                      border: "none",
-                      background: "rgba(255,69,58,0.12)",
-                      color: "#FF453A",
-                      fontSize: 22,
-                      lineHeight: 1,
-                      cursor: "pointer",
-                    }}
-                  >
-                    −
-                  </button>
-                )}
-              </div>
-            ))}
-          </div>
-          <button
-            onClick={addStep}
-            style={{
-              marginTop: 10,
-              height: 44,
-              width: "100%",
-              borderRadius: 10,
-              border: "1.5px dashed rgba(235,235,245,0.25)",
-              background: "transparent",
-              color: "rgba(235,235,245,0.8)",
-              fontSize: 15,
-              fontWeight: 600,
-              cursor: "pointer",
-            }}
-          >
-            + Add step
-          </button>
-        </div>
-
-        {/* Nutrition (collapsible) */}
-        <div>
-          <button
-            onClick={() => setShowNutrition((s) => !s)}
-            style={{
-              width: "100%",
-              height: 52,
-              padding: "0 16px",
-              background: "rgba(118,118,128,0.24)",
-              borderRadius: 10,
-              border: "none",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              boxSizing: "border-box",
-            }}
-          >
-            <span style={{ color: "#fff", fontSize: 16, fontWeight: 600 }}>
-              Nutrition
-            </span>
-            <svg
-              width="12"
-              height="12"
-              viewBox="0 0 12 12"
-              fill="none"
+      <div style={{ padding: "0 20px" }}>
+        {/* STEP 1 — Photo + name */}
+        {step === 1 && (
+          <>
+            <label style={labelStyle}>Photo *</label>
+            <input ref={fileInputRef} type="file" accept="image/*" onChange={handlePhotoSelect} style={{ display: "none" }} />
+            <div
+              onClick={() => fileInputRef.current?.click()}
               style={{
-                transform: showNutrition ? "rotate(180deg)" : "rotate(0deg)",
-                transition: "transform 0.2s",
+                width: "100%", aspectRatio: "1 / 1", borderRadius: 20,
+                background: "rgba(118,118,128,0.24)",
+                border: photo ? "none" : "1.5px dashed rgba(235,235,245,0.3)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                cursor: "pointer", overflow: "hidden", boxSizing: "border-box",
               }}
             >
-              <path
-                d="M2 4L6 8L10 4"
-                stroke="rgba(235,235,245,0.6)"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-
-          {showNutrition && (
-            <div style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 12 }}>
-              <div>
-                <label style={labelStyle}>Calories</label>
-                <input
-                  value={kcal}
-                  onChange={(e) => setKcal(e.target.value)}
-                  inputMode="numeric"
-                  placeholder="0"
-                  style={fieldStyle}
-                />
-              </div>
-              <div style={{ display: "flex", gap: 10 }}>
-                <div style={{ flex: 1 }}>
-                  <label style={labelStyle}>Protein (g)</label>
-                  <input
-                    value={protein}
-                    onChange={(e) => setProtein(e.target.value)}
-                    inputMode="numeric"
-                    placeholder="0"
-                    style={fieldStyle}
-                  />
-                </div>
-                <div style={{ flex: 1 }}>
-                  <label style={labelStyle}>Carbs (g)</label>
-                  <input
-                    value={carbs}
-                    onChange={(e) => setCarbs(e.target.value)}
-                    inputMode="numeric"
-                    placeholder="0"
-                    style={fieldStyle}
-                  />
-                </div>
-                <div style={{ flex: 1 }}>
-                  <label style={labelStyle}>Fat (g)</label>
-                  <input
-                    value={fat}
-                    onChange={(e) => setFat(e.target.value)}
-                    inputMode="numeric"
-                    placeholder="0"
-                    style={fieldStyle}
-                  />
-                </div>
-              </div>
+              {photo ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={photo} alt="Recipe" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              ) : (
+                <span style={{ color: "rgba(235,235,245,0.5)", fontSize: 15 }}>Tap to add a photo</span>
+              )}
             </div>
-          )}
-        </div>
-
-        {error && (
-          <div style={{ color: "#FF453A", fontSize: 13 }}>{error}</div>
+            <Space size={16} />
+            <label style={labelStyle}>Recipe name *</label>
+            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Greek salad" style={fieldStyle} />
+          </>
         )}
 
-        <button
-          onClick={handleSave}
-          disabled={saving}
-          style={{
-            width: "100%",
-            height: 56,
-            borderRadius: 14,
-            border: "none",
-            background: "#0A84FF",
-            color: "#fff",
-            fontSize: 17,
-            fontWeight: 600,
-            cursor: saving ? "default" : "pointer",
-            opacity: saving ? 0.6 : 1,
-          }}
-        >
-          {saving ? "Saving..." : "Save recipe"}
-        </button>
+        {/* STEP 2 — Ingredients (horizontal cards) */}
+        {step === 2 && (
+          <>
+            <label style={labelStyle}>Ingredients *</label>
+            {ingredients.length > 0 && (
+              <div className="hide-scrollbar" style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 4 }}>
+                {ingredients.map((ing, i) => (
+                  <div key={i} style={{ ...cardStyle, flex: "0 0 160px", padding: 12, position: "relative" }}>
+                    <button
+                      onClick={() => removeIngredient(i)}
+                      aria-label="Remove"
+                      style={{
+                        position: "absolute", top: 8, right: 8, width: 22, height: 22,
+                        borderRadius: 11, border: "none", background: "rgba(255,69,58,0.15)",
+                        color: "#FF453A", fontSize: 15, lineHeight: 1, cursor: "pointer",
+                      }}
+                    >×</button>
+                    <input
+                      value={ing.name}
+                      onChange={(e) => updateIngredient(i, { name: e.target.value })}
+                      placeholder="Name"
+                      style={{ ...fieldStyle, padding: "8px 10px", fontSize: 15, marginBottom: 8 }}
+                    />
+                    <div style={{ display: "flex", gap: 6 }}>
+                      <input
+                        value={ing.amount}
+                        onChange={(e) => updateIngredient(i, { amount: e.target.value })}
+                        placeholder="0"
+                        inputMode="decimal"
+                        style={{ ...fieldStyle, padding: "8px 10px", fontSize: 15, width: 0, flex: 1 }}
+                      />
+                      <button
+                        onClick={() => updateIngredient(i, { unit: ing.unit === "g" ? "ml" : "g" })}
+                        style={{
+                          width: 44, borderRadius: 10, border: "none",
+                          background: "rgba(118,118,128,0.24)", color: "#F5F5F5",
+                          fontSize: 14, fontWeight: 600, cursor: "pointer",
+                        }}
+                      >{ing.unit}</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            <Space size={10} />
+            <button onClick={addIngredient} style={{ ...secondaryBtn, height: 44, fontSize: 15 }}>
+              + Add ingredient
+            </button>
+          </>
+        )}
+
+        {/* STEP 3 — Cooking steps (vertical cards) */}
+        {step === 3 && (
+          <>
+            <label style={labelStyle}>Cooking steps *</label>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {steps.map((st, i) => (
+                <div key={i} style={{ ...cardStyle, padding: 14 }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+                    <span style={{ color: "#0A84FF", fontWeight: 700, fontSize: 15 }}>Step {i + 1}</span>
+                    <button
+                      onClick={() => removeStep(i)}
+                      aria-label="Remove"
+                      style={{
+                        width: 24, height: 24, borderRadius: 12, border: "none",
+                        background: "rgba(255,69,58,0.15)", color: "#FF453A", fontSize: 16, lineHeight: 1, cursor: "pointer",
+                      }}
+                    >×</button>
+                  </div>
+                  <textarea
+                    value={st.text}
+                    onChange={(e) => updateStep(i, { text: e.target.value })}
+                    placeholder="Describe this step..."
+                    rows={2}
+                    style={{ ...fieldStyle, resize: "vertical", marginBottom: 8 }}
+                  />
+                  {ingredients.length > 0 && (
+                    <select
+                      value={st.ingredientIndex ?? ""}
+                      onChange={(e) =>
+                        updateStep(i, { ingredientIndex: e.target.value === "" ? null : Number(e.target.value) })
+                      }
+                      style={{ ...fieldStyle, padding: "10px 12px", fontSize: 14 }}
+                    >
+                      <option value="">Attach ingredient (optional)</option>
+                      {ingredients.map((ing, idx) => (
+                        <option key={idx} value={idx}>{ing.name || `Ingredient ${idx + 1}`}</option>
+                      ))}
+                    </select>
+                  )}
+                </div>
+              ))}
+            </div>
+            <Space size={10} />
+            <button onClick={addStep} style={{ ...secondaryBtn, height: 44, fontSize: 15 }}>
+              + Add step
+            </button>
+          </>
+        )}
+
+        {/* STEP 4 — Nutrition (optional) */}
+        {step === 4 && (
+          <>
+            <label style={labelStyle}>Nutrition (optional)</label>
+            <div style={{ marginBottom: 12 }}>
+              <input value={kcal} onChange={(e) => setKcal(e.target.value)} inputMode="numeric" placeholder="Calories" style={fieldStyle} />
+            </div>
+            <div style={{ display: "flex", gap: 10 }}>
+              <input value={protein} onChange={(e) => setProtein(e.target.value)} inputMode="numeric" placeholder="Protein (g)" style={fieldStyle} />
+              <input value={carbs} onChange={(e) => setCarbs(e.target.value)} inputMode="numeric" placeholder="Carbs (g)" style={fieldStyle} />
+              <input value={fat} onChange={(e) => setFat(e.target.value)} inputMode="numeric" placeholder="Fat (g)" style={fieldStyle} />
+            </div>
+          </>
+        )}
+
+        {/* STEP 5 — Review */}
+        {step === 5 && (
+          <>
+            {photo && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={photo} alt={name} style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", borderRadius: 20 }} />
+            )}
+            <Space size={14} />
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <h1 style={{ margin: 0, color: "#fff", fontSize: 24, fontWeight: 800 }}>{name}</h1>
+              <div style={{ ...cardStyle, padding: "8px 14px", borderRadius: 14, color: "#fff", fontWeight: 700, fontSize: 16 }}>
+                {pricing ? "…" : `$${(prices?.total || 0).toFixed(2)}`}
+              </div>
+            </div>
+            <Space size={8} />
+            <div style={{ color: "rgba(235,235,245,0.65)", fontSize: 14, display: "flex", gap: 16, flexWrap: "wrap" }}>
+              <span>{Math.round(num(kcal))} kcal</span>
+              <span>Protein {Math.round(num(protein))}g</span>
+              <span>Carbs {Math.round(num(carbs))}g</span>
+              <span>Fat {Math.round(num(fat))}g</span>
+            </div>
+
+            <Space size={20} />
+            <label style={labelStyle}>Ingredients</label>
+            <div className="hide-scrollbar" style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 4 }}>
+              {ingredients.map((ing, i) => {
+                const price = prices?.items[i]?.price;
+                return (
+                  <div key={i} style={{ ...cardStyle, flex: "0 0 150px", padding: 12 }}>
+                    <div style={{ color: "#fff", fontWeight: 600, fontSize: 15, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                      {ing.name}
+                    </div>
+                    <div style={{ color: "rgba(235,235,245,0.5)", fontSize: 12, marginTop: 2 }}>
+                      {ing.amount}{ing.unit}
+                    </div>
+                    <div style={{ color: "#0A84FF", fontWeight: 700, fontSize: 14, marginTop: 8 }}>
+                      {pricing ? "…" : `$${(price || 0).toFixed(2)}`}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <Space size={20} />
+            <label style={labelStyle}>Steps</label>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {steps.map((st, i) => (
+                <div key={i} style={{ ...cardStyle, padding: 14 }}>
+                  <div style={{ color: "#0A84FF", fontWeight: 700, fontSize: 14, marginBottom: 4 }}>Step {i + 1}</div>
+                  <div style={{ color: "#F5F5F5", fontSize: 15, lineHeight: 1.45 }}>{st.text}</div>
+                  {st.ingredientIndex != null && ingredients[st.ingredientIndex] && (
+                    <div style={{ color: "rgba(235,235,245,0.5)", fontSize: 12, marginTop: 6 }}>
+                      uses: {ingredients[st.ingredientIndex].name}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {error && (
+          <>
+            <Space size={12} />
+            <div style={{ color: "#FF453A", fontSize: 13 }}>{error}</div>
+          </>
+        )}
+
+        <Space size={24} />
+
+        {/* Bottom navigation */}
+        {step < 5 ? (
+          <>
+            <div style={{ display: "flex", gap: 10 }}>
+              <button onClick={handleBack} style={secondaryBtn}>Back</button>
+              <button onClick={handleNext} style={primaryBtn}>Next</button>
+            </div>
+            {step === 4 && (
+              <>
+                <Space size={10} />
+                <button onClick={goToReview} style={{ ...secondaryBtn, width: "100%" }}>Skip</button>
+              </>
+            )}
+          </>
+        ) : (
+          <div style={{ display: "flex", gap: 10 }}>
+            <button onClick={() => setStep(4)} style={secondaryBtn}>Back</button>
+            <button onClick={handleSave} disabled={saving || pricing} style={{ ...primaryBtn, opacity: saving || pricing ? 0.6 : 1 }}>
+              {saving ? "Saving..." : "Save"}
+            </button>
+          </div>
+        )}
       </div>
 
       <Space size={40} />

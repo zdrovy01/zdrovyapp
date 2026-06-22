@@ -1,14 +1,49 @@
 "use client";
 
+import React from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 interface ToolbarWinProps {
   title?: string;
   /** Optional explicit destination. If omitted, goes back to the previous page. */
   backHref?: string;
+  /** Optional trailing action buttons (max 2). */
+  icon1?: React.ReactNode;
+  icon2?: React.ReactNode;
+  onIcon1Click?: () => void;
+  onIcon2Click?: () => void;
+  href1?: string;
+  href2?: string;
 }
 
-export default function ToolbarWin({ title = "Title", backHref }: ToolbarWinProps) {
+const actionStyle: React.CSSProperties = {
+  height: 44,
+  minWidth: 44,
+  borderRadius: 296,
+  border: "none",
+  cursor: "pointer",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  flexShrink: 0,
+  color: "#F5F5F5",
+  textDecoration: "none",
+  background:
+    "linear-gradient(0deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.06) 100%), rgba(0,0,0,0.60)",
+  boxShadow: "0px 8px 40px rgba(0,0,0,0.12)",
+};
+
+export default function ToolbarWin({
+  title = "Title",
+  backHref,
+  icon1,
+  icon2,
+  onIcon1Click,
+  onIcon2Click,
+  href1,
+  href2,
+}: ToolbarWinProps) {
   const router = useRouter();
 
   const handleBack = () => {
@@ -78,8 +113,25 @@ export default function ToolbarWin({ title = "Title", backHref }: ToolbarWinProp
         {title}
       </div>
 
-      {/* Trailing placeholder (balance) */}
-      <div style={{ width: 44, height: 44, flexShrink: 0 }} />
+      {/* Trailing actions (max 2) or balance placeholder */}
+      {icon1 || icon2 ? (
+        <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+          {icon1 &&
+            (href1 ? (
+              <Link href={href1} style={actionStyle} aria-label="Action 1">{icon1}</Link>
+            ) : (
+              <button onClick={onIcon1Click} style={actionStyle} aria-label="Action 1">{icon1}</button>
+            ))}
+          {icon2 &&
+            (href2 ? (
+              <Link href={href2} style={actionStyle} aria-label="Action 2">{icon2}</Link>
+            ) : (
+              <button onClick={onIcon2Click} style={actionStyle} aria-label="Action 2">{icon2}</button>
+            ))}
+        </div>
+      ) : (
+        <div style={{ width: 44, height: 44, flexShrink: 0 }} />
+      )}
     </div>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import ToolbarWin from "@/components/toolbarwin";
+import Toolbar from "@/components/toolbar";
 import Space from "@/components/space";
 import { getSupabaseClient } from "@/config/supabase";
 import { compressImage } from "@/services/image-compress";
@@ -225,7 +225,7 @@ export default function CreateRecipePage() {
   return (
     <>
       <Space size={40} />
-      <ToolbarWin title={`${TITLES[step - 1]} · ${step}/5`} backHref={undefined} />
+      <Toolbar title={`${TITLES[step - 1]} · ${step}/5`} showIcon1={false} showIcon2={false} />
       <Space size={16} />
 
       <div style={{ padding: "0 20px" }}>

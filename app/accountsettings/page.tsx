@@ -365,7 +365,7 @@ export default function AccountSettingsPage() {
               savingUsername ||
               !usernameInput.trim() ||
               usernameInput.trim().replace(/^@+/, "").toLowerCase() ===
-                user.username
+              user.username
             }
             style={{
               height: 44,
@@ -379,8 +379,8 @@ export default function AccountSettingsPage() {
               cursor: "pointer",
               opacity:
                 savingUsername ||
-                !usernameInput.trim() ||
-                usernameInput.trim().replace(/^@+/, "").toLowerCase() ===
+                  !usernameInput.trim() ||
+                  usernameInput.trim().replace(/^@+/, "").toLowerCase() ===
                   user.username
                   ? 0.5
                   : 1,
@@ -394,11 +394,9 @@ export default function AccountSettingsPage() {
       {/* Delete account */}
       <Option2
         text={deleting ? "Deleting..." : "Delete account"}
-        onClick={deleting ? () => {} : handleDeleteAccount}
+        onClick={deleting ? () => { } : handleDeleteAccount}
         style={{ color: "#FF453A" }}
       />
-
-      <Space size={20} />
 
       <Option2 text="Sign Out" onClick={logout} style={{ color: "#FF453A" }} />
 

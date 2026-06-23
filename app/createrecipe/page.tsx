@@ -439,10 +439,26 @@ export default function CreateRecipePage() {
             <div style={{ color: "#FF453A", fontSize: 13 }}>{error}</div>
           </>
         )}
+      </div>
 
-        <Space size={24} />
+      {/* Spacer so content isn't hidden behind the fixed bar */}
+      <div style={{ height: step === 4 ? 150 : 96 }} />
 
-        {/* Bottom navigation */}
+      {/* Fixed bottom navigation */}
+      <div
+        style={{
+          position: "fixed",
+          left: "50%",
+          bottom: 0,
+          transform: "translateX(-50%)",
+          width: "100%",
+          maxWidth: 402,
+          padding: "16px 20px 28px",
+          boxSizing: "border-box",
+          background: "linear-gradient(to top, #000 60%, rgba(0,0,0,0))",
+          zIndex: 50,
+        }}
+      >
         {step < 5 ? (
           <>
             <div style={{ display: "flex", gap: 10 }}>
@@ -465,8 +481,6 @@ export default function CreateRecipePage() {
           </div>
         )}
       </div>
-
-      <Space size={40} />
     </>
   );
 }

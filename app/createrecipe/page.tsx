@@ -270,50 +270,79 @@ export default function CreateRecipePage() {
           </>
         )}
 
-        {/* STEP 2 — Ingredients (horizontal cards) */}
+        {/* STEP 2 — Ingredients (full-width cards) */}
         {step === 2 && (
           <>
             {ingredients.length > 0 && (
-              <div className="hide-scrollbar" style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 4 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 10 }}>
                 {ingredients.map((ing, i) => (
-                  <div key={i} style={{ ...cardStyle, flex: "0 0 160px", padding: 12, position: "relative" }}>
-                    <button
-                      onClick={() => removeIngredient(i)}
-                      aria-label="Remove"
-                      style={{
-                        position: "absolute", top: 8, right: 8, width: 22, height: 22,
-                        borderRadius: 11, border: "none", background: "rgba(255,69,58,0.15)",
-                        color: "#FF453A", fontSize: 15, lineHeight: 1, cursor: "pointer",
-                      }}
-                    >×</button>
-                    <input
-                      value={ing.name}
-                      onChange={(e) => updateIngredient(i, { name: e.target.value })}
-                      placeholder="Name"
-                      style={{ ...fieldStyle, padding: "8px 10px", fontSize: 15, marginBottom: 8 }}
-                    />
-                    <div style={{ display: "flex", gap: 6 }}>
+                  <div key={i} style={{ ...cardStyle, padding: 14 }}>
+                    {/* Name row */}
+                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      <div
+                        style={{
+                          width: 30, height: 30, flexShrink: 0, borderRadius: 9,
+                          background: "rgba(118,118,128,0.24)", color: "rgba(235,235,245,0.6)",
+                          display: "flex", alignItems: "center", justifyContent: "center",
+                          fontSize: 13, fontWeight: 700,
+                        }}
+                      >{i + 1}</div>
+                      <input
+                        value={ing.name}
+                        onChange={(e) => updateIngredient(i, { name: e.target.value })}
+                        placeholder="Ingredient name"
+                        style={{
+                          flex: 1, minWidth: 0, background: "transparent", border: "none",
+                          outline: "none", color: "#F5F5F5", fontSize: 16, fontWeight: 600,
+                        }}
+                      />
+                      <button
+                        onClick={() => removeIngredient(i)}
+                        aria-label="Remove"
+                        style={{
+                          width: 30, height: 30, flexShrink: 0, borderRadius: 9, border: "none",
+                          background: "rgba(255,69,58,0.12)", color: "#FF453A", cursor: "pointer",
+                          display: "flex", alignItems: "center", justifyContent: "center",
+                        }}
+                      >
+                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                          <path d="M3 3l8 8M11 3l-8 8" stroke="#FF453A" strokeWidth="1.8" strokeLinecap="round" />
+                        </svg>
+                      </button>
+                    </div>
+
+                    {/* Amount + unit row */}
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 12 }}>
                       <input
                         value={ing.amount}
                         onChange={(e) => updateIngredient(i, { amount: e.target.value })}
-                        placeholder="0"
+                        placeholder="Amount"
                         inputMode="decimal"
-                        style={{ ...fieldStyle, padding: "8px 10px", fontSize: 15, width: 0, flex: 1 }}
+                        style={{ ...fieldStyle, flex: 1, padding: "10px 12px", fontSize: 15 }}
                       />
-                      <button
-                        onClick={() => updateIngredient(i, { unit: ing.unit === "g" ? "ml" : "g" })}
-                        style={{
-                          width: 44, borderRadius: 10, border: "none",
-                          background: "rgba(118,118,128,0.24)", color: "#F5F5F5",
-                          fontSize: 14, fontWeight: 600, cursor: "pointer",
-                        }}
-                      >{ing.unit}</button>
+                      {/* Segmented unit control */}
+                      <div style={{ display: "flex", background: "rgba(118,118,128,0.24)", borderRadius: 10, padding: 2, flexShrink: 0 }}>
+                        {(["g", "ml"] as const).map((u) => {
+                          const active = ing.unit === u;
+                          return (
+                            <button
+                              key={u}
+                              onClick={() => updateIngredient(i, { unit: u })}
+                              style={{
+                                width: 44, height: 36, borderRadius: 8, border: "none", cursor: "pointer",
+                                background: active ? "#0A84FF" : "transparent",
+                                color: active ? "#fff" : "rgba(235,235,245,0.6)",
+                                fontSize: 14, fontWeight: 600,
+                              }}
+                            >{u}</button>
+                          );
+                        })}
+                      </div>
                     </div>
                   </div>
                 ))}
               </div>
             )}
-            {ingredients.length > 0 && <Space size={10} />}
             <button onClick={addIngredient} style={addBtn}>
               + Add ingredient
             </button>

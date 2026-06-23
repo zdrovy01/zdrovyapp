@@ -49,10 +49,8 @@ export default function TabBar() {
         padding: "4px 2px",
         borderRadius: 1000,
         overflow: "hidden",
-        backdropFilter: "blur(24px)",
-        WebkitBackdropFilter: "blur(24px)",
-        background: "rgba(0, 0, 0, 0.67)",
-        boxShadow: "0 4px 32px rgba(0,0,0,0.28), inset 0 0.5px 0 rgba(255,255,255,0.10)",
+        background: "#0A0A0A",
+        boxShadow: "0 4px 32px rgba(0,0,0,0.28)",
       }}>
         {tabs.map((tab) => {
           const active = pathname === tab.href;
@@ -77,7 +75,7 @@ export default function TabBar() {
                 <div style={{
                   position: "absolute",
                   inset: 0,
-                  background: "#121212",
+                  background: "#2A2A2A",
                   borderRadius: 100,
                 }} />
               )}

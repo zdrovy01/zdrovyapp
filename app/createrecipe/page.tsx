@@ -63,6 +63,19 @@ const secondaryBtn: React.CSSProperties = {
   cursor: "pointer",
 };
 
+const addBtn: React.CSSProperties = {
+  width: "100%",
+  height: 50,
+  borderRadius: 14,
+  border: "1.5px dashed rgba(235,235,245,0.25)",
+  background: "transparent",
+  color: "#0A84FF",
+  fontSize: 15,
+  fontWeight: 600,
+  fontFamily: FONT,
+  cursor: "pointer",
+};
+
 interface Ingredient {
   name: string;
   amount: string;
@@ -260,7 +273,6 @@ export default function CreateRecipePage() {
         {/* STEP 2 — Ingredients (horizontal cards) */}
         {step === 2 && (
           <>
-            <label style={labelStyle}>Ingredients *</label>
             {ingredients.length > 0 && (
               <div className="hide-scrollbar" style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 4 }}>
                 {ingredients.map((ing, i) => (
@@ -301,8 +313,8 @@ export default function CreateRecipePage() {
                 ))}
               </div>
             )}
-            <Space size={10} />
-            <button onClick={addIngredient} style={{ ...secondaryBtn, height: 44, fontSize: 15 }}>
+            {ingredients.length > 0 && <Space size={10} />}
+            <button onClick={addIngredient} style={addBtn}>
               + Add ingredient
             </button>
           </>
@@ -311,7 +323,6 @@ export default function CreateRecipePage() {
         {/* STEP 3 — Cooking steps (vertical cards) */}
         {step === 3 && (
           <>
-            <label style={labelStyle}>Cooking steps *</label>
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {steps.map((st, i) => (
                 <div key={i} style={{ ...cardStyle, padding: 14 }}>
@@ -350,8 +361,8 @@ export default function CreateRecipePage() {
                 </div>
               ))}
             </div>
-            <Space size={10} />
-            <button onClick={addStep} style={{ ...secondaryBtn, height: 44, fontSize: 15 }}>
+            {steps.length > 0 && <Space size={10} />}
+            <button onClick={addStep} style={addBtn}>
               + Add step
             </button>
           </>
@@ -360,7 +371,9 @@ export default function CreateRecipePage() {
         {/* STEP 4 — Nutrition (optional) */}
         {step === 4 && (
           <>
-            <label style={labelStyle}>Nutrition (optional)</label>
+            <div style={{ color: "rgba(235,235,245,0.45)", fontSize: 14, marginBottom: 14 }}>
+              Optional — you can skip this step.
+            </div>
             <div style={{ marginBottom: 12 }}>
               <input value={kcal} onChange={(e) => setKcal(e.target.value)} inputMode="numeric" placeholder="Calories" style={fieldStyle} />
             </div>

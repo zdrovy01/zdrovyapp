@@ -11,7 +11,7 @@ import { useRef, useState, useEffect } from "react";
 
 export default function AccountSettingsPage() {
   useProtectedRoute();
-  const { user, loading, logout, refreshUser } = useAuth();
+  const { user, loading, refreshUser } = useAuth();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -104,34 +104,6 @@ export default function AccountSettingsPage() {
       alert("Failed to process image");
     } finally {
       setUploading(false);
-    }
-  };
-
-  const [deleting, setDeleting] = useState(false);
-
-  const handleDeleteAccount = async () => {
-    if (!user) return;
-    const confirmed = window.confirm(
-      "Delete your account permanently? This removes all your data and cannot be undone."
-    );
-    if (!confirmed) return;
-
-    setDeleting(true);
-    try {
-      const supabase = getSupabaseClient();
-      const { error } = await supabase.rpc("delete_user");
-      if (error) {
-        console.error("Failed to delete account:", error);
-        alert("Failed to delete account. Please try again.");
-        setDeleting(false);
-        return;
-      }
-      await logout();
-      window.location.href = "/auth";
-    } catch (err) {
-      console.error("Delete account threw:", err);
-      alert("Failed to delete account. Please try again.");
-      setDeleting(false);
     }
   };
 
@@ -391,14 +363,8 @@ export default function AccountSettingsPage() {
         </div>
       </div>
 
-      {/* Delete account */}
-      <Option2
-        text={deleting ? "Deleting..." : "Delete account"}
-        onClick={deleting ? () => { } : handleDeleteAccount}
-        style={{ color: "#FF453A" }}
-      />
-
-      <Option2 text="Sign Out" onClick={logout} style={{ color: "#FF453A" }} />
+      {/* More options (sign out, delete account) */}
+      <Option2 text="More options" href="/moreoptions" />
 
       <Space size={40} />
     </>

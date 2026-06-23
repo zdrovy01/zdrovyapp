@@ -36,7 +36,7 @@ export default function Option2({ text = "Text", icon, href, onClick, style: sty
         </div>
       )}
       <div style={{
-        color: "white",
+        color: styleProp?.color || "white",
         fontSize: 16,
         fontFamily: "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif",
         fontWeight: 600,

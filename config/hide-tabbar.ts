@@ -8,6 +8,7 @@ const HIDE_TABBAR_ON: string[] = [
   "/log",
   "/settings",
   "/accountsettings",
+  "/moreoptions",
   "/createrecipe",
   "/qr",
   "/shops",

@@ -21,6 +21,64 @@ interface Recipe {
   image_url: string | null;
 }
 
+interface ParsedIngredient {
+  name: string;
+  amount: string;
+  unit: string;
+  price: number | null;
+}
+interface ParsedStep {
+  text: string;
+  ingredient: string | null;
+}
+
+const cardStyle: React.CSSProperties = {
+  background: "#0A0A0A",
+  borderRadius: 20,
+  boxSizing: "border-box",
+};
+const labelStyle: React.CSSProperties = {
+  color: "rgba(235,235,245,0.5)",
+  fontSize: 12,
+  marginBottom: 8,
+  display: "block",
+};
+
+function parseIngredients(raw: string | null): ParsedIngredient[] {
+  if (!raw) return [];
+  try {
+    const j = JSON.parse(raw);
+    if (Array.isArray(j))
+      return j.map((it) => ({
+        name: it.name || "",
+        amount: it.amount || "",
+        unit: it.unit || "",
+        price: typeof it.price === "number" ? it.price : null,
+      }));
+  } catch {}
+  // Fallback: plain lines
+  return raw
+    .split("\n")
+    .map((l) => l.trim())
+    .filter(Boolean)
+    .map((l) => ({ name: l, amount: "", unit: "", price: null }));
+}
+
+function parseSteps(raw: string | null): ParsedStep[] {
+  if (!raw) return [];
+  try {
+    const j = JSON.parse(raw);
+    if (Array.isArray(j))
+      return j.map((it) => ({ text: it.text || "", ingredient: it.ingredient || null }));
+  } catch {}
+  // Fallback: numbered lines
+  return raw
+    .split("\n")
+    .map((l) => l.replace(/^\s*\d+\.\s*/, "").trim())
+    .filter(Boolean)
+    .map((t) => ({ text: t, ingredient: null }));
+}
+
 export default function RecipeDetailPage() {
   useProtectedRoute();
   const params = useParams();
@@ -32,15 +90,12 @@ export default function RecipeDetailPage() {
   const [loading, setLoading] = useState(true);
   const [saved, setSaved] = useState(false);
   const [savingState, setSavingState] = useState(false);
-  const [stepsOpen, setStepsOpen] = useState(false);
 
   useEffect(() => {
     const load = async () => {
       try {
         const supabase = getSupabaseClient();
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
+        const { data: { user } } = await supabase.auth.getUser();
 
         const { data, error } = await supabase
           .from("recipes")
@@ -55,7 +110,6 @@ export default function RecipeDetailPage() {
         }
         setRecipe(data);
 
-        // Creator username
         const { data: profile } = await supabase
           .from("user_profiles")
           .select("username, name")
@@ -63,7 +117,6 @@ export default function RecipeDetailPage() {
           .maybeSingle();
         setCreator(profile?.username || profile?.name || "user");
 
-        // Saved state
         if (user) {
           const { data: savedRow } = await supabase
             .from("saved_recipes")
@@ -87,9 +140,7 @@ export default function RecipeDetailPage() {
     setSavingState(true);
     try {
       const supabase = getSupabaseClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
       if (saved) {
@@ -99,13 +150,11 @@ export default function RecipeDetailPage() {
           .eq("user_id", user.id)
           .eq("recipe_id", recipe.id);
         if (!error) setSaved(false);
-        else console.error("Unsave failed:", error);
       } else {
         const { error } = await supabase
           .from("saved_recipes")
           .insert({ user_id: user.id, recipe_id: recipe.id });
         if (!error) setSaved(true);
-        else console.error("Save failed:", error);
       }
     } finally {
       setSavingState(false);
@@ -121,17 +170,13 @@ export default function RecipeDetailPage() {
       <>
         <Space size={40} />
         <ToolbarWin title="Recipe" />
-        <div style={{ padding: 20, color: "rgba(235,235,245,0.6)" }}>
-          Recipe not found.
-        </div>
+        <div style={{ padding: 20, color: "rgba(235,235,245,0.6)" }}>Recipe not found.</div>
       </>
     );
   }
 
-  const steps = (recipe.instructions || "")
-    .split("\n")
-    .map((s) => s.replace(/^\s*\d+\.\s*/, "").trim())
-    .filter(Boolean);
+  const ingredients = parseIngredients(recipe.ingredients);
+  const steps = parseSteps(recipe.instructions);
 
   return (
     <>
@@ -146,172 +191,76 @@ export default function RecipeDetailPage() {
           <img
             src={recipe.image_url}
             alt={recipe.name}
-            style={{
-              width: "100%",
-              aspectRatio: "1 / 1",
-              objectFit: "cover",
-              borderRadius: 20,
-            }}
+            style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", borderRadius: 20 }}
           />
         )}
 
-        <Space size={16} />
+        <Space size={14} />
 
-        {/* Title */}
-        <h1
-          style={{
-            margin: 0,
-            color: "#fff",
-            fontSize: 28,
-            fontWeight: 800,
-            letterSpacing: "-0.4px",
-          }}
-        >
-          {recipe.name}
-        </h1>
-
-        <Space size={12} />
-
-        {/* Calories + price */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "baseline",
-            justifyContent: "space-between",
-          }}
-        >
-          <div style={{ color: "#fff", fontSize: 20, fontWeight: 600 }}>
-            {recipe.kcal} kcal
-          </div>
-          <div style={{ color: "#fff", fontSize: 20, fontWeight: 700 }}>
+        {/* Title + price */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+          <h1 style={{ margin: 0, color: "#fff", fontSize: 24, fontWeight: 800 }}>{recipe.name}</h1>
+          <div style={{ ...cardStyle, padding: "8px 14px", borderRadius: 14, color: "#fff", fontWeight: 700, fontSize: 16, flexShrink: 0 }}>
             ${recipe.price.toFixed(2)}
           </div>
         </div>
 
-        <Space size={10} />
+        <Space size={8} />
 
         {/* Macros */}
-        <div
-          style={{
-            display: "flex",
-            gap: 16,
-            color: "rgba(235,235,245,0.65)",
-            fontSize: 14,
-          }}
-        >
+        <div style={{ color: "rgba(235,235,245,0.65)", fontSize: 14, display: "flex", gap: 16, flexWrap: "wrap" }}>
+          <span>{recipe.kcal} kcal</span>
           <span>Protein {recipe.protein}g</span>
           <span>Carbs {recipe.carbs}g</span>
           <span>Fat {recipe.fat}g</span>
         </div>
 
-        <Space size={20} />
-
-        {/* Steps count */}
-        <div style={{ color: "rgba(235,235,245,0.5)", fontSize: 14 }}>
-          {steps.length} {steps.length === 1 ? "step" : "steps"} to cook
-        </div>
-
-        <Space size={20} />
-
         {/* Ingredients */}
-        {recipe.ingredients && (
+        {ingredients.length > 0 && (
           <>
-            <div
-              style={{
-                color: "rgba(235,235,245,0.6)",
-                fontSize: 13,
-                fontWeight: 600,
-                textTransform: "uppercase",
-                letterSpacing: 0.5,
-                marginBottom: 8,
-              }}
-            >
-              Ingredients
-            </div>
-            <div
-              style={{
-                color: "#F5F5F5",
-                fontSize: 15,
-                lineHeight: 1.5,
-                whiteSpace: "pre-wrap",
-              }}
-            >
-              {recipe.ingredients}
-            </div>
             <Space size={20} />
+            <label style={labelStyle}>Ingredients</label>
+            <div className="hide-scrollbar" style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 4 }}>
+              {ingredients.map((ing, i) => (
+                <div key={i} style={{ ...cardStyle, flex: "0 0 150px", padding: 12 }}>
+                  <div style={{ color: "#fff", fontWeight: 600, fontSize: 15, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                    {ing.name}
+                  </div>
+                  {(ing.amount || ing.unit) && (
+                    <div style={{ color: "rgba(235,235,245,0.5)", fontSize: 12, marginTop: 2 }}>
+                      {ing.amount}{ing.unit}
+                    </div>
+                  )}
+                  {ing.price != null && (
+                    <div style={{ color: "#0A84FF", fontWeight: 700, fontSize: 14, marginTop: 8 }}>
+                      ${ing.price.toFixed(2)}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           </>
         )}
 
-        {/* Steps (collapsible) */}
+        {/* Steps */}
         {steps.length > 0 && (
-          <div style={{ background: "#0A0A0A", borderRadius: 14, overflow: "hidden" }}>
-            <button
-              onClick={() => setStepsOpen((o) => !o)}
-              style={{
-                width: "100%",
-                height: 52,
-                padding: "0 16px",
-                background: "transparent",
-                border: "none",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                boxSizing: "border-box",
-              }}
-            >
-              <span style={{ color: "#fff", fontSize: 16, fontWeight: 600 }}>
-                Cooking steps
-              </span>
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 12 12"
-                fill="none"
-                style={{
-                  transform: stepsOpen ? "rotate(180deg)" : "rotate(0deg)",
-                  transition: "transform 0.2s",
-                }}
-              >
-                <path
-                  d="M2 4L6 8L10 4"
-                  stroke="rgba(235,235,245,0.6)"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </button>
-            {stepsOpen && (
-              <div style={{ padding: "0 16px 16px" }}>
-                {steps.map((step, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      display: "flex",
-                      gap: 12,
-                      padding: "10px 0",
-                      borderTop: "1px solid rgba(235,235,245,0.06)",
-                    }}
-                  >
-                    <span
-                      style={{
-                        color: "#0A84FF",
-                        fontSize: 15,
-                        fontWeight: 700,
-                        flexShrink: 0,
-                      }}
-                    >
-                      {i + 1}.
-                    </span>
-                    <span style={{ color: "#F5F5F5", fontSize: 15, lineHeight: 1.45 }}>
-                      {step}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          <>
+            <Space size={20} />
+            <label style={labelStyle}>Steps</label>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {steps.map((st, i) => (
+                <div key={i} style={{ ...cardStyle, padding: 14 }}>
+                  <div style={{ color: "#0A84FF", fontWeight: 700, fontSize: 14, marginBottom: 4 }}>Step {i + 1}</div>
+                  <div style={{ color: "#F5F5F5", fontSize: 15, lineHeight: 1.45 }}>{st.text}</div>
+                  {st.ingredient && (
+                    <div style={{ color: "rgba(235,235,245,0.5)", fontSize: 12, marginTop: 6 }}>
+                      uses: {st.ingredient}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </>
         )}
 
         <Space size={28} />
@@ -322,14 +271,11 @@ export default function RecipeDetailPage() {
             onClick={toggleSave}
             disabled={savingState}
             style={{
-              flex: 1,
-              height: 54,
-              borderRadius: 14,
+              flex: 1, height: 54, borderRadius: 14,
               border: saved ? "1.5px solid rgba(235,235,245,0.3)" : "none",
               background: saved ? "transparent" : "#fff",
               color: saved ? "#fff" : "#000",
-              fontSize: 16,
-              fontWeight: 600,
+              fontSize: 16, fontWeight: 600,
               cursor: savingState ? "default" : "pointer",
               opacity: savingState ? 0.6 : 1,
             }}
@@ -339,15 +285,8 @@ export default function RecipeDetailPage() {
           <button
             onClick={() => router.push(`/cook?recipe=${recipe.id}`)}
             style={{
-              flex: 1,
-              height: 54,
-              borderRadius: 14,
-              border: "none",
-              background: "#0A84FF",
-              color: "#fff",
-              fontSize: 16,
-              fontWeight: 600,
-              cursor: "pointer",
+              flex: 1, height: 54, borderRadius: 14, border: "none",
+              background: "#0A84FF", color: "#fff", fontSize: 16, fontWeight: 600, cursor: "pointer",
             }}
           >
             Start cooking

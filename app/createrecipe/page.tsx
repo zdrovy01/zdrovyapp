@@ -199,25 +199,27 @@ export default function CreateRecipePage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) { setError("Please sign in first"); setSaving(false); return; }
 
-      const ingredientsText = ingredients
-        .map((i) => `${i.name.trim()} — ${i.amount.trim()}${i.unit}`)
-        .join("\n");
+      // Store structured JSON so the recipe page can render the same layout.
+      const ingredientsData = ingredients.map((ing, i) => ({
+        name: ing.name.trim(),
+        amount: ing.amount.trim(),
+        unit: ing.unit,
+        price: prices?.items[i]?.price ?? 0,
+      }));
 
-      const instructionsText = steps
-        .map((s, i) => {
-          const attached =
-            s.ingredientIndex != null && ingredients[s.ingredientIndex]
-              ? ` (uses: ${ingredients[s.ingredientIndex].name.trim()})`
-              : "";
-          return `${i + 1}. ${s.text.trim()}${attached}`;
-        })
-        .join("\n");
+      const stepsData = steps.map((s) => ({
+        text: s.text.trim(),
+        ingredient:
+          s.ingredientIndex != null && ingredients[s.ingredientIndex]
+            ? ingredients[s.ingredientIndex].name.trim()
+            : null,
+      }));
 
       const { error: dbError } = await supabase.from("recipes").insert([{
         user_id: user.id,
         name: name.trim(),
-        ingredients: ingredientsText || null,
-        instructions: instructionsText || null,
+        ingredients: JSON.stringify(ingredientsData),
+        instructions: JSON.stringify(stepsData),
         kcal: Math.round(num(kcal)),
         protein: Math.round(num(protein)),
         carbs: Math.round(num(carbs)),

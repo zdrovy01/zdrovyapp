@@ -25,7 +25,7 @@ export default function ShopsPage() {
       <ToolbarWin title="Shops" />
       <Space size={20} />
 
-      <div style={{ padding: "0 20px", display: "flex", flexDirection: "column", gap: 10 }}>
+      <div style={{ display: "flex", flexDirection: "column" }}>
         {SHOPS.map((shop) => {
           const active = selected.includes(shop);
           return (
@@ -33,14 +33,14 @@ export default function ShopsPage() {
               key={shop}
               onClick={() => toggle(shop)}
               style={{
-                height: 64,
-                borderRadius: 16,
+                height: 56,
                 background: "#0A0A0A",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
                 padding: "0 20px",
                 cursor: "pointer",
+                boxSizing: "border-box",
               }}
             >
               <span style={{ color: "#F5F5F5", fontSize: 16, fontWeight: 600, fontFamily: FONT }}>

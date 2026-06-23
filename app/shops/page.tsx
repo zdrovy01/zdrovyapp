@@ -7,7 +7,7 @@ import { useState } from "react";
 
 const FONT = "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif";
 
-const SHOPS = ["Biedronka", "Lidl", "Żabka", "Auchan", "Carrefour"];
+const SHOPS = ["Biedronka", "Lidl"];
 
 export default function ShopsPage() {
   useProtectedRoute();

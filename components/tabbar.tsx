@@ -46,12 +46,13 @@ export default function TabBar() {
       <div style={{
         display: "flex",
         position: "relative",
+        padding: "4px 2px",
         borderRadius: 1000,
         overflow: "hidden",
         backdropFilter: "blur(24px)",
         WebkitBackdropFilter: "blur(24px)",
-        background: "rgba(30, 30, 30, 0.72)",
-        boxShadow: "0 4px 32px rgba(0,0,0,0.28), inset 0 0.5px 0 rgba(255,255,255,0.12)",
+        background: "rgba(0, 0, 0, 0.67)",
+        boxShadow: "0 4px 32px rgba(0,0,0,0.28), inset 0 0.5px 0 rgba(255,255,255,0.10)",
       }}>
         {tabs.map((tab) => {
           const active = pathname === tab.href;
@@ -60,28 +61,27 @@ export default function TabBar() {
               key={tab.href}
               href={tab.href}
               style={{
-                width: 96,
+                width: 100,
                 height: 54,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 position: "relative",
                 textDecoration: "none",
-                color: active ? "#0A84FF" : "rgba(255,255,255,0.6)",
+                color: active ? "#0091FF" : "#F5F5F5",
                 zIndex: 1,
               }}
             >
-              {/* Active pill */}
+              {/* Active selection */}
               {active && (
                 <div style={{
                   position: "absolute",
-                  inset: "4px 2px",
-                  background: "rgba(10, 10, 10, 0.85)",
+                  inset: 0,
+                  background: "#121212",
                   borderRadius: 100,
-                  boxShadow: "inset 0 0.5px 0 rgba(255,255,255,0.08)",
                 }} />
               )}
-              <div style={{ position: "relative", zIndex: 1 }}>
+              <div style={{ position: "relative", zIndex: 1, display: "flex" }}>
                 {tab.icon}
               </div>
             </Link>

@@ -6,7 +6,7 @@ import ToolbarWin from "@/components/toolbarwin";
 import Space from "@/components/space";
 import { getSupabaseClient } from "@/config/supabase";
 import { compressImage } from "@/services/image-compress";
-import { estimateIngredientPrices } from "@/services/gemini-food";
+import { estimateIngredientPrices, generateRecipeFromText } from "@/services/gemini-food";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
 
 const FONT = "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif";
@@ -79,6 +79,9 @@ export default function CreateRecipePage() {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const [mode, setMode] = useState<"manual" | "auto">("manual");
+  const [autoText, setAutoText] = useState("");
+
   const [photo, setPhoto] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
@@ -123,6 +126,52 @@ export default function CreateRecipePage() {
   const removeStep = (i: number) => setSteps((s) => s.filter((_, idx) => idx !== i));
   const updateStep = (i: number, patch: Partial<Step>) =>
     setSteps((s) => s.map((st, idx) => (idx === i ? { ...st, ...patch } : st)));
+
+  const handleAutoSave = async () => {
+    setError("");
+    if (!photo) { setError("Please add a photo."); return; }
+    if (!autoText.trim()) { setError("Describe the recipe first."); return; }
+
+    setSaving(true);
+    try {
+      const supabase = getSupabaseClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { setError("Please sign in first"); setSaving(false); return; }
+
+      const recipe = await generateRecipeFromText(autoText.trim());
+
+      const ingredientsData = recipe.ingredients.map((i) => ({
+        name: i.name,
+        amount: i.amount,
+        unit: i.unit,
+        price: i.price,
+      }));
+      const stepsData = recipe.steps.map((s) => ({
+        text: s.text,
+        ingredient: s.ingredient || null,
+      }));
+
+      const { error: dbError } = await supabase.from("recipes").insert([{
+        user_id: user.id,
+        name: (name.trim() || recipe.name),
+        ingredients: JSON.stringify(ingredientsData),
+        instructions: JSON.stringify(stepsData),
+        kcal: recipe.kcal,
+        protein: recipe.protein,
+        carbs: recipe.carbs,
+        fat: recipe.fat,
+        price: recipe.price,
+        image_url: photo,
+      }]);
+
+      if (dbError) throw dbError;
+      router.push("/recipe");
+    } catch (err) {
+      console.error("Failed to generate/save recipe:", err);
+      setError("Failed to generate recipe. Try again.");
+      setSaving(false);
+    }
+  };
 
   const handleSave = async () => {
     setError("");
@@ -222,10 +271,46 @@ export default function CreateRecipePage() {
 
         {/* Name */}
         <div>
-          <label style={labelStyle}>Recipe name *</label>
+          <label style={labelStyle}>Recipe name {mode === "manual" ? "*" : "(optional)"}</label>
           <input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Greek salad" style={fieldStyle} />
         </div>
 
+        {/* Mode toggle */}
+        <div style={{ display: "flex", background: "rgba(118,118,128,0.24)", borderRadius: 12, padding: 3 }}>
+          {(["manual", "auto"] as const).map((m) => {
+            const active = mode === m;
+            return (
+              <button
+                key={m}
+                onClick={() => { setMode(m); setError(""); }}
+                style={{
+                  flex: 1, height: 40, borderRadius: 9, border: "none", cursor: "pointer",
+                  background: active ? "#0A84FF" : "transparent",
+                  color: active ? "#fff" : "rgba(235,235,245,0.6)",
+                  fontSize: 15, fontWeight: 600, fontFamily: FONT,
+                  textTransform: "capitalize",
+                }}
+              >{m}</button>
+            );
+          })}
+        </div>
+
+        {/* AUTO mode — single description field */}
+        {mode === "auto" && (
+          <div>
+            <label style={labelStyle}>Describe the recipe</label>
+            <textarea
+              value={autoText}
+              onChange={(e) => setAutoText(e.target.value)}
+              placeholder="List the ingredients, how to cook it… AI will fill in amounts, steps, calories, macros and prices."
+              rows={6}
+              style={{ ...fieldStyle, resize: "vertical" }}
+            />
+          </div>
+        )}
+
+        {/* MANUAL mode */}
+        {mode === "manual" && (<>
         {/* Ingredients */}
         <div>
           <label style={labelStyle}>Ingredients *</label>
@@ -351,11 +436,18 @@ export default function CreateRecipePage() {
             <input value={fat} onChange={(e) => setFat(e.target.value)} inputMode="numeric" placeholder="Fat (g)" style={fieldStyle} />
           </div>
         </div>
+        </>)}
 
         {error && <div style={{ color: "#FF453A", fontSize: 13 }}>{error}</div>}
 
-        <button onClick={handleSave} disabled={saving} style={{ ...primaryBtn, opacity: saving ? 0.6 : 1 }}>
-          {saving ? "Saving..." : "Save recipe"}
+        <button
+          onClick={mode === "auto" ? handleAutoSave : handleSave}
+          disabled={saving}
+          style={{ ...primaryBtn, opacity: saving ? 0.6 : 1 }}
+        >
+          {saving
+            ? mode === "auto" ? "Generating..." : "Saving..."
+            : mode === "auto" ? "Generate & save" : "Save recipe"}
         </button>
       </div>
 

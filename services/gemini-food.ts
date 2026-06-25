@@ -168,6 +168,131 @@ const PRICE_SCHEMA = {
   required: ["items", "total"],
 };
 
+// ---- Full recipe generation from a text description ----
+
+export interface GeneratedRecipe {
+  name: string;
+  kcal: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  price: number;
+  ingredients: { name: string; amount: string; unit: string; price: number }[];
+  steps: { text: string; ingredient: string }[];
+}
+
+const RECIPE_SCHEMA = {
+  type: "OBJECT",
+  properties: {
+    name: { type: "STRING" },
+    kcal: { type: "INTEGER" },
+    protein: { type: "INTEGER" },
+    carbs: { type: "INTEGER" },
+    fat: { type: "INTEGER" },
+    price: { type: "NUMBER" },
+    ingredients: {
+      type: "ARRAY",
+      items: {
+        type: "OBJECT",
+        properties: {
+          name: { type: "STRING" },
+          amount: { type: "STRING" },
+          unit: { type: "STRING" },
+          price: { type: "NUMBER" },
+        },
+        required: ["name", "amount", "unit", "price"],
+      },
+    },
+    steps: {
+      type: "ARRAY",
+      items: {
+        type: "OBJECT",
+        properties: {
+          text: { type: "STRING" },
+          ingredient: { type: "STRING" },
+        },
+        required: ["text", "ingredient"],
+      },
+    },
+  },
+  required: ["name", "kcal", "protein", "carbs", "fat", "price", "ingredients", "steps"],
+};
+
+export async function generateRecipeFromText(
+  description: string
+): Promise<GeneratedRecipe> {
+  if (!GEMINI_API_KEY) throw new Error("Gemini API key not configured");
+
+  const body = JSON.stringify({
+    contents: [
+      {
+        parts: [
+          {
+            text: `You are a chef and nutritionist. From the description below, produce a complete structured recipe.
+
+Description: "${description}"
+
+Rules:
+- "name": a short recipe title.
+- "ingredients": every ingredient with a realistic "amount" (number as string) and "unit" ("g" or "ml"), plus an estimated retail USD "price" for that quantity.
+- "steps": ordered cooking steps. For each step, set "ingredient" to the name of ONE ingredient it mainly uses, or "" if none.
+- "kcal", "protein", "carbs", "fat": integers for the WHOLE dish (use 4/4/9 kcal per g consistency).
+- "price": total USD cost (sum of ingredient prices).
+- Be realistic and complete.`,
+          },
+        ],
+      },
+    ],
+    generationConfig: {
+      temperature: 0.2,
+      responseMimeType: "application/json",
+      responseSchema: RECIPE_SCHEMA,
+    },
+  });
+
+  const response = await fetch(ENDPOINT, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-goog-api-key": GEMINI_API_KEY,
+    },
+    body,
+  });
+
+  if (!response.ok) {
+    const errorData = await response.text();
+    console.error("Gemini recipe API error:", response.status, errorData);
+    throw new Error(`Gemini API error: ${response.status}`);
+  }
+
+  const data = await response.json();
+  const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
+  if (!content) throw new Error("Invalid response from Gemini");
+
+  const jsonMatch = content.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) throw new Error("Could not parse Gemini recipe response");
+
+  const p = JSON.parse(jsonMatch[0]);
+  return {
+    name: p.name || "Recipe",
+    kcal: Math.round(p.kcal || 0),
+    protein: Math.round(p.protein || 0),
+    carbs: Math.round(p.carbs || 0),
+    fat: Math.round(p.fat || 0),
+    price: parseFloat((p.price || 0).toFixed(2)),
+    ingredients: (p.ingredients || []).map((it: { name?: string; amount?: string; unit?: string; price?: number }) => ({
+      name: it.name || "",
+      amount: (it.amount ?? "").toString(),
+      unit: it.unit || "g",
+      price: parseFloat((it.price || 0).toFixed(2)),
+    })),
+    steps: (p.steps || []).map((it: { text?: string; ingredient?: string }) => ({
+      text: it.text || "",
+      ingredient: it.ingredient || "",
+    })),
+  };
+}
+
 export async function estimateIngredientPrices(
   ingredients: { name: string; amount?: string; unit?: string }[]
 ): Promise<{ items: PricedIngredient[]; total: number }> {

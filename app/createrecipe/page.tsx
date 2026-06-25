@@ -2,11 +2,11 @@
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import Toolbar from "@/components/toolbar";
+import ToolbarWin from "@/components/toolbarwin";
 import Space from "@/components/space";
 import { getSupabaseClient } from "@/config/supabase";
 import { compressImage } from "@/services/image-compress";
-import { estimateIngredientPrices, PricedIngredient } from "@/services/gemini-food";
+import { estimateIngredientPrices } from "@/services/gemini-food";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
 
 const FONT = "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif";
@@ -14,7 +14,7 @@ const FONT = "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif";
 const labelStyle: React.CSSProperties = {
   color: "rgba(235,235,245,0.5)",
   fontSize: 12,
-  marginBottom: 6,
+  marginBottom: 8,
   display: "block",
 };
 
@@ -38,25 +38,12 @@ const cardStyle: React.CSSProperties = {
 };
 
 const primaryBtn: React.CSSProperties = {
-  flex: 1,
-  height: 52,
+  width: "100%",
+  height: 54,
   borderRadius: 14,
   border: "none",
   background: "#0A84FF",
   color: "#fff",
-  fontSize: 16,
-  fontWeight: 600,
-  fontFamily: FONT,
-  cursor: "pointer",
-};
-
-const secondaryBtn: React.CSSProperties = {
-  flex: 1,
-  height: 52,
-  borderRadius: 14,
-  border: "none",
-  background: "rgba(118,118,128,0.24)",
-  color: "#F5F5F5",
   fontSize: 16,
   fontWeight: 600,
   fontFamily: FONT,
@@ -87,14 +74,10 @@ interface Step {
   ingredientIndex: number | null;
 }
 
-const TITLES = ["Photo", "Ingredients", "Cooking steps", "Nutrition", "Review"];
-
 export default function CreateRecipePage() {
   useProtectedRoute();
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const [step, setStep] = useState(1);
 
   const [photo, setPhoto] = useState<string | null>(null);
   const [name, setName] = useState("");
@@ -105,8 +88,6 @@ export default function CreateRecipePage() {
   const [fat, setFat] = useState("");
   const [kcal, setKcal] = useState("");
 
-  const [prices, setPrices] = useState<{ items: PricedIngredient[]; total: number } | null>(null);
-  const [pricing, setPricing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -143,68 +124,40 @@ export default function CreateRecipePage() {
   const updateStep = (i: number, patch: Partial<Step>) =>
     setSteps((s) => s.map((st, idx) => (idx === i ? { ...st, ...patch } : st)));
 
-  // ---- Validation per step ----
-  const canNext = () => {
-    if (step === 1) return !!photo && !!name.trim();
-    if (step === 2)
-      return ingredients.length > 0 && ingredients.every((i) => i.name.trim() && i.amount.trim());
-    if (step === 3) return steps.length > 0 && steps.every((s) => s.text.trim());
-    return true;
-  };
-
-  const goToReview = async () => {
-    setStep(5);
-    setPricing(true);
-    try {
-      const result = await estimateIngredientPrices(
-        ingredients.map((i) => ({ name: i.name, amount: i.amount, unit: i.unit }))
-      );
-      setPrices(result);
-    } catch (err) {
-      console.error("Pricing failed:", err);
-      setPrices({ items: ingredients.map((i) => ({ name: i.name, price: 0 })), total: 0 });
-    } finally {
-      setPricing(false);
-    }
-  };
-
-  const handleNext = () => {
-    setError("");
-    if (!canNext()) {
-      setError("Please fill in the required fields.");
-      return;
-    }
-    if (step === 4) {
-      goToReview();
-      return;
-    }
-    setStep((s) => s + 1);
-  };
-
-  const handleBack = () => {
-    setError("");
-    if (step === 1) {
-      router.back();
-    } else {
-      setStep((s) => s - 1);
-    }
-  };
-
   const handleSave = async () => {
-    if (!photo) return;
-    setSaving(true);
     setError("");
+    if (!photo) { setError("Please add a photo."); return; }
+    if (!name.trim()) { setError("Please enter a recipe name."); return; }
+    if (ingredients.length === 0 || !ingredients.every((i) => i.name.trim() && i.amount.trim())) {
+      setError("Add at least one ingredient with a name and amount.");
+      return;
+    }
+    if (steps.length === 0 || !steps.every((s) => s.text.trim())) {
+      setError("Add at least one cooking step.");
+      return;
+    }
+
+    setSaving(true);
     try {
       const supabase = getSupabaseClient();
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) { setError("Please sign in first"); setSaving(false); return; }
 
-      // Store structured JSON so the recipe page can render the same layout.
+      // AI price estimate
+      let prices: { items: { name: string; price: number }[]; total: number };
+      try {
+        prices = await estimateIngredientPrices(
+          ingredients.map((i) => ({ name: i.name, amount: i.amount, unit: i.unit }))
+        );
+      } catch {
+        prices = { items: ingredients.map((i) => ({ name: i.name, price: 0 })), total: 0 };
+      }
+
       const ingredientsData = ingredients.map((ing, i) => ({
         name: ing.name.trim(),
         amount: ing.amount.trim(),
         unit: ing.unit,
-        price: prices?.items[i]?.price ?? 0,
+        price: prices.items[i]?.price ?? 0,
       }));
 
       const stepsData = steps.map((s) => ({
@@ -224,7 +177,7 @@ export default function CreateRecipePage() {
         protein: Math.round(num(protein)),
         carbs: Math.round(num(carbs)),
         fat: Math.round(num(fat)),
-        price: prices?.total || 0,
+        price: prices.total || 0,
         image_url: photo,
       }]);
 
@@ -240,121 +193,111 @@ export default function CreateRecipePage() {
   return (
     <>
       <Space size={40} />
-      <Toolbar title={`${TITLES[step - 1]} · ${step}/5`} showIcon1={false} showIcon2={false} />
+      <ToolbarWin title="New recipe" />
       <Space size={16} />
 
-      <div style={{ padding: "0 20px" }}>
-        {/* STEP 1 — Photo + name */}
-        {step === 1 && (
-          <>
-            <label style={labelStyle}>Photo *</label>
-            <input ref={fileInputRef} type="file" accept="image/*" onChange={handlePhotoSelect} style={{ display: "none" }} />
-            <div
-              onClick={() => fileInputRef.current?.click()}
-              style={{
-                width: "100%", aspectRatio: "1 / 1", borderRadius: 20,
-                background: "rgba(118,118,128,0.24)",
-                border: photo ? "none" : "1.5px dashed rgba(235,235,245,0.3)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                cursor: "pointer", overflow: "hidden", boxSizing: "border-box",
-              }}
-            >
-              {photo ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={photo} alt="Recipe" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-              ) : (
-                <span style={{ color: "rgba(235,235,245,0.5)", fontSize: 15 }}>Tap to add a photo</span>
-              )}
-            </div>
-            <Space size={16} />
-            <label style={labelStyle}>Recipe name *</label>
-            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Greek salad" style={fieldStyle} />
-          </>
-        )}
+      <div style={{ padding: "0 20px", display: "flex", flexDirection: "column", gap: 24 }}>
+        {/* Photo */}
+        <div>
+          <label style={labelStyle}>Photo *</label>
+          <input ref={fileInputRef} type="file" accept="image/*" onChange={handlePhotoSelect} style={{ display: "none" }} />
+          <div
+            onClick={() => fileInputRef.current?.click()}
+            style={{
+              width: "100%", aspectRatio: "1 / 1", borderRadius: 20,
+              background: "rgba(118,118,128,0.24)",
+              border: photo ? "none" : "1.5px dashed rgba(235,235,245,0.3)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              cursor: "pointer", overflow: "hidden", boxSizing: "border-box",
+            }}
+          >
+            {photo ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={photo} alt="Recipe" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            ) : (
+              <span style={{ color: "rgba(235,235,245,0.5)", fontSize: 15 }}>Tap to add a photo</span>
+            )}
+          </div>
+        </div>
 
-        {/* STEP 2 — Ingredients (full-width cards) */}
-        {step === 2 && (
-          <>
-            {ingredients.length > 0 && (
-              <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 10 }}>
-                {ingredients.map((ing, i) => (
-                  <div key={i} style={{ ...cardStyle, padding: 14 }}>
-                    {/* Name row */}
-                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                      <div
-                        style={{
-                          width: 30, height: 30, flexShrink: 0, borderRadius: 9,
-                          background: "rgba(118,118,128,0.24)", color: "rgba(235,235,245,0.6)",
-                          display: "flex", alignItems: "center", justifyContent: "center",
-                          fontSize: 13, fontWeight: 700,
-                        }}
-                      >{i + 1}</div>
-                      <input
-                        value={ing.name}
-                        onChange={(e) => updateIngredient(i, { name: e.target.value })}
-                        placeholder="Ingredient name"
-                        style={{
-                          flex: 1, minWidth: 0, background: "transparent", border: "none",
-                          outline: "none", color: "#F5F5F5", fontSize: 16, fontWeight: 600,
-                        }}
-                      />
-                      <button
-                        onClick={() => removeIngredient(i)}
-                        aria-label="Remove"
-                        style={{
-                          width: 30, height: 30, flexShrink: 0, borderRadius: 9, border: "none",
-                          background: "rgba(255,69,58,0.12)", color: "#FF453A", cursor: "pointer",
-                          display: "flex", alignItems: "center", justifyContent: "center",
-                        }}
-                      >
-                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                          <path d="M3 3l8 8M11 3l-8 8" stroke="#FF453A" strokeWidth="1.8" strokeLinecap="round" />
-                        </svg>
-                      </button>
-                    </div>
+        {/* Name */}
+        <div>
+          <label style={labelStyle}>Recipe name *</label>
+          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Greek salad" style={fieldStyle} />
+        </div>
 
-                    {/* Amount + unit row */}
-                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 12 }}>
-                      <input
-                        value={ing.amount}
-                        onChange={(e) => updateIngredient(i, { amount: e.target.value })}
-                        placeholder="Amount"
-                        inputMode="decimal"
-                        style={{ ...fieldStyle, flex: 1, padding: "10px 12px", fontSize: 15 }}
-                      />
-                      {/* Segmented unit control */}
-                      <div style={{ display: "flex", background: "rgba(118,118,128,0.24)", borderRadius: 10, padding: 2, flexShrink: 0 }}>
-                        {(["g", "ml"] as const).map((u) => {
-                          const active = ing.unit === u;
-                          return (
-                            <button
-                              key={u}
-                              onClick={() => updateIngredient(i, { unit: u })}
-                              style={{
-                                width: 44, height: 36, borderRadius: 8, border: "none", cursor: "pointer",
-                                background: active ? "#0A84FF" : "transparent",
-                                color: active ? "#fff" : "rgba(235,235,245,0.6)",
-                                fontSize: 14, fontWeight: 600,
-                              }}
-                            >{u}</button>
-                          );
-                        })}
-                      </div>
+        {/* Ingredients */}
+        <div>
+          <label style={labelStyle}>Ingredients *</label>
+          {ingredients.length > 0 && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 10 }}>
+              {ingredients.map((ing, i) => (
+                <div key={i} style={{ ...cardStyle, padding: 14 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <div style={{
+                      width: 30, height: 30, flexShrink: 0, borderRadius: 9,
+                      background: "rgba(118,118,128,0.24)", color: "rgba(235,235,245,0.6)",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      fontSize: 13, fontWeight: 700,
+                    }}>{i + 1}</div>
+                    <input
+                      value={ing.name}
+                      onChange={(e) => updateIngredient(i, { name: e.target.value })}
+                      placeholder="Ingredient name"
+                      style={{ flex: 1, minWidth: 0, background: "transparent", border: "none", outline: "none", color: "#F5F5F5", fontSize: 16, fontWeight: 600 }}
+                    />
+                    <button
+                      onClick={() => removeIngredient(i)}
+                      aria-label="Remove"
+                      style={{
+                        width: 30, height: 30, flexShrink: 0, borderRadius: 9, border: "none",
+                        background: "rgba(255,69,58,0.12)", cursor: "pointer",
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                      }}
+                    >
+                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                        <path d="M3 3l8 8M11 3l-8 8" stroke="#FF453A" strokeWidth="1.8" strokeLinecap="round" />
+                      </svg>
+                    </button>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 12 }}>
+                    <input
+                      value={ing.amount}
+                      onChange={(e) => updateIngredient(i, { amount: e.target.value })}
+                      placeholder="Amount"
+                      inputMode="decimal"
+                      style={{ ...fieldStyle, flex: 1, padding: "10px 12px", fontSize: 15 }}
+                    />
+                    <div style={{ display: "flex", background: "rgba(118,118,128,0.24)", borderRadius: 10, padding: 2, flexShrink: 0 }}>
+                      {(["g", "ml"] as const).map((u) => {
+                        const active = ing.unit === u;
+                        return (
+                          <button
+                            key={u}
+                            onClick={() => updateIngredient(i, { unit: u })}
+                            style={{
+                              width: 44, height: 36, borderRadius: 8, border: "none", cursor: "pointer",
+                              background: active ? "#0A84FF" : "transparent",
+                              color: active ? "#fff" : "rgba(235,235,245,0.6)",
+                              fontSize: 14, fontWeight: 600,
+                            }}
+                          >{u}</button>
+                        );
+                      })}
                     </div>
                   </div>
-                ))}
-              </div>
-            )}
-            <button onClick={addIngredient} style={addBtn}>
-              + Add ingredient
-            </button>
-          </>
-        )}
+                </div>
+              ))}
+            </div>
+          )}
+          <button onClick={addIngredient} style={addBtn}>+ Add ingredient</button>
+        </div>
 
-        {/* STEP 3 — Cooking steps (vertical cards) */}
-        {step === 3 && (
-          <>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        {/* Steps */}
+        <div>
+          <label style={labelStyle}>Cooking steps *</label>
+          {steps.length > 0 && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 10 }}>
               {steps.map((st, i) => (
                 <div key={i} style={{ ...cardStyle, padding: 14 }}>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
@@ -364,7 +307,7 @@ export default function CreateRecipePage() {
                       aria-label="Remove"
                       style={{
                         width: 24, height: 24, borderRadius: 12, border: "none",
-                        background: "rgba(255,69,58,0.15)", color: "#FF453A", fontSize: 16, lineHeight: 1, cursor: "pointer",
+                        background: "rgba(255,69,58,0.12)", color: "#FF453A", fontSize: 16, lineHeight: 1, cursor: "pointer",
                       }}
                     >×</button>
                   </div>
@@ -392,139 +335,31 @@ export default function CreateRecipePage() {
                 </div>
               ))}
             </div>
-            {steps.length > 0 && <Space size={10} />}
-            <button onClick={addStep} style={addBtn}>
-              + Add step
-            </button>
-          </>
-        )}
+          )}
+          <button onClick={addStep} style={addBtn}>+ Add step</button>
+        </div>
 
-        {/* STEP 4 — Nutrition (optional) */}
-        {step === 4 && (
-          <>
-            <div style={{ color: "rgba(235,235,245,0.45)", fontSize: 14, marginBottom: 14 }}>
-              Optional — you can skip this step.
-            </div>
-            <div style={{ marginBottom: 12 }}>
-              <input value={kcal} onChange={(e) => setKcal(e.target.value)} inputMode="numeric" placeholder="Calories" style={fieldStyle} />
-            </div>
-            <div style={{ display: "flex", gap: 10 }}>
-              <input value={protein} onChange={(e) => setProtein(e.target.value)} inputMode="numeric" placeholder="Protein (g)" style={fieldStyle} />
-              <input value={carbs} onChange={(e) => setCarbs(e.target.value)} inputMode="numeric" placeholder="Carbs (g)" style={fieldStyle} />
-              <input value={fat} onChange={(e) => setFat(e.target.value)} inputMode="numeric" placeholder="Fat (g)" style={fieldStyle} />
-            </div>
-          </>
-        )}
-
-        {/* STEP 5 — Review */}
-        {step === 5 && (
-          <>
-            {photo && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={photo} alt={name} style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", borderRadius: 20 }} />
-            )}
-            <Space size={14} />
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <h1 style={{ margin: 0, color: "#fff", fontSize: 24, fontWeight: 800 }}>{name}</h1>
-              <div style={{ ...cardStyle, padding: "8px 14px", borderRadius: 14, color: "#fff", fontWeight: 700, fontSize: 16 }}>
-                {pricing ? "…" : `$${(prices?.total || 0).toFixed(2)}`}
-              </div>
-            </div>
-            <Space size={8} />
-            <div style={{ color: "rgba(235,235,245,0.65)", fontSize: 14, display: "flex", gap: 16, flexWrap: "wrap" }}>
-              <span>{Math.round(num(kcal))} kcal</span>
-              <span>Protein {Math.round(num(protein))}g</span>
-              <span>Carbs {Math.round(num(carbs))}g</span>
-              <span>Fat {Math.round(num(fat))}g</span>
-            </div>
-
-            <Space size={20} />
-            <label style={labelStyle}>Ingredients</label>
-            <div className="hide-scrollbar" style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 4 }}>
-              {ingredients.map((ing, i) => {
-                const price = prices?.items[i]?.price;
-                return (
-                  <div key={i} style={{ ...cardStyle, flex: "0 0 150px", padding: 12 }}>
-                    <div style={{ color: "#fff", fontWeight: 600, fontSize: 15, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                      {ing.name}
-                    </div>
-                    <div style={{ color: "rgba(235,235,245,0.5)", fontSize: 12, marginTop: 2 }}>
-                      {ing.amount}{ing.unit}
-                    </div>
-                    <div style={{ color: "#0A84FF", fontWeight: 700, fontSize: 14, marginTop: 8 }}>
-                      {pricing ? "…" : `$${(price || 0).toFixed(2)}`}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            <Space size={20} />
-            <label style={labelStyle}>Steps</label>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              {steps.map((st, i) => (
-                <div key={i} style={{ ...cardStyle, padding: 14 }}>
-                  <div style={{ color: "#0A84FF", fontWeight: 700, fontSize: 14, marginBottom: 4 }}>Step {i + 1}</div>
-                  <div style={{ color: "#F5F5F5", fontSize: 15, lineHeight: 1.45 }}>{st.text}</div>
-                  {st.ingredientIndex != null && ingredients[st.ingredientIndex] && (
-                    <div style={{ color: "rgba(235,235,245,0.5)", fontSize: 12, marginTop: 6 }}>
-                      uses: {ingredients[st.ingredientIndex].name}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </>
-        )}
-
-        {error && (
-          <>
-            <Space size={12} />
-            <div style={{ color: "#FF453A", fontSize: 13 }}>{error}</div>
-          </>
-        )}
-      </div>
-
-      {/* Spacer so content isn't hidden behind the fixed bar */}
-      <div style={{ height: step === 4 ? 150 : 96 }} />
-
-      {/* Fixed bottom navigation */}
-      <div
-        style={{
-          position: "fixed",
-          left: "50%",
-          bottom: 0,
-          transform: "translateX(-50%)",
-          width: "100%",
-          maxWidth: 402,
-          padding: "16px 20px 28px",
-          boxSizing: "border-box",
-          background: "linear-gradient(to top, #000 60%, rgba(0,0,0,0))",
-          zIndex: 50,
-        }}
-      >
-        {step < 5 ? (
-          <>
-            <div style={{ display: "flex", gap: 10 }}>
-              <button onClick={handleBack} style={secondaryBtn}>Back</button>
-              <button onClick={handleNext} style={primaryBtn}>Next</button>
-            </div>
-            {step === 4 && (
-              <>
-                <Space size={10} />
-                <button onClick={goToReview} style={{ ...secondaryBtn, width: "100%" }}>Skip</button>
-              </>
-            )}
-          </>
-        ) : (
-          <div style={{ display: "flex", gap: 10 }}>
-            <button onClick={() => setStep(4)} style={secondaryBtn}>Back</button>
-            <button onClick={handleSave} disabled={saving || pricing} style={{ ...primaryBtn, opacity: saving || pricing ? 0.6 : 1 }}>
-              {saving ? "Saving..." : "Save"}
-            </button>
+        {/* Nutrition */}
+        <div>
+          <label style={labelStyle}>Nutrition (optional)</label>
+          <div style={{ marginBottom: 10 }}>
+            <input value={kcal} onChange={(e) => setKcal(e.target.value)} inputMode="numeric" placeholder="Calories" style={fieldStyle} />
           </div>
-        )}
+          <div style={{ display: "flex", gap: 10 }}>
+            <input value={protein} onChange={(e) => setProtein(e.target.value)} inputMode="numeric" placeholder="Protein (g)" style={fieldStyle} />
+            <input value={carbs} onChange={(e) => setCarbs(e.target.value)} inputMode="numeric" placeholder="Carbs (g)" style={fieldStyle} />
+            <input value={fat} onChange={(e) => setFat(e.target.value)} inputMode="numeric" placeholder="Fat (g)" style={fieldStyle} />
+          </div>
+        </div>
+
+        {error && <div style={{ color: "#FF453A", fontSize: 13 }}>{error}</div>}
+
+        <button onClick={handleSave} disabled={saving} style={{ ...primaryBtn, opacity: saving ? 0.6 : 1 }}>
+          {saving ? "Saving..." : "Save recipe"}
+        </button>
       </div>
+
+      <Space size={40} />
     </>
   );
 }

@@ -7,6 +7,7 @@ import Space from "@/components/space";
 import { getSupabaseClient } from "@/config/supabase";
 import { compressImage } from "@/services/image-compress";
 import { estimateIngredientPrices, generateRecipeFromText } from "@/services/gemini-food";
+import { COLORS } from "@/config/theme";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
 
 const FONT = "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif";
@@ -42,8 +43,8 @@ const primaryBtn: React.CSSProperties = {
   height: 54,
   borderRadius: 14,
   border: "none",
-  background: "#0A84FF",
-  color: "#fff",
+  background: COLORS.accent,
+  color: COLORS.onAccent,
   fontSize: 16,
   fontWeight: 600,
   fontFamily: FONT,
@@ -56,7 +57,7 @@ const addBtn: React.CSSProperties = {
   borderRadius: 14,
   border: "1.5px dashed rgba(235,235,245,0.25)",
   background: "transparent",
-  color: "#0A84FF",
+  color: COLORS.accent,
   fontSize: 15,
   fontWeight: 600,
   fontFamily: FONT,
@@ -285,8 +286,8 @@ export default function CreateRecipePage() {
                 onClick={() => { setMode(m); setError(""); }}
                 style={{
                   flex: 1, height: 40, borderRadius: 9, border: "none", cursor: "pointer",
-                  background: active ? "#0A84FF" : "transparent",
-                  color: active ? "#fff" : "rgba(235,235,245,0.6)",
+                  background: active ? COLORS.accent : "transparent",
+                  color: active ? COLORS.onAccent : "rgba(235,235,245,0.6)",
                   fontSize: 15, fontWeight: 600, fontFamily: FONT,
                   textTransform: "capitalize",
                 }}
@@ -362,8 +363,8 @@ export default function CreateRecipePage() {
                             onClick={() => updateIngredient(i, { unit: u })}
                             style={{
                               width: 44, height: 36, borderRadius: 8, border: "none", cursor: "pointer",
-                              background: active ? "#0A84FF" : "transparent",
-                              color: active ? "#fff" : "rgba(235,235,245,0.6)",
+                              background: active ? COLORS.accent : "transparent",
+                              color: active ? COLORS.onAccent : "rgba(235,235,245,0.6)",
                               fontSize: 14, fontWeight: 600,
                             }}
                           >{u}</button>
@@ -386,7 +387,7 @@ export default function CreateRecipePage() {
               {steps.map((st, i) => (
                 <div key={i} style={{ ...cardStyle, padding: 14 }}>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
-                    <span style={{ color: "#0A84FF", fontWeight: 700, fontSize: 15 }}>Step {i + 1}</span>
+                    <span style={{ color: COLORS.accent, fontWeight: 700, fontSize: 15 }}>Step {i + 1}</span>
                     <button
                       onClick={() => removeStep(i)}
                       aria-label="Remove"

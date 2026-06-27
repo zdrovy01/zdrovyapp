@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import ToolbarWin from "@/components/toolbarwin";
 import Space from "@/components/space";
 import { getSupabaseClient } from "@/config/supabase";
+import { COLORS } from "@/config/theme";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
 
 interface Recipe {
@@ -232,7 +233,7 @@ export default function RecipeDetailPage() {
                     </div>
                   )}
                   {ing.price != null && (
-                    <div style={{ color: "#0A84FF", fontWeight: 700, fontSize: 14, marginTop: 8 }}>
+                    <div style={{ color: COLORS.accent, fontWeight: 700, fontSize: 14, marginTop: 8 }}>
                       ${ing.price.toFixed(2)}
                     </div>
                   )}
@@ -250,7 +251,7 @@ export default function RecipeDetailPage() {
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {steps.map((st, i) => (
                 <div key={i} style={{ ...cardStyle, padding: 14 }}>
-                  <div style={{ color: "#0A84FF", fontWeight: 700, fontSize: 14, marginBottom: 4 }}>Step {i + 1}</div>
+                  <div style={{ color: COLORS.accent, fontWeight: 700, fontSize: 14, marginBottom: 4 }}>Step {i + 1}</div>
                   <div style={{ color: "#F5F5F5", fontSize: 15, lineHeight: 1.45 }}>{st.text}</div>
                   {st.ingredient && (
                     <div style={{ color: "rgba(235,235,245,0.5)", fontSize: 12, marginTop: 6 }}>
@@ -286,7 +287,7 @@ export default function RecipeDetailPage() {
             onClick={() => router.push(`/cook?recipe=${recipe.id}`)}
             style={{
               flex: 1, height: 54, borderRadius: 14, border: "none",
-              background: "#0A84FF", color: "#fff", fontSize: 16, fontWeight: 600, cursor: "pointer",
+              background: COLORS.accent, color: COLORS.onAccent, fontSize: 16, fontWeight: 600, cursor: "pointer",
             }}
           >
             Start cooking

@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useLanguage } from "@/config/language-context";
+import { COLORS } from "@/config/theme";
 
 interface TextInputProps {
   placeholder?: string;
@@ -138,7 +139,7 @@ export default function TextInput({ placeholder = "Message", onSend }: TextInput
               {[0, 1, 2].map((i) => (
                 <span key={i} style={{
                   width: 5, height: 5, borderRadius: "50%",
-                  background: "#0A84FF", display: "inline-block",
+                  background: COLORS.accent, display: "inline-block",
                   animation: `bounce 1.2s ease-in-out ${i * 0.2}s infinite`,
                 }} />
               ))}
@@ -174,11 +175,11 @@ export default function TextInput({ placeholder = "Message", onSend }: TextInput
         {text.trim() && !listening && (
           <button onClick={handleSend} style={{
             width: 32, height: 32, borderRadius: 100,
-            background: "#0A84FF", border: "none", cursor: "pointer",
+            background: COLORS.accent, border: "none", cursor: "pointer",
             display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
           }}>
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-              <path d="M7 12V2M7 2L2 7M7 2L12 7" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M7 12V2M7 2L2 7M7 2L12 7" stroke={COLORS.onAccent} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </button>
         )}

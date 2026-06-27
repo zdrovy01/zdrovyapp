@@ -3,6 +3,7 @@
 import { useAuth } from "@/config/auth-context";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
 import { getSupabaseClient } from "@/config/supabase";
+import { COLORS } from "@/config/theme";
 import { compressImage } from "@/services/image-compress";
 import ToolbarWin from "@/components/toolbarwin";
 import Space from "@/components/space";
@@ -211,7 +212,7 @@ export default function AccountSettingsPage() {
             style={{
               fontSize: 11,
               fontFamily: "monospace",
-              color: "rgba(10,132,255,0.75)",
+              color: COLORS.accent,
               wordBreak: "break-all",
               marginTop: 2,
             }}
@@ -271,8 +272,8 @@ export default function AccountSettingsPage() {
               padding: "0 16px",
               borderRadius: 10,
               border: "none",
-              background: "#0A84FF",
-              color: "#fff",
+              background: COLORS.accent,
+              color: COLORS.onAccent,
               fontSize: 15,
               fontWeight: 600,
               cursor: "pointer",
@@ -344,8 +345,8 @@ export default function AccountSettingsPage() {
               padding: "0 16px",
               borderRadius: 10,
               border: "none",
-              background: "#0A84FF",
-              color: "#fff",
+              background: COLORS.accent,
+              color: COLORS.onAccent,
               fontSize: 15,
               fontWeight: 600,
               cursor: "pointer",

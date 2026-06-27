@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { COLORS } from "@/config/theme";
 
 const tabs = [
   {
@@ -66,7 +67,7 @@ export default function TabBar() {
                 justifyContent: "center",
                 position: "relative",
                 textDecoration: "none",
-                color: active ? "#0091FF" : "#F5F5F5",
+                color: active ? COLORS.accent : COLORS.text,
                 zIndex: 1,
               }}
             >

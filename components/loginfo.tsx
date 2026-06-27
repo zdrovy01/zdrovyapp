@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import { COLORS } from "@/config/theme";
 
 const FONT = "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif";
 
@@ -129,10 +130,10 @@ export default function LogInfo({
             <button key={idx} onClick={btn.onClick} style={{
               flex: 1,
               height: 52,
-              background: idx === 0 ? "#0A84FF" : "rgba(255,255,255,0.08)",
+              background: idx === 0 ? COLORS.accent : "rgba(255,255,255,0.08)",
               border: "none",
               borderRadius: 14,
-              color: "#fff",
+              color: idx === 0 ? COLORS.onAccent : "#fff",
               fontSize: 16,
               fontWeight: 600,
               fontFamily: FONT,

@@ -6,6 +6,7 @@ import { useProtectedRoute } from "@/hooks/use-protected-route";
 import ToolbarWin from "@/components/toolbarwin";
 import Space from "@/components/space";
 import Option2 from "@/components/option2";
+import { COLORS } from "@/config/theme";
 import { useState } from "react";
 
 const LANGUAGES = [
@@ -51,7 +52,7 @@ function Check() {
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
       <path
         d="M3.5 9.5L7 13L14.5 5"
-        stroke="#0A84FF"
+        stroke={COLORS.accent}
         strokeWidth="2.2"
         strokeLinecap="round"
         strokeLinejoin="round"

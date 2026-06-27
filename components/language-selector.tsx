@@ -1,6 +1,7 @@
 "use client";
 
 import { useLanguage } from "@/config/language-context";
+import { COLORS } from "@/config/theme";
 
 const languages = [
   { code: "en-US", name: "English" },
@@ -27,9 +28,9 @@ export default function LanguageSelector() {
               padding: "8px 16px",
               borderRadius: 10,
               border: "1px solid",
-              borderColor: lang === l.code ? "#0A84FF" : "rgba(255,255,255,0.2)",
-              background: lang === l.code ? "rgba(10,132,255,0.15)" : "transparent",
-              color: lang === l.code ? "#0A84FF" : "rgba(235,235,245,0.7)",
+              borderColor: lang === l.code ? COLORS.accent : "rgba(255,255,255,0.2)",
+              background: lang === l.code ? "rgba(248,253,3,0.15)" : "transparent",
+              color: lang === l.code ? COLORS.accent : "rgba(235,235,245,0.7)",
               fontSize: 14,
               fontFamily: "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif",
               fontWeight: lang === l.code ? 600 : 500,

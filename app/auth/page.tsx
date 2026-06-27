@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useAuth } from "@/config/auth-context";
-import { useRouter } from "next/navigation";
 import Space from "@/components/space";
 import Logo3D from "@/components/logo3d";
 
@@ -10,7 +9,6 @@ export default function AuthPage() {
   const { loginWithGoogle } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const router = useRouter();
 
   const handleGoogleLogin = async () => {
     setLoading(true);
@@ -38,7 +36,7 @@ export default function AuthPage() {
         boxSizing: "border-box",
       }}
     >
-      {/* Top: logo card filling space from top of screen to titles */}
+      {/* Logo fills the upper space (no background card) */}
       <div
         style={{
           flex: 1,
@@ -46,16 +44,12 @@ export default function AuthPage() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "#0A0A0A",
-          borderRadius: "0 0 64px 64px",
         }}
       >
         <Logo3D width={220} />
       </div>
 
-      <Space size={32} />
-
-      {/* Bottom: title + subtitle + Google sign in */}
+      {/* Bottom: title + Google sign in */}
       <div
         style={{
           maxWidth: 360,
@@ -67,7 +61,6 @@ export default function AuthPage() {
           boxSizing: "border-box",
         }}
       >
-        {/* Title */}
         <h1
           style={{
             fontSize: 34,
@@ -79,26 +72,10 @@ export default function AuthPage() {
             letterSpacing: "-0.5px",
           }}
         >
-          Healthy food.
+          Better Habits
           <br />
-          Real prices.
+          Start Here
         </h1>
-
-        <Space size={16} />
-
-        {/* Subtitle */}
-        <p
-          style={{
-            fontSize: 16,
-            color: "rgba(235,235,245,0.55)",
-            textAlign: "center",
-            lineHeight: 1.45,
-            margin: 0,
-            maxWidth: 320,
-          }}
-        >
-          See what every meal costs — from stores you already shop at.
-        </p>
 
         <Space size={32} />
 
@@ -157,7 +134,6 @@ export default function AuthPage() {
           {loading ? "Signing in..." : "Continue with Google"}
         </button>
 
-        {/* Error Message */}
         {error && (
           <>
             <Space size={16} />

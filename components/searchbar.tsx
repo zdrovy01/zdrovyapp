@@ -36,14 +36,14 @@ export default function Searchbar({ placeholder = "Search", onChange }: Searchba
       {/* Search field */}
       <div style={{
         flex: "1 1 0",
-        height: 48,
-        paddingLeft: 14,
-        paddingRight: 12,
-        borderRadius: 14,
+        height: 52,
+        paddingLeft: 16,
+        paddingRight: 14,
+        borderRadius: 25,
         display: "flex",
         alignItems: "center",
         gap: 8,
-        background: COLORS.fill,
+        background: COLORS.surface,
         boxSizing: "border-box",
       }}>
         {/* Search icon */}
@@ -75,16 +75,16 @@ export default function Searchbar({ placeholder = "Search", onChange }: Searchba
         onClick={handleClose}
         aria-label="Close"
         style={{
-          width: 48,
-          height: 48,
-          borderRadius: 14,
+          width: 52,
+          height: 52,
+          borderRadius: 25,
           border: "none",
           cursor: "pointer",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           flexShrink: 0,
-          background: COLORS.fill,
+          background: COLORS.surface,
         }}
       >
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none">

@@ -13,6 +13,7 @@ const HIDE_TABBAR_ON: string[] = [
   "/qr",
   "/saves",
   "/shops",
+  "/profile",
 ];
 
 export default HIDE_TABBAR_ON;

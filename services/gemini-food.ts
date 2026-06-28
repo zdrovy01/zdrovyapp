@@ -13,6 +13,27 @@ export interface FoodLog {
 const MODEL = "gemini-flash-latest";
 const ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
 
+// POST to Gemini, retrying on transient overload (503) / rate limit (429).
+async function geminiFetch(body: string, retries = 3): Promise<Response> {
+  let lastResponse: Response | null = null;
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    const response = await fetch(ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-goog-api-key": GEMINI_API_KEY as string,
+      },
+      body,
+    });
+    if (response.status !== 503 && response.status !== 429) return response;
+    lastResponse = response;
+    if (attempt < retries) {
+      await new Promise((r) => setTimeout(r, 800 * (attempt + 1)));
+    }
+  }
+  return lastResponse as Response;
+}
+
 // Structured-output schema so Gemini returns clean, typed JSON.
 const RESPONSE_SCHEMA = {
   type: "OBJECT",
@@ -60,14 +81,7 @@ function buildRequestBody(parts: unknown[]) {
 async function callGemini(parts: unknown[], context: string): Promise<FoodLog> {
   if (!GEMINI_API_KEY) throw new Error("Gemini API key not configured");
 
-  const response = await fetch(ENDPOINT, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-goog-api-key": GEMINI_API_KEY,
-    },
-    body: buildRequestBody(parts),
-  });
+  const response = await geminiFetch(buildRequestBody(parts));
 
   if (!response.ok) {
     const errorData = await response.text();
@@ -250,14 +264,7 @@ Rules:
     },
   });
 
-  const response = await fetch(ENDPOINT, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-goog-api-key": GEMINI_API_KEY,
-    },
-    body,
-  });
+  const response = await geminiFetch(body);
 
   if (!response.ok) {
     const errorData = await response.text();
@@ -327,14 +334,7 @@ Return JSON: { "items": [ { "name": <same name>, "price": <USD number> } ], "tot
     },
   });
 
-  const response = await fetch(ENDPOINT, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-goog-api-key": GEMINI_API_KEY,
-    },
-    body,
-  });
+  const response = await geminiFetch(body);
 
   if (!response.ok) {
     const errorData = await response.text();

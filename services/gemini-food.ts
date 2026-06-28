@@ -235,7 +235,7 @@ Description: "${description}"
 Rules:
 - "name": a short recipe title.
 - "ingredients": every ingredient with a realistic "amount" (number as string) and "unit" ("g" or "ml"), plus an estimated retail USD "price" for that quantity.
-- "steps": ordered cooking steps. For each step, set "ingredient" to the name of ONE ingredient it mainly uses, or "" if none.
+- "steps": ordered cooking steps. Keep EACH step SHORT — one sentence, max ~12 words, only the key action. No fluff, no explanations. For each step, set "ingredient" to the name of ONE ingredient it mainly uses, or "" if none.
 - "kcal", "protein", "carbs", "fat": integers for the WHOLE dish (use 4/4/9 kcal per g consistency).
 - "price": total USD cost (sum of ingredient prices).
 - Be realistic and complete.`,

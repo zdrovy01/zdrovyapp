@@ -27,7 +27,7 @@ export default function SearchPage() {
     if (debounceRef.current) clearTimeout(debounceRef.current);
 
     const q = query.trim();
-    if (!q) {
+    if (q.length < 3) {
       setResults([]);
       setLoading(false);
       return;
@@ -71,7 +71,7 @@ export default function SearchPage() {
       <Space size={40} />
       <Searchbar placeholder="Search people" onChange={setQuery} />
 
-      {query.trim() === "" ? null : loading ? (
+      {query.trim().length < 3 ? null : loading ? (
         <div style={{ padding: "8px 20px", color: "rgba(235,235,245,0.5)", fontFamily: FONT }}>
           Searching...
         </div>

@@ -21,7 +21,19 @@ export const getSupabaseClient = (): SupabaseClient => {
     if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
       throw new Error("Supabase is not configured properly");
     }
-    supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: {
+        // Keep the user signed in across reloads / re-opens.
+        persistSession: true,
+        autoRefreshToken: true,
+        // Complete the Google OAuth redirect and store the session.
+        detectSessionInUrl: true,
+        flowType: "pkce",
+        storageKey: "zdrovy-auth",
+        storage:
+          typeof window !== "undefined" ? window.localStorage : undefined,
+      },
+    });
   }
   return supabaseClient;
 };

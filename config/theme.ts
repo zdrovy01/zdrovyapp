@@ -1,5 +1,3 @@
-// Single source of truth for the app's colors.
-// Change ACCENT here to re-skin the whole app.
 
 export const COLORS = {
   /** Primary brand / accent color */

@@ -5,8 +5,8 @@ import ToolbarWin from "@/components/toolbarwin";
 import RecipeCard from "@/components/recipecard";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
 import { getSupabaseClient } from "@/config/supabase";
+import { useCached } from "@/hooks/use-cached";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
 
 interface Recipe {
   id: string;
@@ -22,20 +22,14 @@ interface Recipe {
 export default function SavesPage() {
   useProtectedRoute();
   const router = useRouter();
-  const [recipes, setRecipes] = useState<Recipe[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  const load = async () => {
-    setLoading(true);
-    try {
+  const { data: recipes, loading, setData: setRecipes } = useCached<Recipe[]>(
+    "saves",
+    async () => {
       const supabase = getSupabaseClient();
       const { data: { session } } = await supabase.auth.getSession();
-        const user = session?.user;
-      if (!user) {
-        setRecipes([]);
-        setLoading(false);
-        return;
-      }
+      const user = session?.user;
+      if (!user) return [];
 
       const { data, error } = await supabase
         .from("saved_recipes")
@@ -44,37 +38,21 @@ export default function SavesPage() {
         .order("created_at", { ascending: false });
 
       if (error) {
-        console.error("Failed to load saves:", {
-          message: error.message,
-          code: error.code,
-          details: error.details,
-          hint: error.hint,
-        });
-        setRecipes([]);
-      } else {
-        const list = (data || [])
-          .map((row: { recipes: Recipe | Recipe[] | null }) =>
-            Array.isArray(row.recipes) ? row.recipes[0] : row.recipes
-          )
-          .filter((r): r is Recipe => !!r);
-        setRecipes(list);
+        console.error("Failed to load saves:", error);
+        return [];
       }
-    } catch (err) {
-      console.error("Failed to load saves:", err);
-      setRecipes([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+      return (data || [])
+        .map((row: { recipes: Recipe | Recipe[] | null }) =>
+          Array.isArray(row.recipes) ? row.recipes[0] : row.recipes
+        )
+        .filter((r): r is Recipe => !!r);
+    },
+    []
+  );
 
   const handleUnsave = async (recipeId: string) => {
     const prev = recipes;
-    setRecipes((cur) => cur.filter((r) => r.id !== recipeId));
+    setRecipes(recipes.filter((r) => r.id !== recipeId));
     try {
       const supabase = getSupabaseClient();
       const { data: { session } } = await supabase.auth.getSession();

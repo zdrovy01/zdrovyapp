@@ -19,11 +19,15 @@ interface Recipe {
   image_url: string | null;
 }
 
+// Module-level cache: persists across navigations within the session,
+// so re-opening this page shows results instantly (then revalidates).
+let recipesCache: Recipe[] | null = null;
+
 export default function RecipePage() {
   useProtectedRoute();
   const router = useRouter();
-  const [recipes, setRecipes] = useState<Recipe[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [recipes, setRecipes] = useState<Recipe[]>(recipesCache || []);
+  const [loading, setLoading] = useState(recipesCache === null);
 
   useEffect(() => {
     const load = async () => {
@@ -33,6 +37,7 @@ export default function RecipePage() {
         const user = session?.user;
         if (!user) {
           setRecipes([]);
+          recipesCache = [];
           setLoading(false);
           return;
         }
@@ -48,13 +53,12 @@ export default function RecipePage() {
             details: error.details,
             hint: error.hint,
           });
-          setRecipes([]);
         } else {
-          setRecipes(data || []);
+          recipesCache = data || [];
+          setRecipes(recipesCache);
         }
       } catch (err) {
         console.error("Failed to load recipes:", err);
-        setRecipes([]);
       } finally {
         setLoading(false);
       }
@@ -64,14 +68,17 @@ export default function RecipePage() {
 
   const handleDelete = async (id: string) => {
     const prev = recipes;
-    setRecipes((cur) => cur.filter((r) => r.id !== id));
+    const next = recipes.filter((r) => r.id !== id);
+    setRecipes(next);
+    recipesCache = next;
     try {
       const supabase = getSupabaseClient();
       const { error } = await supabase.from("recipes").delete().eq("id", id);
-      if (error) { console.error("Failed to delete recipe:", error); setRecipes(prev); }
+      if (error) { console.error("Failed to delete recipe:", error); setRecipes(prev); recipesCache = prev; }
     } catch (err) {
       console.error("Failed to delete recipe:", err);
       setRecipes(prev);
+      recipesCache = prev;
     }
   };
 

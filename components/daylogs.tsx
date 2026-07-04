@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Log from "@/components/log";
 import Title from "@/components/title";
 import { getSupabaseClient } from "@/config/supabase";
+import { useCached } from "@/hooks/use-cached";
 
 interface FoodLogItem {
   id: string;
@@ -30,30 +30,17 @@ interface DayLogsProps {
 }
 
 export default function DayLogs({ date }: DayLogsProps) {
-  const [logs, setLogs] = useState<FoodLogItem[]>([]);
-  const [loading, setLoading] = useState(true);
-
   const dateKey = date.toDateString();
 
-  useEffect(() => {
-    loadLogs(date);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dateKey]);
-
-  const loadLogs = async (selectedDate: Date) => {
-    setLoading(true);
-    try {
+  const { data: logs, loading, setData: setLogs } = useCached<FoodLogItem[]>(
+    `logs:${dateKey}`,
+    async () => {
       const supabase = getSupabaseClient();
       const { data: { session } } = await supabase.auth.getSession();
-  const user = session?.user;
+      const user = session?.user;
+      if (!user) return [];
 
-      if (!user) {
-        setLogs([]);
-        setLoading(false);
-        return;
-      }
-
-      const start = new Date(selectedDate);
+      const start = new Date(date);
       start.setHours(0, 0, 0, 0);
       const end = new Date(start);
       end.setDate(end.getDate() + 1);
@@ -67,37 +54,22 @@ export default function DayLogs({ date }: DayLogsProps) {
         .order("created_at", { ascending: false });
 
       if (error) {
-        console.error("Failed to load logs:", {
-          message: error.message,
-          code: error.code,
-          details: error.details,
-          hint: error.hint,
-        });
-        setLogs([]);
-      } else {
-        setLogs(data || []);
+        console.error("Failed to load logs:", error);
+        return [];
       }
-    } catch (err) {
-      console.error("Failed to load logs:", err);
-      setLogs([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+      return data || [];
+    },
+    []
+  );
 
   const handleDelete = async (id: string) => {
     const prev = logs;
-    setLogs((cur) => cur.filter((l) => l.id !== id));
+    setLogs(logs.filter((l) => l.id !== id));
     try {
       const supabase = getSupabaseClient();
       const { error } = await supabase.from("food_logs").delete().eq("id", id);
       if (error) {
-        console.error("Failed to delete log:", {
-          message: error.message,
-          code: error.code,
-          details: error.details,
-          hint: error.hint,
-        });
+        console.error("Failed to delete log:", error);
         setLogs(prev); // revert on failure
       }
     } catch (err) {

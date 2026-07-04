@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Space from "@/components/space";
 import ToolbarWin from "@/components/toolbarwin";
 import { getSupabaseClient } from "@/config/supabase";
 import { useAuth } from "@/config/auth-context";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
+import { useCached } from "@/hooks/use-cached";
 
 interface Friend {
   user_id: string;
@@ -21,15 +21,13 @@ export default function FriendsPage() {
   useProtectedRoute();
   const { user } = useAuth();
   const router = useRouter();
-  const [friends, setFriends] = useState<Friend[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (!user) return;
-    const load = async () => {
+  const { data: friends, loading } = useCached<Friend[]>(
+    `friends:${user?.id || "none"}`,
+    async () => {
+      if (!user) return [];
       const supabase = getSupabaseClient();
 
-      // Get all accepted friend requests where user is sender or receiver
       const [sent, received] = await Promise.all([
         supabase.from("friend_requests").select("receiver_id").eq("sender_id", user.id).eq("status", "accepted"),
         supabase.from("friend_requests").select("sender_id").eq("receiver_id", user.id).eq("status", "accepted"),
@@ -39,19 +37,17 @@ export default function FriendsPage() {
         ...(sent.data?.map((r) => r.receiver_id) || []),
         ...(received.data?.map((r) => r.sender_id) || []),
       ];
-
-      if (!ids.length) { setLoading(false); return; }
+      if (!ids.length) return [];
 
       const { data: profiles } = await supabase
         .from("user_profiles")
         .select("user_id, username, name, avatar_url")
         .in("user_id", ids);
 
-      setFriends(profiles || []);
-      setLoading(false);
-    };
-    load();
-  }, [user]);
+      return profiles || [];
+    },
+    []
+  );
 
   return (
     <>

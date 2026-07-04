@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { getUserStatsForDate } from "@/services/supabase-logs";
+import { useCached } from "@/hooks/use-cached";
 
 interface TrackerProps {
   date?: Date;
@@ -47,37 +48,21 @@ function useCountUp(target: number, duration = 900) {
 }
 
 export default function Tracker({ date, href = "/log" }: TrackerProps) {
-  const [stats, setStats] = useState({
-    totalKcal: 0,
-    totalProtein: 0,
-    totalCarbs: 0,
-    totalFat: 0,
-  });
-  const [loading, setLoading] = useState(true);
-
   const dateKey = date ? date.toDateString() : "today";
 
-  useEffect(() => {
-    loadStats();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dateKey]);
-
-  const loadStats = async () => {
-    setLoading(true);
-    try {
+  const { data: stats } = useCached(
+    `stats:${dateKey}`,
+    async () => {
       const data = await getUserStatsForDate(date || new Date());
-      setStats({
+      return {
         totalKcal: data.totalKcal,
         totalProtein: data.totalProtein,
         totalCarbs: data.totalCarbs,
         totalFat: data.totalFat,
-      });
-    } catch (err) {
-      console.error("Failed to load stats:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+      };
+    },
+    { totalKcal: 0, totalProtein: 0, totalCarbs: 0, totalFat: 0 }
+  );
 
   const items = [
     { label: "Calories", value: Math.round(stats.totalKcal), unit: "", color: "#FFFFFF", total: 2000 },

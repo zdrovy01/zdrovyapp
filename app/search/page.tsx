@@ -37,9 +37,8 @@ export default function SearchPage() {
     debounceRef.current = setTimeout(async () => {
       try {
         const supabase = getSupabaseClient();
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
+        const { data: { session } } = await supabase.auth.getSession();
+        const user = session?.user;
 
         const { data, error } = await supabase
           .from("user_profiles")

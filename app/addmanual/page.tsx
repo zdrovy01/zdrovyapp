@@ -70,7 +70,8 @@ export default function AddManualPage() {
     setSaving(true);
     try {
       const supabase = getSupabaseClient();
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { session } } = await supabase.auth.getSession();
+        const user = session?.user;
       if (!user) { setError("Please sign in first"); setSaving(false); return; }
 
       const { error: dbError } = await supabase.from("food_logs").insert([{

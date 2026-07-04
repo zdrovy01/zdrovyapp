@@ -123,16 +123,20 @@ export default function NotificationsPage() {
 
       if (!data) { setNotifications([]); return; }
 
-      const withProfiles = await Promise.all(
-        data.map(async (n) => {
-          const { data: p } = await supabase
-            .from("user_profiles")
-            .select("name, username, avatar_url")
-            .eq("user_id", n.from_user_id)
-            .single();
-          return { ...n, from_profile: p || undefined };
-        })
+      // Batch-load all sender profiles in a single query (avoids N+1).
+      const senderIds = Array.from(new Set(data.map((n) => n.from_user_id)));
+      const { data: profiles } = await supabase
+        .from("user_profiles")
+        .select("user_id, name, username, avatar_url")
+        .in("user_id", senderIds);
+
+      const byId = new Map(
+        (profiles || []).map((p) => [p.user_id, p])
       );
+      const withProfiles = data.map((n) => ({
+        ...n,
+        from_profile: byId.get(n.from_user_id) || undefined,
+      }));
       setNotifications(withProfiles);
     } catch (err) {
       console.error("Failed to load notifications:", err);

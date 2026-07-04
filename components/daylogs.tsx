@@ -44,9 +44,8 @@ export default function DayLogs({ date }: DayLogsProps) {
     setLoading(true);
     try {
       const supabase = getSupabaseClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const { data: { session } } = await supabase.auth.getSession();
+  const user = session?.user;
 
       if (!user) {
         setLogs([]);

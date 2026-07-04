@@ -61,7 +61,8 @@ export default function AddPage() {
     if (!foodLog) return;
     try {
       const supabase = getSupabaseClient();
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { session } } = await supabase.auth.getSession();
+        const user = session?.user;
       if (!user) { setError("Please sign in first"); return; }
 
       const { error: dbError } = await supabase.from("food_logs").insert([{

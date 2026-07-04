@@ -96,7 +96,8 @@ export default function RecipeDetailPage() {
     const load = async () => {
       try {
         const supabase = getSupabaseClient();
-        const { data: { user } } = await supabase.auth.getUser();
+        const { data: { session } } = await supabase.auth.getSession();
+        const user = session?.user;
 
         const { data, error } = await supabase
           .from("recipes")
@@ -141,7 +142,8 @@ export default function RecipeDetailPage() {
     setSavingState(true);
     try {
       const supabase = getSupabaseClient();
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { session } } = await supabase.auth.getSession();
+        const user = session?.user;
       if (!user) return;
 
       if (saved) {

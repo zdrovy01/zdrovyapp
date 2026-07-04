@@ -29,9 +29,8 @@ export default function SavesPage() {
     setLoading(true);
     try {
       const supabase = getSupabaseClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const { data: { session } } = await supabase.auth.getSession();
+        const user = session?.user;
       if (!user) {
         setRecipes([]);
         setLoading(false);
@@ -78,9 +77,8 @@ export default function SavesPage() {
     setRecipes((cur) => cur.filter((r) => r.id !== recipeId));
     try {
       const supabase = getSupabaseClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const { data: { session } } = await supabase.auth.getSession();
+        const user = session?.user;
       if (!user) return;
       const { error } = await supabase
         .from("saved_recipes")

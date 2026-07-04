@@ -103,7 +103,8 @@ export default function AddPage() {
 
       <Option
         buttons={2}
-        text1="Recipe"
+        text1="Manual"
+        href1="/addmanual"
         text2="Photo"
         onClick2={() => fileInputRef.current?.click()}
       />

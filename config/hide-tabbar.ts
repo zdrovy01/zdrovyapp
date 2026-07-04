@@ -3,6 +3,7 @@ const HIDE_TABBAR_ON: string[] = [
   "/search",
   "/camera",
   "/add",
+  "/addmanual",
   "/cook",
   "/auth",
   "/log",

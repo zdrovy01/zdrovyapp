@@ -18,6 +18,7 @@ const HIDE_TABBAR_ON: string[] = [
   "/language",
   "/currency",
   "/theme",
+  "/options",
 ];
 
 export default HIDE_TABBAR_ON;

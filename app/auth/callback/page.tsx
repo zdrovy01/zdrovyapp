@@ -8,16 +8,14 @@ export default function AuthCallbackPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const handleCallback = async () => {
-      try {
-        const supabase = getSupabaseClient();
+    const supabase = getSupabaseClient();
+    let done = false;
 
-        // Get the session from the callback
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
+    const finish = async (session: Awaited<ReturnType<typeof supabase.auth.getSession>>["data"]["session"]) => {
+      if (done) return;
+      done = true;
 
-        if (session?.user) {
+      if (session?.user) {
           // Create profile ONLY if it doesn't exist yet — never overwrite
           // a user's custom avatar/name/username on subsequent logins.
           try {
@@ -53,17 +51,31 @@ export default function AuthCallbackPage() {
           }
 
           // Redirect to home regardless of profile result
-          router.push("/");
+          router.replace("/");
         } else {
-          router.push("/auth");
+          router.replace("/auth");
         }
-      } catch (err) {
-        console.error("Callback error:", err);
-        router.push("/auth");
-      }
     };
 
-    handleCallback();
+    // 1) Try existing session immediately (may already be exchanged).
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session?.user) finish(data.session);
+    });
+
+    // 2) React to the OAuth token exchange completing.
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        if (session?.user) finish(session);
+      }
+    );
+
+    // 3) Fallback: if nothing resolved in 6s, bounce to /auth.
+    const timeout = setTimeout(() => finish(null), 6000);
+
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(timeout);
+    };
   }, [router]);
 
   return (

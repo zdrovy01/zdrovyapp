@@ -23,15 +23,10 @@ export const getSupabaseClient = (): SupabaseClient => {
     }
     supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
       auth: {
-        // Keep the user signed in across reloads / re-opens.
+        // Keep the user signed in across reloads / re-opens (defaults, made explicit).
         persistSession: true,
         autoRefreshToken: true,
-        // Complete the Google OAuth redirect and store the session.
         detectSessionInUrl: true,
-        flowType: "pkce",
-        storageKey: "zdrovy-auth",
-        storage:
-          typeof window !== "undefined" ? window.localStorage : undefined,
       },
     });
   }

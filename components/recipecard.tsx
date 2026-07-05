@@ -70,7 +70,7 @@ export default function RecipeCard({
   };
 
   return (
-    <div style={{ position: "relative", width: "100%", overflow: "hidden", borderRadius: 20, background: "#FF3B30" }}>
+    <div style={{ position: "relative", width: "100%", overflow: "hidden", borderRadius: 20, background: "#0A0A0A" }}>
       {onDelete && (
         <button
           onClick={onDelete}

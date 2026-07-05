@@ -84,7 +84,7 @@ export default function Log({
         width: "100%",
         overflow: "hidden",
         borderRadius: 20,
-        background: "#FF3B30",
+        background: "#0A0A0A",
       }}
     >
       {/* Delete button */}

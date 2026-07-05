@@ -41,3 +41,20 @@ footer {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Page transition animations (end at transform:none so fixed elements stay intact) */
+@keyframes pageFade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes pageSlide {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes pageScale {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: none; }
+}
+.page-anim-fade  { animation: pageFade 0.22s ease both; }
+.page-anim-slide { animation: pageSlide 0.24s cubic-bezier(0.4,0,0.2,1) both; }
+.page-anim-scale { animation: pageScale 0.22s cubic-bezier(0.4,0,0.2,1) both; }

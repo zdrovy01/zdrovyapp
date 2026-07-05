@@ -1,0 +1,70 @@
+"use client";
+
+import Space from "@/components/space";
+import ToolbarWin from "@/components/toolbarwin";
+import { useProtectedRoute } from "@/hooks/use-protected-route";
+import { COLORS } from "@/config/theme";
+import { useState } from "react";
+
+const FONT = "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif";
+
+const THEMES = [
+  { label: "Dark", code: "dark" },
+  { label: "Light", code: "light" },
+];
+
+export default function ThemePage() {
+  useProtectedRoute();
+  const [theme, setTheme] = useState<string>(() =>
+    typeof window !== "undefined"
+      ? localStorage.getItem("zdrovy-theme") || "dark"
+      : "dark"
+  );
+
+  const select = (code: string) => {
+    setTheme(code);
+    if (typeof window !== "undefined") localStorage.setItem("zdrovy-theme", code);
+  };
+
+  return (
+    <>
+      <Space size={40} />
+      <ToolbarWin title="Theme" />
+      <Space size={16} />
+
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        {THEMES.map((t) => {
+          const active = t.code === theme;
+          return (
+            <button
+              key={t.code}
+              onClick={() => select(t.code)}
+              style={{
+                width: "100%",
+                height: 56,
+                padding: "0 20px",
+                background: "#0A0A0A",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                border: "none",
+                cursor: "pointer",
+                boxSizing: "border-box",
+                fontFamily: FONT,
+              }}
+            >
+              <span style={{ color: "#fff", fontSize: 16, fontWeight: active ? 600 : 400 }}>
+                {t.label}
+              </span>
+              {active && (
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                  <path d="M3.5 9.5L7 13L14.5 5" stroke={COLORS.accent} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              )}
+            </button>
+          );
+        })}
+      </div>
+    </>
+  );
+}

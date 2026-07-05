@@ -15,6 +15,9 @@ const HIDE_TABBAR_ON: string[] = [
   "/saves",
   "/shops",
   "/profile",
+  "/language",
+  "/currency",
+  "/theme",
 ];
 
 export default HIDE_TABBAR_ON;

@@ -21,6 +21,9 @@ interface ProfileData {
 
 type FriendStatus = "none" | "pending" | "accepted";
 
+// Session cache so re-opening a profile shows instantly (revalidates in background).
+const profileCache = new Map<string, ProfileData>();
+
 const FONT = "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif";
 
 const btnStyle = (bg: string, color: string, disabled = false): React.CSSProperties => ({
@@ -46,8 +49,9 @@ export default function ProfilePage() {
   const router = useRouter();
   const { username } = useParams<{ username: string }>();
 
-  const [profile, setProfile] = useState<ProfileData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const cached = username ? profileCache.get(username) : undefined;
+  const [profile, setProfile] = useState<ProfileData | null>(cached || null);
+  const [loading, setLoading] = useState(!cached);
   const [isFollowing, setIsFollowing] = useState(false);
   const [friendStatus, setFriendStatus] = useState<FriendStatus>("none");
   const [targetId, setTargetId] = useState<string | null>(null);
@@ -60,7 +64,6 @@ export default function ProfilePage() {
   }, [username, me]);
 
   const loadProfile = async () => {
-    setLoading(true);
     try {
       const supabase = getSupabaseClient();
 
@@ -91,7 +94,7 @@ export default function ProfilePage() {
         supabase.from("follows").select("id", { count: "exact", head: true }).eq("follower_id", uid),
       ]);
 
-      setProfile({
+      const built: ProfileData = {
         user_id: uid,
         name: profileData.name || "User",
         username: profileData.username || username,
@@ -99,7 +102,9 @@ export default function ProfilePage() {
         recipes_count: recipesRes.count || 0,
         followers_count: followersRes.count || 0,
         following_count: followingRes.count || 0,
-      });
+      };
+      if (username) profileCache.set(username, built);
+      setProfile(built);
 
       if (me && !isOwnProfile) {
         const [followRes, friendRes] = await Promise.all([

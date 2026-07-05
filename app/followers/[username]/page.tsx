@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Space from "@/components/space";
 import ToolbarWin from "@/components/toolbarwin";
 import UserRow from "@/components/userrow";
 import { getSupabaseClient } from "@/config/supabase";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
+import { useCached } from "@/hooks/use-cached";
 
 interface UserProfile {
   username: string;
@@ -19,35 +19,31 @@ const FONT = "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif";
 export default function FollowersPage() {
   useProtectedRoute();
   const { username } = useParams<{ username: string }>();
-  const [users, setUsers] = useState<UserProfile[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (!username) return;
-    const load = async () => {
+  const { data: users, loading } = useCached<UserProfile[]>(
+    `followers:${username || "none"}`,
+    async () => {
+      if (!username) return [];
       const supabase = getSupabaseClient();
       const { data: profile } = await supabase
         .from("user_profiles").select("user_id").eq("username", username).single();
-      if (!profile) { setLoading(false); return; }
+      if (!profile) return [];
 
       const { data } = await supabase
         .from("follows")
         .select("follower_id")
         .eq("following_id", profile.user_id);
-
-      if (!data?.length) { setLoading(false); return; }
+      if (!data?.length) return [];
 
       const ids = data.map((r) => r.follower_id);
       const { data: profiles } = await supabase
         .from("user_profiles")
         .select("username, name, avatar_url")
         .in("user_id", ids);
-
-      setUsers(profiles || []);
-      setLoading(false);
-    };
-    load();
-  }, [username]);
+      return profiles || [];
+    },
+    []
+  );
 
   return (
     <>

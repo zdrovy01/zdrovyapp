@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Footer from "@/components/footer";
+import PageTransition from "@/components/page-transition";
 import { LanguageProvider } from "@/config/language-context";
 import { AuthProvider } from "@/config/auth-context";
 import "./globals.css";
@@ -22,7 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AuthProvider>
           <LanguageProvider>
             <main>
-              {children}
+              <PageTransition>{children}</PageTransition>
             </main>
             <Footer />
           </LanguageProvider>

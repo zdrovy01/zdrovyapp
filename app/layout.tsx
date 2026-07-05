@@ -13,6 +13,15 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "Zdrovy App",
+  appleWebApp: {
+    capable: true,
+    title: "Zdrovy",
+    statusBarStyle: "black-translucent",
+  },
+  icons: {
+    apple: "/apple-touch-icon.png",
+  },
+  themeColor: "#1a3a2a",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

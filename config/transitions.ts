@@ -1,6 +1,3 @@
-// Per-route page transitions. Change these to control how each page animates.
-//
-// Kinds:
 //   "slide" — iOS-style push (slides in from the side)
 //   "fade"  — gentle opacity fade
 //   "scale" — zoom in

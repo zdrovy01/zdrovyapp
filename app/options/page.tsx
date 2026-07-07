@@ -17,6 +17,7 @@ export default function OptionsPage() {
       <Option2 text="Friends" href="/friends" />
       <Option2 text="Saved recipes" href="/saves" />
       <Option2 text="My QR code" href="/qr" />
+      <Option2 text="Settings" href="/settings" />
     </>
   );
 }

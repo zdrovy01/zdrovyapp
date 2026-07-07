@@ -54,7 +54,7 @@ export default function MorePage() {
     <div>
       <Space size={8} />
       <Toolbar
-        title={`@${username}`}
+        title={username}
         icon1={notifIcon}
         href1="/notifications"
         showIcon2={false}
@@ -68,7 +68,10 @@ export default function MorePage() {
         <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
           <AvatarViewer src={user?.avatar_url} initial={initial} size={80} />
 
-          <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 12 }}>
+            {/* Name */}
+            <div style={{ color: "#F5F5F5", fontSize: 17, fontWeight: 700, fontFamily: FONT }}>{user?.name || "User"}</div>
+
             {/* Stats */}
             <div style={{ display: "flex" }}>
               {[

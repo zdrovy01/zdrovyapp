@@ -184,7 +184,10 @@ export default function ProfilePage() {
           <AvatarViewer src={profile.avatar_url} initial={initial} size={80} />
 
           {/* Right column: name on top, stats below */}
-          <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 12 }}>
+            {/* Name */}
+            <div style={{ color: "#F5F5F5", fontSize: 17, fontWeight: 700, fontFamily: FONT }}>{profile.name}</div>
+
             {/* Stats */}
             <div style={{ display: "flex" }}>
               {[

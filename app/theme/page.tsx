@@ -30,7 +30,7 @@ export default function ThemePage() {
     <>
       <Space size={40} />
       <ToolbarWin title="Theme" />
-      <Space size={16} />
+      <Space size={10} />
 
       <div style={{ display: "flex", flexDirection: "column" }}>
         {THEMES.map((t) => {

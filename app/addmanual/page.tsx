@@ -99,7 +99,7 @@ export default function AddManualPage() {
     <>
       <Space size={40} />
       <ToolbarWin title="Manual log" />
-      <Space size={16} />
+      <Space size={10} />
 
       <div style={{ padding: "0 20px", display: "flex", flexDirection: "column", gap: 20 }}>
         {/* Photo (optional) */}

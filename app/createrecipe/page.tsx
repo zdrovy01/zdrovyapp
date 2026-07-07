@@ -246,7 +246,7 @@ export default function CreateRecipePage() {
     <>
       <Space size={40} />
       <ToolbarWin title="New recipe" />
-      <Space size={16} />
+      <Space size={10} />
 
       <div style={{ padding: "0 20px", display: "flex", flexDirection: "column", gap: 24 }}>
         {/* Photo */}

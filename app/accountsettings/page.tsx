@@ -125,7 +125,7 @@ export default function AccountSettingsPage() {
     <>
       <Space size={40} />
       <ToolbarWin title="Account settings" />
-      <Space size={20} />
+      <Space size={10} />
 
       <input
         ref={fileInputRef}

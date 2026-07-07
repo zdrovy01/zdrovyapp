@@ -91,6 +91,7 @@ export default function AddPage() {
     <>
       <Space size={40} />
       <ToolbarWin title="Add new log" />
+      <Space size={10} />
 
       {/* Hidden file input for camera */}
       <input

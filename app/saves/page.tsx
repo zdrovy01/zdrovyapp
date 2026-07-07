@@ -77,7 +77,7 @@ export default function SavesPage() {
     <>
       <Space size={40} />
       <ToolbarWin title="Saved" />
-      <Space size={16} />
+      <Space size={10} />
 
       {loading ? (
         <div style={{ padding: "0 20px", color: "rgba(235,235,245,0.6)" }}>Loading...</div>

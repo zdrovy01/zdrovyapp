@@ -49,7 +49,7 @@ export default function FollowersPage() {
     <>
       <Space size={40} />
       <ToolbarWin title="Followers" />
-      <Space size={8} />
+      <Space size={10} />
       {loading ? (
         <div style={{ padding: "0 20px", color: "rgba(235,235,245,0.5)", fontFamily: FONT }}>Loading...</div>
       ) : users.length === 0 ? (

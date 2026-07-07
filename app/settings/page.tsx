@@ -37,7 +37,7 @@ export default function SettingsPage() {
     <>
       <Space size={40} />
       <ToolbarWin title="Settings" />
-      <Space size={20} />
+      <Space size={10} />
 
       {/* Preferences */}
       <SectionHeader text="Preferences" />

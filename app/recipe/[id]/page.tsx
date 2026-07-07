@@ -185,7 +185,7 @@ export default function RecipeDetailPage() {
     <>
       <Space size={40} />
       <ToolbarWin title={`@${creator}`} />
-      <Space size={16} />
+      <Space size={10} />
 
       <div style={{ padding: "0 20px" }}>
         {/* Photo */}

@@ -23,7 +23,7 @@ export default function LanguagePage() {
     <>
       <Space size={40} />
       <ToolbarWin title="Speech Language" />
-      <Space size={16} />
+      <Space size={10} />
 
       <div style={{ display: "flex", flexDirection: "column" }}>
         {LANGUAGES.map((l) => {

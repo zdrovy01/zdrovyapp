@@ -48,7 +48,7 @@ export default function MoreOptionsPage() {
     <>
       <Space size={40} />
       <ToolbarWin title="More options" />
-      <Space size={20} />
+      <Space size={10} />
 
       <Option2 text="Sign Out" onClick={logout} style={{ color: "#FF453A" }} />
       <Option2

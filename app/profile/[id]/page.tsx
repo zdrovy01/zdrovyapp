@@ -152,7 +152,7 @@ export default function ProfilePage() {
     <>
       <Space size={40} />
       <ToolbarWin title={`@${profile.username}`} />
-      <Space size={20} />
+      <Space size={10} />
 
       <div style={{ padding: "0 20px", display: "flex", flexDirection: "column", gap: 20 }}>
 

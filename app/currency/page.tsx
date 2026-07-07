@@ -32,7 +32,7 @@ export default function CurrencyPage() {
     <>
       <Space size={40} />
       <ToolbarWin title="Currency" />
-      <Space size={16} />
+      <Space size={10} />
 
       <div style={{ display: "flex", flexDirection: "column" }}>
         {CURRENCIES.map((c) => {

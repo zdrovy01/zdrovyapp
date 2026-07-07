@@ -12,7 +12,7 @@ export default function OptionsPage() {
     <>
       <Space size={40} />
       <ToolbarWin title="More" />
-      <Space size={16} />
+      <Space size={10} />
 
       <Option2 text="Friends" href="/friends" />
       <Option2 text="Saved recipes" href="/saves" />

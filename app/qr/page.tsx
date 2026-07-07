@@ -182,7 +182,7 @@ export default function QrPage() {
     <>
       <Space size={40} />
       <ToolbarWin title={`@${username}`} />
-      <Space size={24} />
+      <Space size={10} />
 
       <div
         style={{

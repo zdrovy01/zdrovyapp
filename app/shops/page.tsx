@@ -23,7 +23,7 @@ export default function ShopsPage() {
     <>
       <Space size={40} />
       <ToolbarWin title="Shops" />
-      <Space size={20} />
+      <Space size={10} />
 
       <div style={{ display: "flex", flexDirection: "column" }}>
         {SHOPS.map((shop) => {

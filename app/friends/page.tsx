@@ -66,7 +66,7 @@ export default function FriendsPage() {
             return (
               <div
                 key={f.user_id}
-                onClick={() => router.push(`/messages/${f.username}`)}
+                onClick={() => router.push(`/${f.username}`)}
                 style={{
                   display: "flex", alignItems: "center", gap: 14,
                   padding: "12px 20px", cursor: "pointer",
@@ -88,7 +88,7 @@ export default function FriendsPage() {
                   )}
                 </div>
 
-                {/* Name + last message placeholder */}
+                {/* Name + @username */}
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ color: "#F5F5F5", fontSize: 15, fontWeight: 600, fontFamily: FONT }}>
                     {f.name || f.username}
@@ -97,7 +97,7 @@ export default function FriendsPage() {
                     color: "rgba(235,235,245,0.35)", fontSize: 13, fontFamily: FONT,
                     whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
                   }}>
-                    Tap to message
+                    @{f.username}
                   </div>
                 </div>
 

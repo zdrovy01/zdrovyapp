@@ -63,29 +63,34 @@ export default function MorePage() {
       />
       <Space size={20} />
 
-      <div style={{ padding: "0 20px", display: "flex", flexDirection: "column", gap: 20 }}>
-        {/* Avatar + stats */}
+      <div style={{ padding: "0 20px", display: "flex", flexDirection: "column", gap: 16 }}>
+        {/* Avatar + (name + stats) */}
         <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
           <AvatarViewer src={user?.avatar_url} initial={initial} size={80} />
 
-          {[
-            { label: "Recipes", value: stats.recipes, href: "/recipe" },
-            { label: "Followers", value: stats.followers, href: `/followers/${username}` },
-            { label: "Following", value: stats.following, href: `/following/${username}` },
-          ].map((s) => (
-            <div key={s.label}
-              onClick={() => router.push(s.href)}
-              style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 2, cursor: "pointer" }}>
-              <span style={{ color: "#F5F5F5", fontSize: 20, fontWeight: 700, fontFamily: FONT }}>{s.value}</span>
-              <span style={{ color: "rgba(235,235,245,0.5)", fontSize: 12, fontFamily: FONT }}>{s.label}</span>
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 12 }}>
+            {/* Name + username */}
+            <div>
+              <div style={{ color: "#F5F5F5", fontSize: 17, fontWeight: 700, fontFamily: FONT }}>{user?.name || "User"}</div>
+              <div style={{ color: "rgba(235,235,245,0.45)", fontSize: 13, fontFamily: FONT }}>@{username}</div>
             </div>
-          ))}
-        </div>
 
-        {/* Name + username */}
-        <div>
-          <div style={{ color: "#F5F5F5", fontSize: 17, fontWeight: 700, fontFamily: FONT }}>{user?.name || "User"}</div>
-          <div style={{ color: "rgba(235,235,245,0.45)", fontSize: 14, fontFamily: FONT }}>@{username}</div>
+            {/* Stats */}
+            <div style={{ display: "flex" }}>
+              {[
+                { label: "Recipes", value: stats.recipes, href: "/recipe" },
+                { label: "Followers", value: stats.followers, href: `/followers/${username}` },
+                { label: "Following", value: stats.following, href: `/following/${username}` },
+              ].map((s) => (
+                <div key={s.label}
+                  onClick={() => router.push(s.href)}
+                  style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 2, cursor: "pointer" }}>
+                  <span style={{ color: "#F5F5F5", fontSize: 18, fontWeight: 700, fontFamily: FONT }}>{s.value}</span>
+                  <span style={{ color: "rgba(235,235,245,0.5)", fontSize: 11, fontFamily: FONT }}>{s.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 

@@ -6,6 +6,7 @@ import Space from "@/components/space";
 import ToolbarWin from "@/components/toolbarwin";
 import AvatarViewer from "@/components/avatarviewer";
 import { getSupabaseClient } from "@/config/supabase";
+import { COLORS } from "@/config/theme";
 import { useAuth } from "@/config/auth-context";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
 
@@ -175,32 +176,37 @@ export default function ProfilePage() {
       <ToolbarWin title={`@${profile.username}`} />
       <Space size={10} />
 
-      <div style={{ padding: "0 20px", display: "flex", flexDirection: "column", gap: 20 }}>
+      <div style={{ padding: "0 20px", display: "flex", flexDirection: "column", gap: 16 }}>
 
-        {/* Avatar + stats row */}
+        {/* Avatar + (name + stats) row */}
         <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
           {/* Avatar */}
           <AvatarViewer src={profile.avatar_url} initial={initial} size={80} />
 
-          {/* Stats */}
-          {[
-            { label: "Recipes", value: profile.recipes_count, href: null },
-            { label: "Followers", value: profile.followers_count, href: `/followers/${username}` },
-            { label: "Following", value: profile.following_count, href: `/following/${username}` },
-          ].map((s) => (
-            <div key={s.label}
-              onClick={() => s.href && router.push(s.href)}
-              style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 2, cursor: s.href ? "pointer" : "default" }}>
-              <span style={{ color: "#F5F5F5", fontSize: 20, fontWeight: 700, fontFamily: FONT }}>{s.value}</span>
-              <span style={{ color: "rgba(235,235,245,0.5)", fontSize: 12, fontFamily: FONT }}>{s.label}</span>
+          {/* Right column: name on top, stats below */}
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 12 }}>
+            {/* Name */}
+            <div>
+              <div style={{ color: "#F5F5F5", fontSize: 17, fontWeight: 700, fontFamily: FONT }}>{profile.name}</div>
+              <div style={{ color: "rgba(235,235,245,0.45)", fontSize: 13, fontFamily: FONT }}>@{profile.username}</div>
             </div>
-          ))}
-        </div>
 
-        {/* Name */}
-        <div>
-          <div style={{ color: "#F5F5F5", fontSize: 17, fontWeight: 700, fontFamily: FONT }}>{profile.name}</div>
-          <div style={{ color: "rgba(235,235,245,0.45)", fontSize: 14, fontFamily: FONT }}>@{profile.username}</div>
+            {/* Stats */}
+            <div style={{ display: "flex" }}>
+              {[
+                { label: "Recipes", value: profile.recipes_count, href: null },
+                { label: "Followers", value: profile.followers_count, href: `/followers/${username}` },
+                { label: "Following", value: profile.following_count, href: `/following/${username}` },
+              ].map((s) => (
+                <div key={s.label}
+                  onClick={() => s.href && router.push(s.href)}
+                  style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 2, cursor: s.href ? "pointer" : "default" }}>
+                  <span style={{ color: "#F5F5F5", fontSize: 18, fontWeight: 700, fontFamily: FONT }}>{s.value}</span>
+                  <span style={{ color: "rgba(235,235,245,0.5)", fontSize: 11, fontFamily: FONT }}>{s.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Action buttons */}
@@ -210,28 +216,48 @@ export default function ProfilePage() {
             <button
               onClick={handleFollow}
               style={btnStyle(
-                isFollowing ? "rgba(255,255,255,0.1)" : "#fff",
-                isFollowing ? "#F5F5F5" : "#000"
+                isFollowing ? "rgba(255,255,255,0.1)" : COLORS.accent,
+                isFollowing ? COLORS.text : COLORS.onAccent
               )}
             >
-              {isFollowing ? "Unfollow" : "Follow"}
+              {isFollowing ? "Following" : "Follow"}
             </button>
 
-            {/* Friend request */}
+            {/* Add friend — compact icon button */}
             <button
               onClick={handleFriendRequest}
               disabled={friendStatus !== "none"}
-              style={btnStyle(
-                friendStatus === "accepted"
-                  ? "rgba(255,255,255,0.1)"
-                  : friendStatus === "pending"
-                  ? "rgba(255,255,255,0.06)"
-                  : "rgba(255,255,255,0.12)",
-                "#F5F5F5",
-                friendStatus !== "none"
-              )}
+              aria-label={
+                friendStatus === "accepted" ? "Friends" : friendStatus === "pending" ? "Request sent" : "Add friend"
+              }
+              style={{
+                width: 52,
+                height: 44,
+                flexShrink: 0,
+                borderRadius: 14,
+                border: "none",
+                background: "rgba(255,255,255,0.1)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: friendStatus !== "none" ? "default" : "pointer",
+              }}
             >
-              {friendStatus === "accepted" ? "Friends ✓" : friendStatus === "pending" ? "Sent ✓" : "Add Friend"}
+              {friendStatus === "accepted" ? (
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path d="M4 10.5L8 14.5L16 5.5" stroke={COLORS.accent} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              ) : friendStatus === "pending" ? (
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                  <circle cx="9" cy="9" r="7.5" stroke="rgba(235,235,245,0.5)" strokeWidth="1.5" />
+                  <path d="M9 5v4l2.5 1.5" stroke="rgba(235,235,245,0.5)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              ) : (
+                <svg width="22" height="18" viewBox="0 0 22 18" fill="none">
+                  <path d="M8 9a4 4 0 100-8 4 4 0 000 8zM1.5 17c0-3 2.9-5 6.5-5s6.5 2 6.5 5" stroke="#F5F5F5" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M17.5 6v5M20 8.5h-5" stroke="#F5F5F5" strokeWidth="1.6" strokeLinecap="round" />
+                </svg>
+              )}
             </button>
           </div>
         )}

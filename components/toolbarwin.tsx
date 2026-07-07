@@ -60,36 +60,38 @@ export default function ToolbarWin({
     <div
       style={{
         width: "100%",
-        paddingBottom: 10,
+        paddingTop: 4,
+        paddingBottom: 12,
         paddingLeft: 16,
         paddingRight: 16,
         position: "relative",
         justifyContent: "space-between",
-        alignItems: "flex-start",
+        alignItems: "center",
         display: "flex",
         boxSizing: "border-box",
+        // iOS-style hairline separator under the toolbar
+        borderBottom: "0.5px solid rgba(255,255,255,0.12)",
       }}
     >
-      {/* Back button */}
+      {/* Back button — plain chevron */}
       <button
         onClick={handleBack}
         aria-label="Back"
         style={{
           height: 44,
           minWidth: 44,
-          borderRadius: 296,
           justifyContent: "center",
           alignItems: "center",
           display: "flex",
           border: "none",
           cursor: "pointer",
           flexShrink: 0,
-          background: "linear-gradient(0deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.06) 100%), rgba(0,0,0,0.60)",
-          boxShadow: "0px 8px 40px rgba(0,0,0,0.12)",
+          background: "transparent",
+          padding: 0,
         }}
       >
-        <svg width="10" height="17" viewBox="0 0 10 17" fill="none">
-          <path d="M8.5 15.5L1.5 8.5L8.5 1.5" stroke="#F5F5F5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <svg width="11" height="19" viewBox="0 0 10 17" fill="none">
+          <path d="M8.5 15.5L1.5 8.5L8.5 1.5" stroke="#F5F5F5" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
 

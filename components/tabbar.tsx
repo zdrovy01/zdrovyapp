@@ -40,46 +40,45 @@ export default function TabBar() {
   return (
     <div style={{
       width: "min(402px, 100vw)",
-      height: 83,
+      height: 64,
       position: "relative",
       boxSizing: "border-box",
-      overflow: "hidden",
-      borderTop: "0.33px solid rgba(255,255,255,0.15)",
       background: COLORS.background,
+      // iOS-style hairline separator on top
+      borderTop: "0.5px solid rgba(255,255,255,0.12)",
     }}>
       <div style={{
         position: "absolute",
-        top: 7,
-        left: 0,
-        right: 0,
+        inset: 0,
         display: "flex",
+        alignItems: "center",
         justifyContent: "space-between",
       }}>
         {tabs.map((tab) => {
           const active = pathname === tab.href;
-          const color = active ? COLORS.accent : "#7E7E7E";
+          const color = active ? COLORS.text : COLORS.textSecondary;
           return (
             <Link
               key={tab.href}
               href={tab.href}
               style={{
                 flex: "1 1 0",
-                height: 48,
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                justifyContent: "flex-start",
+                justifyContent: "center",
                 gap: 4,
                 textDecoration: "none",
                 color,
               }}
             >
-              <div style={{ height: 26, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <div style={{ height: 24, display: "flex", alignItems: "center", justifyContent: "center" }}>
                 {tab.icon}
               </div>
               <span style={{
                 fontSize: 10,
-                fontWeight: 510,
+                fontWeight: 590,
+                letterSpacing: 0.1,
                 color,
                 fontFamily: "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif",
               }}>

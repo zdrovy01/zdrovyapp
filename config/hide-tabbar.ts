@@ -14,7 +14,6 @@ const HIDE_TABBAR_ON: string[] = [
   "/qr",
   "/saves",
   "/shops",
-  "/profile",
   "/language",
   "/currency",
   "/theme",

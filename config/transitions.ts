@@ -10,7 +10,7 @@ export const TRANSITIONS: Record<string, TransitionKind> = {
   "/": "fade",
   "/recipe": "slide",
   "/log": "slide",
-  "/more": "slide",
+  "/myprofile": "slide",
   "/settings": "slide",
   "/accountsettings": "slide",
   "/moreoptions": "slide",
@@ -28,9 +28,7 @@ export const TRANSITIONS: Record<string, TransitionKind> = {
 
 // Prefix overrides (checked if no exact match). First match wins.
 export const TRANSITION_PREFIXES: [string, TransitionKind][] = [
-  ["/recipe/", "slide"],
-  ["/profile/", "slide"],
-  ["/followers/", "slide"],
+  ["/recipe/", "slide"],  ["/followers/", "slide"],
   ["/following/", "slide"],
 ];
 

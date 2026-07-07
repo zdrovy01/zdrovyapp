@@ -2,13 +2,14 @@
 
 import { usePathname } from "next/navigation";
 import TabBar from "@/components/tabbar";
-import HIDE_TABBAR_ON from "@/config/hide-tabbar";
+
+// The tab bar only shows on the three main tab destinations.
+// Every other page (windowed pages, profiles like /[username], etc.) hides it.
+const TABBAR_ON = ["/", "/recipe", "/myprofile"];
 
 export default function Footer() {
   const pathname = usePathname();
-  // Hide on exact matches and on recipe detail pages (/recipe/<id>)
-  if (HIDE_TABBAR_ON.includes(pathname) || /^\/recipe\/.+/.test(pathname))
-    return null;
+  if (!TABBAR_ON.includes(pathname)) return null;
   return (
     <footer>
       <TabBar />

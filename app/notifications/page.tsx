@@ -186,7 +186,7 @@ export default function NotificationsPage() {
 
   return (
     <>
-      <Space size={40} />
+      <Space size={8} />
       <ToolbarWin title="Notifications" />
       <Space size={10} />
 

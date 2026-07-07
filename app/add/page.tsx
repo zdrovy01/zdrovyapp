@@ -89,7 +89,7 @@ export default function AddPage() {
 
   return (
     <>
-      <Space size={40} />
+      <Space size={8} />
       <ToolbarWin title="Add new log" />
       <Space size={10} />
 

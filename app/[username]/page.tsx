@@ -146,7 +146,7 @@ export default function ProfilePage() {
   if (loading) {
     return (
       <>
-        <Space size={40} />
+        <Space size={8} />
         <ToolbarWin title="" />
         <div style={{ padding: "40px 20px", textAlign: "center", color: "rgba(235,235,245,0.5)", fontFamily: FONT }}>
           Loading...
@@ -158,7 +158,7 @@ export default function ProfilePage() {
   if (!profile) {
     return (
       <>
-        <Space size={40} />
+        <Space size={8} />
         <ToolbarWin title="Profile" />
         <div style={{ padding: "40px 20px", textAlign: "center", color: "rgba(235,235,245,0.5)", fontFamily: FONT }}>
           User not found
@@ -171,7 +171,7 @@ export default function ProfilePage() {
 
   return (
     <>
-      <Space size={40} />
+      <Space size={8} />
       <ToolbarWin title={`@${profile.username}`} />
       <Space size={10} />
 
@@ -228,10 +228,10 @@ export default function ProfilePage() {
                   ? "rgba(255,255,255,0.06)"
                   : "rgba(255,255,255,0.12)",
                 "#F5F5F5",
-                friendStatus === "pending"
+                friendStatus !== "none"
               )}
             >
-              {friendStatus === "accepted" ? "Message" : friendStatus === "pending" ? "Sent ✓" : "Add Friend"}
+              {friendStatus === "accepted" ? "Friends ✓" : friendStatus === "pending" ? "Sent ✓" : "Add Friend"}
             </button>
           </div>
         )}

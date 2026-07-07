@@ -30,7 +30,7 @@ export default function CurrencyPage() {
 
   return (
     <>
-      <Space size={40} />
+      <Space size={8} />
       <ToolbarWin title="Currency" />
       <Space size={10} />
 

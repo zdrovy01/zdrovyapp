@@ -21,7 +21,7 @@ export default function ShopsPage() {
 
   return (
     <>
-      <Space size={40} />
+      <Space size={8} />
       <ToolbarWin title="Shops" />
       <Space size={10} />
 

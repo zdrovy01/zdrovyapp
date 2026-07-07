@@ -14,7 +14,7 @@ export default function LogPage() {
 
   return (
     <div>
-      <Space size={40} />
+      <Space size={8} />
       <ToolbarWin title="Log History" />
       <Space size={10} />
       <DateStrip selected={selectedDate} onSelect={setSelectedDate} />

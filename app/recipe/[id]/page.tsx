@@ -171,7 +171,7 @@ export default function RecipeDetailPage() {
   if (!recipe) {
     return (
       <>
-        <Space size={40} />
+        <Space size={8} />
         <ToolbarWin title="Recipe" />
         <div style={{ padding: 20, color: "rgba(235,235,245,0.6)" }}>Recipe not found.</div>
       </>
@@ -183,7 +183,7 @@ export default function RecipeDetailPage() {
 
   return (
     <>
-      <Space size={40} />
+      <Space size={8} />
       <ToolbarWin title={`@${creator}`} />
       <Space size={10} />
 

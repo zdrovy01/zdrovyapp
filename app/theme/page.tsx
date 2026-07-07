@@ -28,7 +28,7 @@ export default function ThemePage() {
 
   return (
     <>
-      <Space size={40} />
+      <Space size={8} />
       <ToolbarWin title="Theme" />
       <Space size={10} />
 

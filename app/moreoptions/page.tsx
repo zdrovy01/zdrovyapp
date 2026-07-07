@@ -46,7 +46,7 @@ export default function MoreOptionsPage() {
 
   return (
     <>
-      <Space size={40} />
+      <Space size={8} />
       <ToolbarWin title="More options" />
       <Space size={10} />
 

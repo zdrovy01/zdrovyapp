@@ -84,7 +84,7 @@ export default function RecipePage() {
 
   return (
     <>
-      <Space size={40} />
+      <Space size={8} />
       <Toolbar
         title="Recipes"
         href1="/createrecipe"

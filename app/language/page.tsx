@@ -21,7 +21,7 @@ export default function LanguagePage() {
 
   return (
     <>
-      <Space size={40} />
+      <Space size={8} />
       <ToolbarWin title="Speech Language" />
       <Space size={10} />
 

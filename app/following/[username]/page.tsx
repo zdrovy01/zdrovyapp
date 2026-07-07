@@ -47,7 +47,7 @@ export default function FollowingPage() {
 
   return (
     <>
-      <Space size={40} />
+      <Space size={8} />
       <ToolbarWin title="Following" />
       <Space size={10} />
       {loading ? (

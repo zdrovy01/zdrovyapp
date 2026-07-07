@@ -47,7 +47,7 @@ export default function FollowersPage() {
 
   return (
     <>
-      <Space size={40} />
+      <Space size={8} />
       <ToolbarWin title="Followers" />
       <Space size={10} />
       {loading ? (

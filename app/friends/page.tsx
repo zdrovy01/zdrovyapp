@@ -51,7 +51,7 @@ export default function FriendsPage() {
 
   return (
     <>
-      <Space size={40} />
+      <Space size={8} />
       <ToolbarWin title="Friends" />
       <Space size={10} />
 

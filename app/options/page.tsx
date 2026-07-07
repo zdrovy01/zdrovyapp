@@ -10,7 +10,7 @@ export default function OptionsPage() {
 
   return (
     <>
-      <Space size={40} />
+      <Space size={8} />
       <ToolbarWin title="More" />
       <Space size={10} />
 

@@ -58,7 +58,7 @@ export default function MorePage() {
 
   return (
     <div>
-      <Space size={40} />
+      <Space size={8} />
       <Toolbar
         title="Profile"
         icon1={notifIcon}

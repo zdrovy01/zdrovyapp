@@ -123,7 +123,7 @@ export default function AccountSettingsPage() {
 
   return (
     <>
-      <Space size={40} />
+      <Space size={8} />
       <ToolbarWin title="Account settings" />
       <Space size={10} />
 

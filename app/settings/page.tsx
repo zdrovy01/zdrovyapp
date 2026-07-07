@@ -35,7 +35,7 @@ export default function SettingsPage() {
 
   return (
     <>
-      <Space size={40} />
+      <Space size={8} />
       <ToolbarWin title="Settings" />
       <Space size={10} />
 

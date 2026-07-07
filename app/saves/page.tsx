@@ -75,7 +75,7 @@ export default function SavesPage() {
 
   return (
     <>
-      <Space size={40} />
+      <Space size={8} />
       <ToolbarWin title="Saved" />
       <Space size={10} />
 

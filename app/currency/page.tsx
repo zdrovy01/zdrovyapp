@@ -11,7 +11,6 @@ const FONT = "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif";
 const CURRENCIES = [
   { label: "US Dollar ($)", code: "USD" },
   { label: "Euro (€)", code: "EUR" },
-  { label: "Hryvnia (₴)", code: "UAH" },
   { label: "Zloty (zł)", code: "PLN" },
 ];
 

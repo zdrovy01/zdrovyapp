@@ -7,15 +7,17 @@ import Space from "@/components/space";
 import { getSupabaseClient } from "@/config/supabase";
 import { compressImage } from "@/services/image-compress";
 import { estimateIngredientPrices, generateRecipeFromText } from "@/services/gemini-food";
-import { COLORS } from "@/config/theme";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
 
 const FONT = "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif";
 
+// Monochrome selected-segment fill (iOS-style)
+const SEG_ACTIVE = "rgba(120,120,128,0.5)";
+
 const labelStyle: React.CSSProperties = {
   color: "rgba(235,235,245,0.5)",
   fontSize: 12,
-  marginBottom: 8,
+  marginBottom: 6,
   display: "block",
 };
 
@@ -26,25 +28,25 @@ const fieldStyle: React.CSSProperties = {
   outline: "none",
   borderRadius: 10,
   color: "#F5F5F5",
-  fontSize: 16,
-  padding: "12px 14px",
+  fontSize: 15,
+  padding: "11px 13px",
   boxSizing: "border-box",
   fontFamily: FONT,
 };
 
 const cardStyle: React.CSSProperties = {
   background: "#0A0A0A",
-  borderRadius: 20,
+  borderRadius: 14,
   boxSizing: "border-box",
 };
 
 const primaryBtn: React.CSSProperties = {
   width: "100%",
-  height: 54,
-  borderRadius: 14,
+  height: 48,
+  borderRadius: 12,
   border: "none",
-  background: COLORS.accent,
-  color: COLORS.onAccent,
+  background: "#F5F5F5",
+  color: "#000",
   fontSize: 16,
   fontWeight: 600,
   fontFamily: FONT,
@@ -53,12 +55,12 @@ const primaryBtn: React.CSSProperties = {
 
 const addBtn: React.CSSProperties = {
   width: "100%",
-  height: 50,
-  borderRadius: 14,
-  border: "1.5px dashed rgba(235,235,245,0.25)",
+  height: 44,
+  borderRadius: 12,
+  border: "1px dashed rgba(235,235,245,0.22)",
   background: "transparent",
-  color: COLORS.accent,
-  fontSize: 15,
+  color: "rgba(235,235,245,0.7)",
+  fontSize: 14,
   fontWeight: 600,
   fontFamily: FONT,
   cursor: "pointer",
@@ -248,7 +250,7 @@ export default function CreateRecipePage() {
       <ToolbarWin title="New recipe" />
       <Space size={10} />
 
-      <div style={{ padding: "0 20px", display: "flex", flexDirection: "column", gap: 24 }}>
+      <div style={{ padding: "0 20px", display: "flex", flexDirection: "column", gap: 16 }}>
         {/* Photo */}
         <div>
           <label style={labelStyle}>Photo *</label>
@@ -256,9 +258,9 @@ export default function CreateRecipePage() {
           <div
             onClick={() => fileInputRef.current?.click()}
             style={{
-              width: "100%", aspectRatio: "1 / 1", borderRadius: 20,
+              width: "100%", aspectRatio: "16 / 10", borderRadius: 14,
               background: "rgba(118,118,128,0.24)",
-              border: photo ? "none" : "1.5px dashed rgba(235,235,245,0.3)",
+              border: photo ? "none" : "1px dashed rgba(235,235,245,0.25)",
               display: "flex", alignItems: "center", justifyContent: "center",
               cursor: "pointer", overflow: "hidden", boxSizing: "border-box",
             }}
@@ -267,7 +269,7 @@ export default function CreateRecipePage() {
               // eslint-disable-next-line @next/next/no-img-element
               <img src={photo} alt="Recipe" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
             ) : (
-              <span style={{ color: "rgba(235,235,245,0.5)", fontSize: 15 }}>Tap to add a photo</span>
+              <span style={{ color: "rgba(235,235,245,0.5)", fontSize: 14 }}>Tap to add a photo</span>
             )}
           </div>
         </div>
@@ -287,10 +289,10 @@ export default function CreateRecipePage() {
                 key={m}
                 onClick={() => { setMode(m); setError(""); }}
                 style={{
-                  flex: 1, height: 40, borderRadius: 9, border: "none", cursor: "pointer",
-                  background: active ? COLORS.accent : "transparent",
-                  color: active ? COLORS.onAccent : "rgba(235,235,245,0.6)",
-                  fontSize: 15, fontWeight: 600, fontFamily: FONT,
+                  flex: 1, height: 36, borderRadius: 9, border: "none", cursor: "pointer",
+                  background: active ? SEG_ACTIVE : "transparent",
+                  color: active ? "#F5F5F5" : "rgba(235,235,245,0.6)",
+                  fontSize: 14, fontWeight: 600, fontFamily: FONT,
                   textTransform: "capitalize",
                 }}
               >{m}</button>
@@ -320,7 +322,7 @@ export default function CreateRecipePage() {
           {ingredients.length > 0 && (
             <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 10 }}>
               {ingredients.map((ing, i) => (
-                <div key={i} style={{ ...cardStyle, padding: 14 }}>
+                <div key={i} style={{ ...cardStyle, padding: 12 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                     <div style={{
                       width: 30, height: 30, flexShrink: 0, borderRadius: 9,
@@ -364,9 +366,9 @@ export default function CreateRecipePage() {
                             key={u}
                             onClick={() => updateIngredient(i, { unit: u })}
                             style={{
-                              width: 44, height: 36, borderRadius: 8, border: "none", cursor: "pointer",
-                              background: active ? COLORS.accent : "transparent",
-                              color: active ? COLORS.onAccent : "rgba(235,235,245,0.6)",
+                              width: 44, height: 34, borderRadius: 8, border: "none", cursor: "pointer",
+                              background: active ? SEG_ACTIVE : "transparent",
+                              color: active ? "#F5F5F5" : "rgba(235,235,245,0.6)",
                               fontSize: 14, fontWeight: 600,
                             }}
                           >{u}</button>
@@ -387,9 +389,9 @@ export default function CreateRecipePage() {
           {steps.length > 0 && (
             <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 10 }}>
               {steps.map((st, i) => (
-                <div key={i} style={{ ...cardStyle, padding: 14 }}>
+                <div key={i} style={{ ...cardStyle, padding: 12 }}>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
-                    <span style={{ color: COLORS.accent, fontWeight: 700, fontSize: 15 }}>Step {i + 1}</span>
+                    <span style={{ color: "#F5F5F5", fontWeight: 700, fontSize: 14 }}>Step {i + 1}</span>
                     <button
                       onClick={() => removeStep(i)}
                       aria-label="Remove"

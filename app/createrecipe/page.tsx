@@ -63,10 +63,10 @@ const primaryBtn: React.CSSProperties = {
 
 const addBtn: React.CSSProperties = {
   width: "100%",
-  height: 44,
-  borderRadius: 12,
-  border: "1px dashed rgba(235,235,245,0.22)",
-  background: "transparent",
+  height: 46,
+  borderRadius: 14,
+  border: "none",
+  background: COLORS.surface,
   color: "rgba(235,235,245,0.7)",
   fontSize: 14,
   fontWeight: 600,
@@ -347,12 +347,12 @@ export default function CreateRecipePage() {
                       onClick={() => removeIngredient(i)}
                       aria-label="Remove"
                       style={{
-                        width: 30, height: 30, flexShrink: 0, borderRadius: 9, border: "none",
+                        width: 28, height: 28, flexShrink: 0, borderRadius: "50%", border: "none",
                         background: "rgba(255,255,255,0.08)", cursor: "pointer",
                         display: "flex", alignItems: "center", justifyContent: "center",
                       }}
                     >
-                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                      <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
                         <path d="M3 3l8 8M11 3l-8 8" stroke="rgba(235,235,245,0.6)" strokeWidth="1.8" strokeLinecap="round" />
                       </svg>
                     </button>
@@ -403,10 +403,15 @@ export default function CreateRecipePage() {
                       onClick={() => removeStep(i)}
                       aria-label="Remove"
                       style={{
-                        width: 24, height: 24, borderRadius: 12, border: "none",
-                        background: "rgba(255,255,255,0.08)", color: "rgba(235,235,245,0.6)", fontSize: 16, lineHeight: 1, cursor: "pointer",
+                        width: 28, height: 28, flexShrink: 0, borderRadius: "50%", border: "none",
+                        background: "rgba(255,255,255,0.08)", cursor: "pointer",
+                        display: "flex", alignItems: "center", justifyContent: "center",
                       }}
-                    >×</button>
+                    >
+                      <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
+                        <path d="M3 3l8 8M11 3l-8 8" stroke="rgba(235,235,245,0.6)" strokeWidth="1.8" strokeLinecap="round" />
+                      </svg>
+                    </button>
                   </div>
                   <textarea
                     value={st.text}

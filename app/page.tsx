@@ -7,7 +7,6 @@ import Title from "@/components/title";
 import Option from "@/components/option";
 import DateStrip from "@/components/datestrip";
 import DayLogs from "@/components/daylogs";
-import Logo3D from "@/components/logo3d";
 import { useState } from "react";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
 
@@ -39,39 +38,6 @@ export default function DashboardPage() {
         </svg>
 
         } />
-
-      <Space size={10} />
-      <div
-        data-layer="Textinput"
-        className="Textinput"
-        style={{
-          width: "100%",
-          paddingLeft: 20,
-          paddingRight: 20,
-          boxSizing: "border-box",
-          justifyContent: "center",
-          alignItems: "center",
-          gap: 10,
-          display: "flex",
-        }}
-      >
-        <div
-          data-layer="container"
-          className="Container"
-          style={{
-            flex: "1 1 0",
-            height: 200,
-            background: "#0A0A0A",
-            borderRadius: 25,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            overflow: "hidden",
-          }}
-        >
-          <Logo3D width={220} />
-        </div>
-      </div>
 
       <Space size={24} />
     </div>

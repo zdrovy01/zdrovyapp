@@ -136,19 +136,16 @@ export default function AddManualPage() {
           <input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Chicken salad" style={fieldStyle} />
         </div>
 
-        {/* Calories */}
+        {/* Nutrition */}
         <div>
-          <label style={labelStyle}>Calories</label>
-          <input value={kcal} onChange={(e) => setKcal(e.target.value)} inputMode="numeric" placeholder="0" style={fieldStyle} />
-        </div>
-
-        {/* Macros */}
-        <div>
-          <label style={labelStyle}>Macros (g)</label>
+          <label style={labelStyle}>Nutrition (optional)</label>
+          <div style={{ marginBottom: 10 }}>
+            <input value={kcal} onChange={(e) => setKcal(e.target.value)} inputMode="numeric" placeholder="Calories" style={fieldStyle} />
+          </div>
           <div style={{ display: "flex", gap: 10 }}>
-            <input value={protein} onChange={(e) => setProtein(e.target.value)} inputMode="numeric" placeholder="Protein" style={fieldStyle} />
-            <input value={carbs} onChange={(e) => setCarbs(e.target.value)} inputMode="numeric" placeholder="Carbs" style={fieldStyle} />
-            <input value={fat} onChange={(e) => setFat(e.target.value)} inputMode="numeric" placeholder="Fat" style={fieldStyle} />
+            <input value={protein} onChange={(e) => setProtein(e.target.value)} inputMode="numeric" placeholder="Protein (g)" style={fieldStyle} />
+            <input value={carbs} onChange={(e) => setCarbs(e.target.value)} inputMode="numeric" placeholder="Carbs (g)" style={fieldStyle} />
+            <input value={fat} onChange={(e) => setFat(e.target.value)} inputMode="numeric" placeholder="Fat (g)" style={fieldStyle} />
           </div>
         </div>
 

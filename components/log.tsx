@@ -88,7 +88,7 @@ export default function Log({
       }}
     >
       {/* Delete button */}
-      {onDelete && (
+      {onDelete && offset < 0 && (
         <button
           onClick={onDelete}
           style={{

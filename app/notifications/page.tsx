@@ -60,25 +60,27 @@ function SwipeRow({
 
   return (
     <div style={{ position: "relative", width: "100%", overflow: "hidden" }}>
-      <button
-        onClick={onDelete}
-        style={{
-          position: "absolute",
-          top: 0,
-          right: 0,
-          height: "100%",
-          width: DELETE_WIDTH,
-          background: "#FF3B30",
-          border: "none",
-          color: "#fff",
-          fontSize: 14,
-          fontWeight: 600,
-          fontFamily: FONT,
-          cursor: "pointer",
-        }}
-      >
-        Delete
-      </button>
+      {offset < 0 && (
+        <button
+          onClick={onDelete}
+          style={{
+            position: "absolute",
+            top: 0,
+            right: 0,
+            height: "100%",
+            width: DELETE_WIDTH,
+            background: "#FF3B30",
+            border: "none",
+            color: "#fff",
+            fontSize: 14,
+            fontWeight: 600,
+            fontFamily: FONT,
+            cursor: "pointer",
+          }}
+        >
+          Delete
+        </button>
+      )}
       <div
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}

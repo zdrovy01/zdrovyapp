@@ -18,8 +18,8 @@ function currencySymbol(): string {
 
 interface Spend {
   id: string;
-  name: string;
-  price: number;
+  title: string;
+  amount: number;
   created_at: string;
 }
 
@@ -48,10 +48,9 @@ export default function SpendsPage() {
       monthStart.setMonth(monthStart.getMonth() - 1);
 
       const { data: rows } = await supabase
-        .from("food_logs")
-        .select("id, name, price, created_at")
+        .from("spends")
+        .select("id, title, amount, created_at")
         .eq("user_id", user.id)
-        .gt("price", 0)
         .gte("created_at", monthStart.toISOString())
         .order("created_at", { ascending: false });
 
@@ -64,7 +63,7 @@ export default function SpendsPage() {
       let today = 0, week = 0, month = 0;
       for (const r of rows) {
         const t = new Date(r.created_at).getTime();
-        const p = r.price || 0;
+        const p = r.amount || 0;
         month += p;
         if (t >= weekStart) week += p;
         if (t >= dayStart && t <= now) today += p;
@@ -82,7 +81,15 @@ export default function SpendsPage() {
   return (
     <>
       <Space size={8} />
-      <ToolbarWin title="Spends" />
+      <ToolbarWin
+        title="Spends"
+        href1="/addspend"
+        icon1={
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M10 3.5v13M3.5 10h13" stroke="#F5F5F5" strokeWidth="2" strokeLinecap="round" />
+          </svg>
+        }
+      />
       <Space size={10} />
 
       <div style={{ padding: "0 20px", display: "flex", flexDirection: "column", gap: 12 }}>
@@ -135,14 +142,14 @@ export default function SpendsPage() {
               >
                 <div style={{ minWidth: 0, marginRight: 12 }}>
                   <div style={{ color: "#F5F5F5", fontSize: 15, fontWeight: 500, fontFamily: FONT, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                    {it.name}
+                    {it.title}
                   </div>
                   <div style={{ color: "rgba(235,235,245,0.4)", fontSize: 12, fontFamily: FONT }}>
                     {fmtDate(it.created_at)}
                   </div>
                 </div>
                 <div style={{ color: "#F5F5F5", fontSize: 15, fontWeight: 600, fontFamily: FONT, flexShrink: 0 }}>
-                  {fmt(it.price)}
+                  {fmt(it.amount)}
                 </div>
               </div>
             ))}

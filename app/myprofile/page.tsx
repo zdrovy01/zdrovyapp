@@ -115,13 +115,13 @@ export default function MorePage() {
         {/* Divider */}
         <div style={{ height: 0.5, background: "rgba(255,255,255,0.08)" }} />
 
-        {/* Recipes grid */}
+        {/* Recipes grid — Instagram-style, full-bleed 3 columns */}
         {recipes.length === 0 ? (
           <div style={{ color: "rgba(235,235,245,0.35)", fontSize: 14, fontFamily: FONT, textAlign: "center", paddingTop: 12 }}>
             No recipes yet
           </div>
         ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 3 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 2, margin: "0 -20px" }}>
             {recipes.map((r) => (
               <div
                 key={r.id}
@@ -129,7 +129,6 @@ export default function MorePage() {
                 style={{
                   aspectRatio: "1 / 1",
                   background: COLORS.surface,
-                  borderRadius: 8,
                   overflow: "hidden",
                   cursor: "pointer",
                   display: "flex",
@@ -139,7 +138,7 @@ export default function MorePage() {
               >
                 {r.image_url ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={r.image_url} alt={r.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  <img src={r.image_url} alt={r.name} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
                 ) : (
                   <span style={{ color: "rgba(235,235,245,0.4)", fontSize: 12, fontFamily: FONT, padding: 6, textAlign: "center" }}>
                     {r.name}

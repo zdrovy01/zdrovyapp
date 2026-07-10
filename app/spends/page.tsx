@@ -73,6 +73,85 @@ function useCountUp(target: number, duration = 800): number {
   return val;
 }
 
+function SpendRow({
+  it, showBorder, sym, fmtDate, onDelete,
+}: {
+  it: Spend;
+  showBorder: boolean;
+  sym: string;
+  fmtDate: (iso: string) => string;
+  onDelete: (id: string) => void;
+}) {
+  const REVEAL = 76; // px of delete area shown when open
+  const [offset, setOffset] = useState(0);
+  const [dragging, setDragging] = useState(false);
+  const startX = useRef(0);
+  const startOffset = useRef(0);
+
+  const onPointerDown = (e: React.PointerEvent) => {
+    startX.current = e.clientX;
+    startOffset.current = offset;
+    setDragging(true);
+    (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+  };
+  const onPointerMove = (e: React.PointerEvent) => {
+    if (!dragging) return;
+    const dx = e.clientX - startX.current;
+    const next = Math.min(0, Math.max(-REVEAL, startOffset.current + dx));
+    setOffset(next);
+  };
+  const onPointerUp = () => {
+    setDragging(false);
+    setOffset(offset < -REVEAL / 2 ? -REVEAL : 0);
+  };
+
+  return (
+    <div style={{ position: "relative", overflow: "hidden", borderTop: showBorder ? "0.5px solid rgba(255,255,255,0.06)" : "none" }}>
+      {/* Delete action behind — only present while the row is swiped open */}
+      {offset < 0 && (
+        <button
+          onClick={() => onDelete(it.id)}
+          aria-label="Delete"
+          style={{
+            position: "absolute", top: 0, right: 0, bottom: 0, width: REVEAL,
+            border: "none", background: "#FF453A", color: "#fff",
+            fontSize: 13, fontWeight: 600, fontFamily: FONT, cursor: "pointer",
+          }}
+        >
+          Delete
+        </button>
+      )}
+
+      {/* Foreground row */}
+      <div
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
+        style={{
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          padding: "13px 16px", background: "#0A0A0A",
+          transform: `translateX(${offset}px)`,
+          transition: dragging ? "none" : "transform 0.22s cubic-bezier(0.2,0.8,0.2,1)",
+          touchAction: "pan-y",
+        }}
+      >
+        <div style={{ minWidth: 0, marginRight: 12 }}>
+          <div style={{ color: "#F5F5F5", fontSize: 15, fontWeight: 500, fontFamily: FONT, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+            {it.title}
+          </div>
+          <div style={{ color: "rgba(235,235,245,0.4)", fontSize: 12, fontFamily: FONT }}>
+            {fmtDate(it.created_at)}
+          </div>
+        </div>
+        <div style={{ color: "#F5F5F5", fontSize: 15, fontWeight: 600, fontFamily: FONT, flexShrink: 0 }}>
+          {sym}{it.amount.toFixed(2)}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function SpendsPage() {
   useProtectedRoute();
   const { user } = useAuth();
@@ -171,41 +250,14 @@ export default function SpendsPage() {
         ) : (
           <div style={{ background: "#0A0A0A", borderRadius: 16, overflow: "hidden" }}>
             {data.items.map((it, i) => (
-              <div
+              <SpendRow
                 key={it.id}
-                style={{
-                  display: "flex", alignItems: "center", justifyContent: "space-between",
-                  padding: "13px 16px",
-                  borderTop: i === 0 ? "none" : "0.5px solid rgba(255,255,255,0.06)",
-                }}
-              >
-                <div style={{ minWidth: 0, marginRight: 12 }}>
-                  <div style={{ color: "#F5F5F5", fontSize: 15, fontWeight: 500, fontFamily: FONT, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                    {it.title}
-                  </div>
-                  <div style={{ color: "rgba(235,235,245,0.4)", fontSize: 12, fontFamily: FONT }}>
-                    {fmtDate(it.created_at)}
-                  </div>
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 12, flexShrink: 0 }}>
-                  <div style={{ color: "#F5F5F5", fontSize: 15, fontWeight: 600, fontFamily: FONT }}>
-                    {fmt(it.amount)}
-                  </div>
-                  <button
-                    onClick={() => handleDelete(it.id)}
-                    aria-label="Delete"
-                    style={{
-                      width: 28, height: 28, flexShrink: 0, borderRadius: "50%", border: "none",
-                      background: "rgba(255,255,255,0.08)", cursor: "pointer",
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                    }}
-                  >
-                    <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
-                      <path d="M3 3l8 8M11 3l-8 8" stroke="rgba(235,235,245,0.6)" strokeWidth="1.8" strokeLinecap="round" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
+                it={it}
+                showBorder={i !== 0}
+                sym={sym}
+                fmtDate={fmtDate}
+                onDelete={handleDelete}
+              />
             ))}
           </div>
         )}

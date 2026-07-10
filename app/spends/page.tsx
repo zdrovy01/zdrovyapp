@@ -7,15 +7,9 @@ import { getSupabaseClient } from "@/config/supabase";
 import { useAuth } from "@/config/auth-context";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
 import { useCached } from "@/hooks/use-cached";
+import { useCurrencySymbol } from "@/config/currency";
 
 const FONT = "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif";
-
-const CURRENCY_SYMBOL: Record<string, string> = { USD: "$", EUR: "€", PLN: "zł" };
-
-function currencySymbol(): string {
-  if (typeof window === "undefined") return "$";
-  return CURRENCY_SYMBOL[localStorage.getItem("zdrovy-currency") || "USD"] || "$";
-}
 
 interface Spend {
   id: string;
@@ -155,7 +149,7 @@ function SpendRow({
 export default function SpendsPage() {
   useProtectedRoute();
   const { user } = useAuth();
-  const sym = currencySymbol();
+  const sym = useCurrencySymbol();
 
   const { data, loading, setData } = useCached<SpendData>(
     `spends:${user?.id || "none"}`,

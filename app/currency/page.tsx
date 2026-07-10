@@ -4,6 +4,7 @@ import Space from "@/components/space";
 import ToolbarWin from "@/components/toolbarwin";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
 import { COLORS } from "@/config/theme";
+import { getCurrencyCode, setCurrency as saveCurrency } from "@/config/currency";
 import { useState } from "react";
 
 const FONT = "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif";
@@ -16,15 +17,11 @@ const CURRENCIES = [
 
 export default function CurrencyPage() {
   useProtectedRoute();
-  const [currency, setCurrency] = useState<string>(() =>
-    typeof window !== "undefined"
-      ? localStorage.getItem("zdrovy-currency") || "USD"
-      : "USD"
-  );
+  const [currency, setCurrency] = useState<string>(getCurrencyCode);
 
   const select = (code: string) => {
     setCurrency(code);
-    if (typeof window !== "undefined") localStorage.setItem("zdrovy-currency", code);
+    saveCurrency(code);
   };
 
   return (

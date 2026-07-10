@@ -8,8 +8,15 @@ import { getSupabaseClient } from "@/config/supabase";
 import { useCached } from "@/hooks/use-cached";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
 import { useRouter } from "next/navigation";
+import { COLORS } from "@/config/theme";
 
 const FONT = "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif";
+
+interface RecipeThumb {
+  id: string;
+  name: string;
+  image_url: string | null;
+}
 
 const notifIcon = (
   <svg width="22" height="24" viewBox="0 0 22 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -45,6 +52,21 @@ export default function MorePage() {
       };
     },
     { recipes: 0, followers: 0, following: 0 }
+  );
+
+  const { data: recipes } = useCached<RecipeThumb[]>(
+    `me-recipes:${user?.id || "none"}`,
+    async () => {
+      if (!user) return [];
+      const supabase = getSupabaseClient();
+      const { data } = await supabase
+        .from("recipes")
+        .select("id, name, image_url")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
+      return (data as RecipeThumb[]) || [];
+    },
+    []
   );
 
   const username = user?.username || "user";
@@ -89,6 +111,44 @@ export default function MorePage() {
             </div>
           </div>
         </div>
+
+        {/* Divider */}
+        <div style={{ height: 0.5, background: "rgba(255,255,255,0.08)" }} />
+
+        {/* Recipes grid */}
+        {recipes.length === 0 ? (
+          <div style={{ color: "rgba(235,235,245,0.35)", fontSize: 14, fontFamily: FONT, textAlign: "center", paddingTop: 12 }}>
+            No recipes yet
+          </div>
+        ) : (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 3 }}>
+            {recipes.map((r) => (
+              <div
+                key={r.id}
+                onClick={() => router.push(`/recipe/${r.id}`)}
+                style={{
+                  aspectRatio: "1 / 1",
+                  background: COLORS.surface,
+                  borderRadius: 8,
+                  overflow: "hidden",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                {r.image_url ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={r.image_url} alt={r.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                ) : (
+                  <span style={{ color: "rgba(235,235,245,0.4)", fontSize: 12, fontFamily: FONT, padding: 6, textAlign: "center" }}>
+                    {r.name}
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
     </div>

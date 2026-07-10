@@ -1,4 +1,7 @@
+"use client";
+
 import React from "react";
+import { useCurrencySymbol } from "@/config/currency";
 
 interface FoodCardProps extends React.HTMLAttributes<HTMLDivElement> {
   image?: string | null;
@@ -26,6 +29,7 @@ export default function FoodCard({
   style,
   ...rest
 }: FoodCardProps) {
+  const sym = useCurrencySymbol();
   const showPrice = price !== undefined && price !== null;
 
   return (
@@ -104,7 +108,7 @@ export default function FoodCard({
         >
           {showPrice && (
             <div style={{ color: "#fff", fontSize: 15, fontWeight: 600 }}>
-              ${(price as number).toFixed(2)}
+              {sym}{(price as number).toFixed(2)}
             </div>
           )}
           {time && (

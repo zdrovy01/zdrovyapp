@@ -22,6 +22,12 @@ interface ProfileData {
 
 type FriendStatus = "none" | "pending" | "accepted";
 
+interface RecipeThumb {
+  id: string;
+  name: string;
+  image_url: string | null;
+}
+
 // Session cache so re-opening a profile shows instantly (revalidates in background).
 const profileCache = new Map<string, ProfileData>();
 
@@ -56,6 +62,7 @@ export default function ProfilePage() {
   const [isFollowing, setIsFollowing] = useState(false);
   const [friendStatus, setFriendStatus] = useState<FriendStatus>("none");
   const [targetId, setTargetId] = useState<string | null>(null);
+  const [recipes, setRecipes] = useState<RecipeThumb[]>([]);
   const isOwnProfile = me?.username === username;
 
   useEffect(() => {
@@ -89,11 +96,14 @@ export default function ProfilePage() {
       const uid = profileData.user_id as string;
       setTargetId(uid);
 
-      const [recipesRes, followersRes, followingRes] = await Promise.all([
+      const [recipesRes, followersRes, followingRes, recipeListRes] = await Promise.all([
         supabase.from("recipes").select("id", { count: "exact", head: true }).eq("user_id", uid),
         supabase.from("follows").select("id", { count: "exact", head: true }).eq("following_id", uid),
         supabase.from("follows").select("id", { count: "exact", head: true }).eq("follower_id", uid),
+        supabase.from("recipes").select("id, name, image_url").eq("user_id", uid).order("created_at", { ascending: false }),
       ]);
+
+      setRecipes((recipeListRes.data as RecipeThumb[]) || []);
 
       const built: ProfileData = {
         user_id: uid,
@@ -262,10 +272,40 @@ export default function ProfilePage() {
         {/* Divider */}
         <div style={{ height: 0.5, background: "rgba(255,255,255,0.08)", marginTop: 4 }} />
 
-        {/* Placeholder grid for recipes */}
-        <div style={{ color: "rgba(235,235,245,0.35)", fontSize: 14, fontFamily: FONT, textAlign: "center", paddingTop: 20 }}>
-          {profile.recipes_count === 0 ? "No recipes yet" : `${profile.recipes_count} recipe${profile.recipes_count !== 1 ? "s" : ""}`}
-        </div>
+        {/* Recipes grid */}
+        {recipes.length === 0 ? (
+          <div style={{ color: "rgba(235,235,245,0.35)", fontSize: 14, fontFamily: FONT, textAlign: "center", paddingTop: 20 }}>
+            No recipes yet
+          </div>
+        ) : (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 3 }}>
+            {recipes.map((r) => (
+              <div
+                key={r.id}
+                onClick={() => router.push(`/recipe/${r.id}`)}
+                style={{
+                  aspectRatio: "1 / 1",
+                  background: COLORS.surface,
+                  borderRadius: 8,
+                  overflow: "hidden",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                {r.image_url ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={r.image_url} alt={r.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                ) : (
+                  <span style={{ color: "rgba(235,235,245,0.4)", fontSize: 12, fontFamily: FONT, padding: 6, textAlign: "center" }}>
+                    {r.name}
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </>
   );

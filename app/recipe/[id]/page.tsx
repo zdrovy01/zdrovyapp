@@ -6,6 +6,7 @@ import ToolbarWin from "@/components/toolbarwin";
 import Space from "@/components/space";
 import { getSupabaseClient } from "@/config/supabase";
 import { COLORS } from "@/config/theme";
+import { useCurrencySymbol } from "@/config/currency";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
 
 interface Recipe {
@@ -82,6 +83,7 @@ function parseSteps(raw: string | null): ParsedStep[] {
 
 export default function RecipeDetailPage() {
   useProtectedRoute();
+  const sym = useCurrencySymbol();
   const params = useParams();
   const router = useRouter();
   const id = params?.id as string;
@@ -204,7 +206,7 @@ export default function RecipeDetailPage() {
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
           <h1 style={{ margin: 0, color: "#fff", fontSize: 24, fontWeight: 800 }}>{recipe.name}</h1>
           <div style={{ ...cardStyle, padding: "8px 14px", borderRadius: 14, color: "#fff", fontWeight: 700, fontSize: 16, flexShrink: 0 }}>
-            ${recipe.price.toFixed(2)}
+            {sym}{recipe.price.toFixed(2)}
           </div>
         </div>
 
@@ -236,7 +238,7 @@ export default function RecipeDetailPage() {
                   )}
                   {ing.price != null && (
                     <div style={{ color: COLORS.accent, fontWeight: 700, fontSize: 14, marginTop: 8 }}>
-                      ${ing.price.toFixed(2)}
+                      {sym}{ing.price.toFixed(2)}
                     </div>
                   )}
                 </div>

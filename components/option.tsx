@@ -64,15 +64,15 @@ export default function Option({
     if (onClick) {
       return (
         <button onClick={onClick} style={{ ...buttonStyle, border: "none", cursor: "pointer" }}>
-          <div style={{ color: "white", display: "flex" }}>{icon}</div>
           <div style={textStyle}>{text}</div>
+          <div style={{ color: "white", display: "flex" }}>{icon}</div>
         </button>
       );
     }
     return (
       <Link href={href} style={buttonStyle}>
-        <div style={{ color: "white", display: "flex" }}>{icon}</div>
         <div style={textStyle}>{text}</div>
+        <div style={{ color: "white", display: "flex" }}>{icon}</div>
       </Link>
     );
   };

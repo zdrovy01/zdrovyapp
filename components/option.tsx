@@ -5,9 +5,9 @@ import React from "react";
 
 interface OptionProps {
   buttons?: 1 | 2 | 3;
-  text1?: string;
-  text2?: string;
-  text3?: string;
+  text1?: React.ReactNode;
+  text2?: React.ReactNode;
+  text3?: React.ReactNode;
   icon1?: React.ReactNode;
   icon2?: React.ReactNode;
   icon3?: React.ReactNode;
@@ -56,7 +56,7 @@ export default function Option({
   onClick3,
 }: OptionProps) {
   const renderButton = (
-    text: string,
+    text: React.ReactNode,
     icon: React.ReactNode,
     href: string,
     onClick?: () => void

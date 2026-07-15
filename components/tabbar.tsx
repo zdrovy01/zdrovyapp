@@ -32,6 +32,15 @@ const tabs = [
       </svg>
     ),
   },
+  {
+    href: "/add",
+    label: "Add",
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M11 2.5v17M2.5 11h17" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+      </svg>
+    ),
+  },
 ];
 
 export default function TabBar() {

@@ -14,6 +14,7 @@ export default function OptionsPage() {
       <ToolbarWin title="More" />
       <Space size={10} />
 
+      <Option2 text="Goal" href="/goal" />
       <Option2 text="Friends" href="/friends" />
       <Option2 text="Saved recipes" href="/saves" />
       <Option2 text="My QR code" href="/qr" />

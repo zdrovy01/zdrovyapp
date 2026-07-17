@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { getUserStatsForDate } from "@/services/supabase-logs";
 import { useCached } from "@/hooks/use-cached";
+import { useGoals } from "@/config/goals";
 
 interface TrackerProps {
   date?: Date;
@@ -64,12 +65,20 @@ export default function Tracker({ date, href = "/log" }: TrackerProps) {
     { totalKcal: 0, totalProtein: 0, totalCarbs: 0, totalFat: 0 }
   );
 
+  const goals = useGoals();
+
   const items = [
-    { label: "Calories", value: Math.round(stats.totalKcal), unit: "", color: "#FFFFFF", total: 2000 },
-    { label: "Protein", value: Math.round(stats.totalProtein), unit: "g", color: "#22C55E", total: 200 },
-    { label: "Carbs", value: Math.round(stats.totalCarbs), unit: "g", color: "#F97316", total: 250 },
-    { label: "Fat", value: Math.round(stats.totalFat), unit: "g", color: "#3B82F6", total: 180 },
+    { label: "Calories", value: Math.round(stats.totalKcal), unit: "", color: "#FFFFFF", total: goals.kcal },
+    { label: "Protein", value: Math.round(stats.totalProtein), unit: "g", color: "#22C55E", total: goals.protein },
+    { label: "Carbs", value: Math.round(stats.totalCarbs), unit: "g", color: "#F97316", total: goals.carbs },
+    { label: "Fat", value: Math.round(stats.totalFat), unit: "g", color: "#3B82F6", total: goals.fat },
   ];
+
+  // Daily completion score = average of how close each target is (each capped at 100%).
+  const score = Math.round(
+    items.reduce((sum, m) => sum + Math.min(100, (m.value / m.total) * 100), 0) / items.length
+  );
+  const animatedScore = useCountUp(score);
 
   return (
     <div
@@ -92,16 +101,61 @@ export default function Tracker({ date, href = "/log" }: TrackerProps) {
           padding: "16px 18px",
           boxSizing: "border-box",
           display: "flex",
+          flexDirection: "column",
           gap: 14,
           textDecoration: "none",
           cursor: "pointer",
         }}
       >
-        {items.map((m) => (
-          <TrackerItem key={m.label} {...m} />
-        ))}
+        {/* Daily score */}
+        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+          <ScoreRing pct={score} />
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: 12, color: "#888" }}>Day completed</div>
+            <div style={{ fontSize: 26, fontWeight: 800, color: "#FFFFFF", lineHeight: 1.15 }}>
+              {animatedScore}%
+            </div>
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div style={{ height: 0.5, background: "rgba(255,255,255,0.08)" }} />
+
+        {/* Macros */}
+        <div style={{ display: "flex", gap: 14 }}>
+          {items.map((m) => (
+            <TrackerItem key={m.label} {...m} />
+          ))}
+        </div>
       </Link>
     </div>
+  );
+}
+
+function ScoreRing({ pct }: { pct: number }) {
+  const size = 52;
+  const stroke = 5;
+  const r = (size - stroke) / 2;
+  const c = 2 * Math.PI * r;
+  const offset = c * (1 - Math.min(100, Math.max(0, pct)) / 100);
+
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ flexShrink: 0 }}>
+      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#2A2A2A" strokeWidth={stroke} />
+      <circle
+        cx={size / 2}
+        cy={size / 2}
+        r={r}
+        fill="none"
+        stroke="#FFFFFF"
+        strokeWidth={stroke}
+        strokeLinecap="round"
+        strokeDasharray={c}
+        strokeDashoffset={offset}
+        transform={`rotate(-90 ${size / 2} ${size / 2})`}
+        style={{ transition: "stroke-dashoffset 0.7s ease-out" }}
+      />
+    </svg>
   );
 }
 

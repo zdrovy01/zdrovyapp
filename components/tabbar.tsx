@@ -2,7 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 import { COLORS } from "@/config/theme";
+import CreateSheet from "@/components/createsheet";
+
+const FONT = "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif";
 
 const tabs = [
   {
@@ -45,6 +49,18 @@ const tabs = [
 
 export default function TabBar() {
   const pathname = usePathname();
+  const [sheetOpen, setSheetOpen] = useState(false);
+
+  const innerStyle: React.CSSProperties = {
+    flex: "1 1 0",
+    height: 48,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    gap: 4,
+    textDecoration: "none",
+  };
 
   return (
     <div style={{
@@ -67,37 +83,38 @@ export default function TabBar() {
         {tabs.map((tab) => {
           const active = pathname === tab.href;
           const color = active ? COLORS.text : COLORS.textSecondary;
-          return (
-            <Link
-              key={tab.href}
-              href={tab.href}
-              style={{
-                flex: "1 1 0",
-                height: 48,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "flex-start",
-                gap: 4,
-                textDecoration: "none",
-                color,
-              }}
-            >
+          const body = (
+            <>
               <div style={{ height: 26, display: "flex", alignItems: "center", justifyContent: "center" }}>
                 {tab.icon}
               </div>
-              <span style={{
-                fontSize: 10,
-                fontWeight: 510,
-                color,
-                fontFamily: "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif",
-              }}>
+              <span style={{ fontSize: 10, fontWeight: 510, color, fontFamily: FONT }}>
                 {tab.label}
               </span>
+            </>
+          );
+
+          // The Add tab opens the Create sheet instead of navigating.
+          if (tab.label === "Add") {
+            return (
+              <button
+                key="add"
+                onClick={() => setSheetOpen(true)}
+                style={{ ...innerStyle, color, background: "transparent", border: "none", cursor: "pointer", padding: 0 }}
+              >
+                {body}
+              </button>
+            );
+          }
+
+          return (
+            <Link key={tab.href} href={tab.href} style={{ ...innerStyle, color }}>
+              {body}
             </Link>
           );
         })}
       </div>
+      <CreateSheet open={sheetOpen} onClose={() => setSheetOpen(false)} />
     </div>
   );
 }

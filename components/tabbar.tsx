@@ -54,7 +54,7 @@ export default function TabBar() {
       boxSizing: "border-box",
       overflow: "hidden",
       borderTop: "0.33px solid rgba(255,255,255,0.15)",
-      background: COLORS.background,
+      background: COLORS.fill,
     }}>
       <div style={{
         position: "absolute",

@@ -108,13 +108,10 @@ export default function Tracker({ date, href = "/log" }: TrackerProps) {
         }}
       >
         {/* Daily score */}
-        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-          <ScoreRing pct={score} />
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 12, color: "#888" }}>Day completed</div>
-            <div style={{ fontSize: 26, fontWeight: 800, color: "#FFFFFF", lineHeight: 1.15 }}>
-              {animatedScore}%
-            </div>
+        <div>
+          <div style={{ fontSize: 12, color: "#888" }}>Day completed</div>
+          <div style={{ fontSize: 48, fontWeight: 800, color: scoreColor(score), lineHeight: 1.1 }}>
+            {animatedScore}%
           </div>
         </div>
 
@@ -132,31 +129,11 @@ export default function Tracker({ date, href = "/log" }: TrackerProps) {
   );
 }
 
-function ScoreRing({ pct }: { pct: number }) {
-  const size = 52;
-  const stroke = 5;
-  const r = (size - stroke) / 2;
-  const c = 2 * Math.PI * r;
-  const offset = c * (1 - Math.min(100, Math.max(0, pct)) / 100);
-
-  return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ flexShrink: 0 }}>
-      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#2A2A2A" strokeWidth={stroke} />
-      <circle
-        cx={size / 2}
-        cy={size / 2}
-        r={r}
-        fill="none"
-        stroke="#FFFFFF"
-        strokeWidth={stroke}
-        strokeLinecap="round"
-        strokeDasharray={c}
-        strokeDashoffset={offset}
-        transform={`rotate(-90 ${size / 2} ${size / 2})`}
-        style={{ transition: "stroke-dashoffset 0.7s ease-out" }}
-      />
-    </svg>
-  );
+// Maps 0→100% completion onto a hue from red (0) through yellow to green (120).
+function scoreColor(pct: number): string {
+  const clamped = Math.min(100, Math.max(0, pct));
+  const hue = (clamped / 100) * 120;
+  return `hsl(${hue}, 75%, 52%)`;
 }
 
 interface TrackerItemProps {

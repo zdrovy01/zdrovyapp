@@ -51,7 +51,6 @@ export default function AddPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Manual log form
-  const [showManual, setShowManual] = useState(false);
   const manualPhotoRef = useRef<HTMLInputElement>(null);
   const [mPhoto, setMPhoto] = useState<string | null>(null);
   const [mName, setMName] = useState("");
@@ -195,74 +194,75 @@ export default function AddPage() {
       <Option
         buttons={2}
         text1="Manual"
-        onClick1={() => setShowManual((s) => !s)}
+        onClick1={() => manualPhotoRef.current?.click()}
         text2="Photo"
         onClick2={() => fileInputRef.current?.click()}
       />
       <Space size={10} />
 
-      {showManual ? (
-        <div style={{ padding: "0 20px", display: "flex", flexDirection: "column", gap: 16 }}>
-          {/* Photo */}
-          <div>
-            <label style={labelStyle}>Photo (optional)</label>
-            <input ref={manualPhotoRef} type="file" accept="image/*" onChange={handleManualPhoto} style={{ display: "none" }} />
-            <div
-              onClick={() => manualPhotoRef.current?.click()}
-              style={{
-                width: "100%", aspectRatio: "16 / 7", borderRadius: 14,
-                background: COLORS.surface,
-                display: "flex", alignItems: "center", justifyContent: "center",
-                cursor: "pointer", overflow: "hidden", boxSizing: "border-box",
-              }}
-            >
-              {mPhoto ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={mPhoto} alt="Meal" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-              ) : (
-                cameraIcon
-              )}
-            </div>
-          </div>
+      <TextInput
+        placeholder="Describe your meal..."
+        onSend={handleFoodAnalysis}
+      />
 
-          {/* Title */}
-          <div>
-            <label style={labelStyle}>Title *</label>
-            <input value={mName} onChange={(e) => setMName(e.target.value)} placeholder="e.g. Chicken salad" style={fieldStyle} />
-          </div>
+      <Space size={16} />
 
-          {/* Nutrition */}
-          <div>
-            <label style={labelStyle}>Nutrition (optional)</label>
-            <div style={{ marginBottom: 10 }}>
-              <input value={mKcal} onChange={(e) => setMKcal(e.target.value)} inputMode="numeric" placeholder="Calories" style={fieldStyle} />
-            </div>
-            <div style={{ display: "flex", gap: 10 }}>
-              <input value={mProtein} onChange={(e) => setMProtein(e.target.value)} inputMode="numeric" placeholder="Protein (g)" style={fieldStyle} />
-              <input value={mCarbs} onChange={(e) => setMCarbs(e.target.value)} inputMode="numeric" placeholder="Carbs (g)" style={fieldStyle} />
-              <input value={mFat} onChange={(e) => setMFat(e.target.value)} inputMode="numeric" placeholder="Fat (g)" style={fieldStyle} />
-            </div>
-          </div>
-
-          <button
-            onClick={handleSaveManual}
-            disabled={savingManual}
+      {/* Manual log form — always visible */}
+      <div style={{ padding: "0 20px", display: "flex", flexDirection: "column", gap: 16 }}>
+        {/* Photo */}
+        <div>
+          <label style={labelStyle}>Photo (optional)</label>
+          <input ref={manualPhotoRef} type="file" accept="image/*" onChange={handleManualPhoto} style={{ display: "none" }} />
+          <div
+            onClick={() => manualPhotoRef.current?.click()}
             style={{
-              width: "100%", height: 48, borderRadius: 12, border: "none",
-              background: "#F5F5F5", color: "#000",
-              fontSize: 16, fontWeight: 600, fontFamily: FONT,
-              cursor: "pointer", opacity: savingManual ? 0.6 : 1,
+              width: "100%", aspectRatio: "16 / 7", borderRadius: 14,
+              background: COLORS.surface,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              cursor: "pointer", overflow: "hidden", boxSizing: "border-box",
             }}
           >
-            {savingManual ? "Saving..." : "Save log"}
-          </button>
+            {mPhoto ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={mPhoto} alt="Meal" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            ) : (
+              cameraIcon
+            )}
+          </div>
         </div>
-      ) : (
-        <TextInput
-          placeholder="Describe your meal..."
-          onSend={handleFoodAnalysis}
-        />
-      )}
+
+        {/* Title */}
+        <div>
+          <label style={labelStyle}>Title *</label>
+          <input value={mName} onChange={(e) => setMName(e.target.value)} placeholder="e.g. Chicken salad" style={fieldStyle} />
+        </div>
+
+        {/* Nutrition */}
+        <div>
+          <label style={labelStyle}>Nutrition (optional)</label>
+          <div style={{ marginBottom: 10 }}>
+            <input value={mKcal} onChange={(e) => setMKcal(e.target.value)} inputMode="numeric" placeholder="Calories" style={fieldStyle} />
+          </div>
+          <div style={{ display: "flex", gap: 10 }}>
+            <input value={mProtein} onChange={(e) => setMProtein(e.target.value)} inputMode="numeric" placeholder="Protein (g)" style={fieldStyle} />
+            <input value={mCarbs} onChange={(e) => setMCarbs(e.target.value)} inputMode="numeric" placeholder="Carbs (g)" style={fieldStyle} />
+            <input value={mFat} onChange={(e) => setMFat(e.target.value)} inputMode="numeric" placeholder="Fat (g)" style={fieldStyle} />
+          </div>
+        </div>
+
+        <button
+          onClick={handleSaveManual}
+          disabled={savingManual}
+          style={{
+            width: "100%", height: 48, borderRadius: 12, border: "none",
+            background: "#F5F5F5", color: "#000",
+            fontSize: 16, fontWeight: 600, fontFamily: FONT,
+            cursor: "pointer", opacity: savingManual ? 0.6 : 1,
+          }}
+        >
+          {savingManual ? "Saving..." : "Save log"}
+        </button>
+      </div>
 
       {error && (
         <div style={{ paddingLeft: 20, paddingRight: 20, marginTop: 12, color: "#FF453A", fontSize: 13 }}>

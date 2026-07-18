@@ -65,7 +65,7 @@ export default function Option({
       return (
         <button onClick={onClick} style={{ ...buttonStyle, border: "none", cursor: "pointer" }}>
           <div style={textStyle}>{text}</div>
-          <div style={{ color: "white", display: "flex" }}>{icon}</div>
+          <div style={{ color: "white", display: "flex", width: "100%" }}>{icon}</div>
         </button>
       );
     }

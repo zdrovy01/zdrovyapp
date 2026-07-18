@@ -37,30 +37,57 @@ export default function SpendsTotal() {
   const { user } = useAuth();
   const sym = useCurrencySymbol();
 
-  const { data: month } = useCached<number>(
+  const { data } = useCached<{ month: number; last: { title: string; amount: number } | null }>(
     `spends-month:${user?.id || "none"}`,
     async () => {
-      if (!user) return 0;
+      if (!user) return { month: 0, last: null };
       const supabase = getSupabaseClient();
       const monthStart = new Date();
       monthStart.setMonth(monthStart.getMonth() - 1);
 
-      const { data } = await supabase
+      const { data: rows } = await supabase
         .from("spends")
-        .select("amount")
+        .select("title, amount, created_at")
         .eq("user_id", user.id)
-        .gte("created_at", monthStart.toISOString());
+        .gte("created_at", monthStart.toISOString())
+        .order("created_at", { ascending: false });
 
-      return (data || []).reduce((sum, r) => sum + (r.amount || 0), 0);
+      const list = rows || [];
+      const month = list.reduce((sum, r) => sum + (r.amount || 0), 0);
+      const last = list[0] ? { title: list[0].title, amount: list[0].amount || 0 } : null;
+      return { month, last };
     },
-    0
+    { month: 0, last: null }
   );
 
-  const anim = useCountUp(month);
+  const anim = useCountUp(data.month);
 
   return (
-    <span style={{ color: "#fff", fontSize: 22, fontWeight: 700, fontFamily: FONT, lineHeight: 1 }}>
-      {sym}{anim.toFixed(2)}
+    <span style={{ display: "flex", width: "100%", alignItems: "flex-end", justifyContent: "space-between", gap: 12 }}>
+      <span style={{ color: "#fff", fontSize: 22, fontWeight: 700, fontFamily: FONT, lineHeight: 1 }}>
+        {sym}{anim.toFixed(2)}
+      </span>
+      {data.last && (
+        <span style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 2, minWidth: 0, textAlign: "right" }}>
+          <span style={{ color: "rgba(235,235,245,0.4)", fontSize: 10, fontFamily: FONT, lineHeight: 1 }}>
+            Last
+          </span>
+          <span
+            style={{
+              color: "rgba(235,235,245,0.7)",
+              fontSize: 12,
+              fontFamily: FONT,
+              lineHeight: 1.1,
+              maxWidth: "100%",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {data.last.title} · {sym}{data.last.amount.toFixed(2)}
+          </span>
+        </span>
+      )}
     </span>
   );
 }

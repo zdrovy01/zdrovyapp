@@ -74,10 +74,10 @@ export default function Tracker({ date, href = "/log" }: TrackerProps) {
     { label: "Fat", value: Math.round(stats.totalFat), unit: "g", color: "#3B82F6", total: goals.fat },
   ];
 
-  // Daily completion score = average of how close each target is (each capped at 100%).
-  const score = Math.round(
-    items.reduce((sum, m) => sum + Math.min(100, (m.value / m.total) * 100), 0) / items.length
-  );
+  // Daily completion score = how close calories are to the daily goal (capped at 100%).
+  const score = goals.kcal > 0
+    ? Math.round(Math.min(100, (stats.totalKcal / goals.kcal) * 100))
+    : 0;
   const animatedScore = useCountUp(score);
 
   return (

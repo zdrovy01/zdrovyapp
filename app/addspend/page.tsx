@@ -10,13 +10,6 @@ import { useProtectedRoute } from "@/hooks/use-protected-route";
 
 const FONT = "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif";
 
-const labelStyle: React.CSSProperties = {
-  color: "rgba(235,235,245,0.5)",
-  fontSize: 12,
-  marginBottom: 6,
-  display: "block",
-};
-
 const fieldStyle: React.CSSProperties = {
   width: "100%",
   background: "rgba(118,118,128,0.24)",
@@ -78,28 +71,20 @@ export default function AddSpendPage() {
       <Space size={10} />
 
       <div style={{ padding: "0 20px", display: "flex", flexDirection: "column", gap: 16 }}>
-        {/* Title */}
-        <div>
-          <label style={labelStyle}>Title *</label>
-          <input
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="e.g. Groceries"
-            style={fieldStyle}
-          />
-        </div>
+        <input
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Title"
+          style={fieldStyle}
+        />
 
-        {/* Amount */}
-        <div>
-          <label style={labelStyle}>Amount *</label>
-          <input
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            inputMode="decimal"
-            placeholder="0.00"
-            style={fieldStyle}
-          />
-        </div>
+        <input
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          inputMode="decimal"
+          placeholder="Amount"
+          style={fieldStyle}
+        />
 
         {error && <div style={{ color: "#FF453A", fontSize: 13, fontFamily: FONT }}>{error}</div>}
 

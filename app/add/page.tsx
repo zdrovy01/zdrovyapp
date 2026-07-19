@@ -15,13 +15,6 @@ import { COLORS } from "@/config/theme";
 
 const FONT = "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif";
 
-const labelStyle: React.CSSProperties = {
-  color: "rgba(235,235,245,0.5)",
-  fontSize: 12,
-  marginBottom: 6,
-  display: "block",
-};
-
 const fieldStyle: React.CSSProperties = {
   width: "100%",
   background: "rgba(118,118,128,0.24)",
@@ -49,6 +42,11 @@ export default function AddPage() {
   const [error, setError] = useState("");
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [proMode, setProMode] = useState(false);
+  const [info, setInfo] = useState("");
+
+  const handleBarcode = () => setInfo("Barcode scanning is coming soon.");
 
   // Manual log form
   const manualPhotoRef = useRef<HTMLInputElement>(null);
@@ -192,26 +190,53 @@ export default function AddPage() {
       />
 
       <Option
-        buttons={2}
-        text1="Manual"
-        onClick1={() => manualPhotoRef.current?.click()}
+        buttons={3}
+        text1="Barcode"
+        onClick1={handleBarcode}
         text2="Photo"
         onClick2={() => fileInputRef.current?.click()}
+        text3="Pro mode"
+        onClick3={() => { setProMode((s) => !s); setInfo(""); }}
       />
       <Space size={10} />
 
-      <TextInput
-        placeholder="Describe your meal..."
-        onSend={handleFoodAnalysis}
-      />
+      {/* Pro mode: free-text meal description (AI) */}
+      {proMode && (
+        <>
+          <TextInput
+            placeholder="Describe your meal..."
+            onSend={handleFoodAnalysis}
+          />
+          <Space size={16} />
+        </>
+      )}
 
-      <Space size={16} />
+      {/* AI analysis result (from Photo or Pro mode) */}
+      {loading && (
+        <div style={{ paddingLeft: 20, paddingRight: 20, marginBottom: 16, color: "rgba(235,235,245,0.6)", fontSize: 14 }}>
+          Analyzing...
+        </div>
+      )}
+      {foodLog && !loading && (
+        <div style={{ paddingLeft: 20, paddingRight: 20, marginBottom: 16 }}>
+          <LogInfo
+            name={foodLog.name}
+            kcal={foodLog.kcal}
+            protein={foodLog.protein}
+            carbs={foodLog.carbs}
+            fat={foodLog.fat}
+            image={photoPreview || undefined}
+            onNameChange={(n) => setFoodLog({ ...foodLog, name: n })}
+            onImageAdd={(dataUrl) => setPhotoPreview(dataUrl)}
+            buttons={[{ text: "Save Log", onClick: handleSaveLog }]}
+          />
+        </div>
+      )}
 
-      {/* Manual log form — always visible */}
+      {/* Manual log form */}
       <div style={{ padding: "0 20px", display: "flex", flexDirection: "column", gap: 16 }}>
         {/* Photo */}
         <div>
-          <label style={labelStyle}>Photo (optional)</label>
           <input ref={manualPhotoRef} type="file" accept="image/*" onChange={handleManualPhoto} style={{ display: "none" }} />
           <div
             onClick={() => manualPhotoRef.current?.click()}
@@ -232,22 +257,14 @@ export default function AddPage() {
         </div>
 
         {/* Title */}
-        <div>
-          <label style={labelStyle}>Title *</label>
-          <input value={mName} onChange={(e) => setMName(e.target.value)} placeholder="e.g. Chicken salad" style={fieldStyle} />
-        </div>
+        <input value={mName} onChange={(e) => setMName(e.target.value)} placeholder="Title" style={fieldStyle} />
 
         {/* Nutrition */}
-        <div>
-          <label style={labelStyle}>Nutrition (optional)</label>
-          <div style={{ marginBottom: 10 }}>
-            <input value={mKcal} onChange={(e) => setMKcal(e.target.value)} inputMode="numeric" placeholder="Calories" style={fieldStyle} />
-          </div>
-          <div style={{ display: "flex", gap: 10 }}>
-            <input value={mProtein} onChange={(e) => setMProtein(e.target.value)} inputMode="numeric" placeholder="Protein (g)" style={fieldStyle} />
-            <input value={mCarbs} onChange={(e) => setMCarbs(e.target.value)} inputMode="numeric" placeholder="Carbs (g)" style={fieldStyle} />
-            <input value={mFat} onChange={(e) => setMFat(e.target.value)} inputMode="numeric" placeholder="Fat (g)" style={fieldStyle} />
-          </div>
+        <input value={mKcal} onChange={(e) => setMKcal(e.target.value)} inputMode="numeric" placeholder="Calories" style={fieldStyle} />
+        <div style={{ display: "flex", gap: 10 }}>
+          <input value={mProtein} onChange={(e) => setMProtein(e.target.value)} inputMode="numeric" placeholder="Protein (g)" style={fieldStyle} />
+          <input value={mCarbs} onChange={(e) => setMCarbs(e.target.value)} inputMode="numeric" placeholder="Carbs (g)" style={fieldStyle} />
+          <input value={mFat} onChange={(e) => setMFat(e.target.value)} inputMode="numeric" placeholder="Fat (g)" style={fieldStyle} />
         </div>
 
         <button
@@ -264,35 +281,16 @@ export default function AddPage() {
         </button>
       </div>
 
+      {info && (
+        <div style={{ paddingLeft: 20, paddingRight: 20, marginTop: 12, color: "rgba(235,235,245,0.6)", fontSize: 13 }}>
+          {info}
+        </div>
+      )}
+
       {error && (
         <div style={{ paddingLeft: 20, paddingRight: 20, marginTop: 12, color: "#FF453A", fontSize: 13 }}>
           {error}
         </div>
-      )}
-
-      {loading && (
-        <div style={{ paddingLeft: 20, paddingRight: 20, marginTop: 16, color: "rgba(235,235,245,0.6)", fontSize: 14 }}>
-          Analyzing...
-        </div>
-      )}
-
-      {foodLog && !loading && (
-        <>
-          <Space size={16} />
-          <div style={{ paddingLeft: 20, paddingRight: 20 }}>
-            <LogInfo
-              name={foodLog.name}
-              kcal={foodLog.kcal}
-              protein={foodLog.protein}
-              carbs={foodLog.carbs}
-              fat={foodLog.fat}
-              image={photoPreview || undefined}
-              onNameChange={(n) => setFoodLog({ ...foodLog, name: n })}
-              onImageAdd={(dataUrl) => setPhotoPreview(dataUrl)}
-              buttons={[{ text: "Save Log", onClick: handleSaveLog }]}
-            />
-          </div>
-        </>
       )}
     </>
   );

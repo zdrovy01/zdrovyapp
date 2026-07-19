@@ -21,13 +21,6 @@ const FONT = "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif";
 // Monochrome selected-segment fill (iOS-style)
 const SEG_ACTIVE = "rgba(120,120,128,0.5)";
 
-const labelStyle: React.CSSProperties = {
-  color: "rgba(235,235,245,0.5)",
-  fontSize: 12,
-  marginBottom: 6,
-  display: "block",
-};
-
 const fieldStyle: React.CSSProperties = {
   width: "100%",
   background: "rgba(118,118,128,0.24)",
@@ -261,7 +254,6 @@ export default function CreateRecipePage() {
       <div style={{ padding: "0 20px", display: "flex", flexDirection: "column", gap: 16 }}>
         {/* Photo */}
         <div>
-          <label style={labelStyle}>Photo *</label>
           <input ref={fileInputRef} type="file" accept="image/*" onChange={handlePhotoSelect} style={{ display: "none" }} />
           <div
             onClick={() => fileInputRef.current?.click()}
@@ -282,10 +274,7 @@ export default function CreateRecipePage() {
         </div>
 
         {/* Name */}
-        <div>
-          <label style={labelStyle}>Recipe name {mode === "manual" ? "*" : "(optional)"}</label>
-          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Greek salad" style={fieldStyle} />
-        </div>
+        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Recipe name" style={fieldStyle} />
 
         {/* Mode toggle */}
         <div style={{ display: "flex", background: "rgba(118,118,128,0.24)", borderRadius: 12, padding: 3 }}>
@@ -309,23 +298,19 @@ export default function CreateRecipePage() {
 
         {/* AUTO mode — single description field */}
         {mode === "auto" && (
-          <div>
-            <label style={labelStyle}>Describe the recipe</label>
-            <textarea
-              value={autoText}
-              onChange={(e) => setAutoText(e.target.value)}
-              placeholder="List the ingredients, how to cook it… AI will fill in amounts, steps, calories, macros and prices."
-              rows={6}
-              style={{ ...fieldStyle, resize: "vertical" }}
-            />
-          </div>
+          <textarea
+            value={autoText}
+            onChange={(e) => setAutoText(e.target.value)}
+            placeholder="Describe the recipe — ingredients, how to cook it… AI fills in amounts, steps, calories, macros and prices."
+            rows={6}
+            style={{ ...fieldStyle, resize: "vertical" }}
+          />
         )}
 
         {/* MANUAL mode */}
         {mode === "manual" && (<>
         {/* Ingredients */}
         <div>
-          <label style={labelStyle}>Ingredients *</label>
           {ingredients.length > 0 && (
             <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 10 }}>
               {ingredients.map((ing, i) => (
@@ -392,7 +377,6 @@ export default function CreateRecipePage() {
 
         {/* Steps */}
         <div>
-          <label style={labelStyle}>Cooking steps *</label>
           {steps.length > 0 && (
             <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 10 }}>
               {steps.map((st, i) => (
@@ -443,7 +427,6 @@ export default function CreateRecipePage() {
 
         {/* Nutrition */}
         <div>
-          <label style={labelStyle}>Nutrition (optional)</label>
           <div style={{ marginBottom: 10 }}>
             <input value={kcal} onChange={(e) => setKcal(e.target.value)} inputMode="numeric" placeholder="Calories" style={fieldStyle} />
           </div>

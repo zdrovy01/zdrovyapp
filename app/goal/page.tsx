@@ -9,13 +9,6 @@ import { useProtectedRoute } from "@/hooks/use-protected-route";
 
 const FONT = "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif";
 
-const labelStyle: React.CSSProperties = {
-  color: "rgba(235,235,245,0.5)",
-  fontSize: 12,
-  marginBottom: 6,
-  display: "block",
-};
-
 const fieldStyle: React.CSSProperties = {
   width: "100%",
   background: "rgba(118,118,128,0.24)",
@@ -52,24 +45,12 @@ export default function GoalPage() {
       <Space size={10} />
 
       <div style={{ padding: "0 20px", display: "flex", flexDirection: "column", gap: 16 }}>
-        <div>
-          <label style={labelStyle}>Calories</label>
-          <input value={g.kcal || ""} onChange={(e) => update("kcal", e.target.value)} inputMode="numeric" placeholder="2000" style={fieldStyle} />
-        </div>
+        <input value={g.kcal || ""} onChange={(e) => update("kcal", e.target.value)} inputMode="numeric" placeholder="Calories" style={fieldStyle} />
 
         <div style={{ display: "flex", gap: 10 }}>
-          <div style={{ flex: 1 }}>
-            <label style={labelStyle}>Protein (g)</label>
-            <input value={g.protein || ""} onChange={(e) => update("protein", e.target.value)} inputMode="numeric" placeholder="150" style={fieldStyle} />
-          </div>
-          <div style={{ flex: 1 }}>
-            <label style={labelStyle}>Carbs (g)</label>
-            <input value={g.carbs || ""} onChange={(e) => update("carbs", e.target.value)} inputMode="numeric" placeholder="250" style={fieldStyle} />
-          </div>
-          <div style={{ flex: 1 }}>
-            <label style={labelStyle}>Fat (g)</label>
-            <input value={g.fat || ""} onChange={(e) => update("fat", e.target.value)} inputMode="numeric" placeholder="70" style={fieldStyle} />
-          </div>
+          <input value={g.protein || ""} onChange={(e) => update("protein", e.target.value)} inputMode="numeric" placeholder="Protein (g)" style={fieldStyle} />
+          <input value={g.carbs || ""} onChange={(e) => update("carbs", e.target.value)} inputMode="numeric" placeholder="Carbs (g)" style={fieldStyle} />
+          <input value={g.fat || ""} onChange={(e) => update("fat", e.target.value)} inputMode="numeric" placeholder="Fat (g)" style={fieldStyle} />
         </div>
 
         <button

@@ -60,6 +60,7 @@ export default function Toolbar({
       data-layer="Toolbar"
       style={{
         width: "100%",
+        paddingTop: 8,
         paddingBottom: 10,
         paddingLeft: 20,
         paddingRight: 20,
@@ -68,6 +69,10 @@ export default function Toolbar({
         gap: 5,
         display: "flex",
         boxSizing: "border-box",
+        position: "sticky",
+        top: 0,
+        zIndex: 50,
+        background: "#000000",
       }}
     >
       {/* Title */}

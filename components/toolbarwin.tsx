@@ -60,11 +60,14 @@ export default function ToolbarWin({
     <div
       style={{
         width: "100%",
-        paddingTop: 4,
+        paddingTop: 8,
         paddingBottom: 12,
         paddingLeft: 16,
         paddingRight: 16,
-        position: "relative",
+        position: "sticky",
+        top: 0,
+        zIndex: 50,
+        background: "#000000",
         justifyContent: "space-between",
         alignItems: "center",
         display: "flex",

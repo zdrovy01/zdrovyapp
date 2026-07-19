@@ -72,7 +72,7 @@ export default function Option({
     return (
       <Link href={href} style={buttonStyle}>
         <div style={textStyle}>{text}</div>
-        <div style={{ color: "white", display: "flex" }}>{icon}</div>
+        <div style={{ color: "white", display: "flex", width: "100%" }}>{icon}</div>
       </Link>
     );
   };

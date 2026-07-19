@@ -79,7 +79,7 @@ export default function ToolbarWin({
       {/* Back button — plain chevron */}
       <button
         onClick={handleBack}
-        aria-label="Back"
+        aria-label="Close"
         style={{
           height: 44,
           minWidth: 44,
@@ -93,8 +93,8 @@ export default function ToolbarWin({
           padding: 0,
         }}
       >
-        <svg width="11" height="19" viewBox="0 0 10 17" fill="none">
-          <path d="M8.5 15.5L1.5 8.5L8.5 1.5" stroke="#F5F5F5" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <path d="M4 4L14 14M14 4L4 14" stroke="#F5F5F5" strokeWidth="2.2" strokeLinecap="round" />
         </svg>
       </button>
 

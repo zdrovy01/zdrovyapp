@@ -3,36 +3,23 @@
 //   "scale" — zoom in
 //   "none"  — no animation (instant)
 
-export type TransitionKind = "slide" | "fade" | "scale" | "none";
+export type TransitionKind = "slide" | "fade" | "scale" | "up" | "none";
 
-// Exact-path overrides. Any route not listed uses DEFAULT_TRANSITION.
+// Exact-path overrides. Any route not listed uses DEFAULT_TRANSITION ("up").
+// The main tab / entry pages keep their own transitions; everything else
+// (the ToolbarWin detail/modal pages) rises from the bottom.
 export const TRANSITIONS: Record<string, TransitionKind> = {
   "/": "fade",
   "/recipe": "slide",
-  "/log": "slide",
   "/myprofile": "slide",
-  "/settings": "slide",
-  "/accountsettings": "slide",
-  "/moreoptions": "slide",
-  "/qr": "scale",
   "/auth": "fade",
-  "/add": "slide",
-  "/addmanual": "slide",
-  "/createrecipe": "slide",
-  "/saves": "slide",
   "/search": "fade",
-  "/notifications": "slide",
-  "/friends": "slide",
-  "/shops": "slide",
 };
 
 // Prefix overrides (checked if no exact match). First match wins.
-export const TRANSITION_PREFIXES: [string, TransitionKind][] = [
-  ["/recipe/", "slide"],  ["/followers/", "slide"],
-  ["/following/", "slide"],
-];
+export const TRANSITION_PREFIXES: [string, TransitionKind][] = [];
 
-export const DEFAULT_TRANSITION: TransitionKind = "slide";
+export const DEFAULT_TRANSITION: TransitionKind = "up";
 
 // Animation duration in seconds.
 export const TRANSITION_DURATION = 0.22;

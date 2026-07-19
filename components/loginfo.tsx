@@ -47,7 +47,7 @@ export default function LogInfo({
     <div style={{
       width: "100%",
       background: "#0A0A0A",
-      borderRadius: 20,
+      borderRadius: 16,
       padding: 20,
       boxSizing: "border-box",
       display: "flex",
@@ -57,13 +57,13 @@ export default function LogInfo({
       {/* Photo */}
       {image ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={image} alt="Food" style={{ width: "100%", height: 180, objectFit: "cover", borderRadius: 14 }} />
+        <img src={image} alt="Food" style={{ width: "100%", height: 180, objectFit: "cover", borderRadius: 16 }} />
       ) : onImageAdd ? (
         <>
           <input ref={fileRef} type="file" accept="image/*" capture="environment" onChange={handleFile} style={{ display: "none" }} />
           <button onClick={() => fileRef.current?.click()} style={{
             alignSelf: "flex-start", display: "flex", alignItems: "center", gap: 6,
-            background: "rgba(255,255,255,0.07)", border: "none", borderRadius: 10,
+            background: "rgba(255,255,255,0.07)", border: "none", borderRadius: 16,
             padding: "6px 12px", cursor: "pointer", color: "rgba(235,235,245,0.5)",
             fontSize: 13, fontFamily: FONT, fontWeight: 500,
           }}>
@@ -132,7 +132,7 @@ export default function LogInfo({
               height: 52,
               background: idx === 0 ? COLORS.accent : "rgba(255,255,255,0.08)",
               border: "none",
-              borderRadius: 14,
+              borderRadius: 16,
               color: idx === 0 ? COLORS.onAccent : "#fff",
               fontSize: 16,
               fontWeight: 600,

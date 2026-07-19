@@ -241,14 +241,14 @@ export default function NotificationsPage() {
                     {n.type === "friend_request" && isPending && (
                       <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
                         <button onClick={() => handleAccept(n)} style={{
-                          height: 36, padding: "0 16px", borderRadius: 10, border: "none",
+                          height: 36, padding: "0 16px", borderRadius: 16, border: "none",
                           background: "#fff", color: "#000", fontSize: 14, fontWeight: 600,
                           fontFamily: FONT, cursor: "pointer",
                         }}>
                           Accept
                         </button>
                         <button onClick={() => handleDecline(n)} style={{
-                          height: 36, padding: "0 16px", borderRadius: 10, border: "none",
+                          height: 36, padding: "0 16px", borderRadius: 16, border: "none",
                           background: "rgba(255,255,255,0.1)", color: "#F5F5F5", fontSize: 14, fontWeight: 600,
                           fontFamily: FONT, cursor: "pointer",
                         }}>
@@ -259,7 +259,7 @@ export default function NotificationsPage() {
 
                     {n.type === "friend_request" && isAccepted && (
                       <div style={{
-                        height: 36, padding: "0 14px", borderRadius: 10,
+                        height: 36, padding: "0 14px", borderRadius: 16,
                         background: "rgba(255,255,255,0.06)", display: "flex", alignItems: "center",
                         color: "rgba(235,235,245,0.5)", fontSize: 13, fontFamily: FONT, flexShrink: 0,
                       }}>

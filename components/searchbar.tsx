@@ -39,7 +39,7 @@ export default function Searchbar({ placeholder = "Search", onChange }: Searchba
         height: 52,
         paddingLeft: 16,
         paddingRight: 14,
-        borderRadius: 25,
+        borderRadius: 16,
         display: "flex",
         alignItems: "center",
         gap: 8,
@@ -77,7 +77,7 @@ export default function Searchbar({ placeholder = "Search", onChange }: Searchba
         style={{
           width: 52,
           height: 52,
-          borderRadius: 25,
+          borderRadius: 16,
           border: "none",
           cursor: "pointer",
           display: "flex",

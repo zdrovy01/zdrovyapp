@@ -97,7 +97,7 @@ export default function Tracker({ date, href = "/log" }: TrackerProps) {
         style={{
           flex: "1 1 0",
           background: "#0A0A0A",
-          borderRadius: 20,
+          borderRadius: 16,
           padding: "16px 18px",
           boxSizing: "border-box",
           display: "flex",

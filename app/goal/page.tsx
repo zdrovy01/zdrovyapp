@@ -14,7 +14,7 @@ const fieldStyle: React.CSSProperties = {
   background: "rgba(118,118,128,0.24)",
   border: "none",
   outline: "none",
-  borderRadius: 10,
+  borderRadius: 16,
   color: "#F5F5F5",
   fontSize: 15,
   padding: "11px 13px",
@@ -56,7 +56,7 @@ export default function GoalPage() {
         <button
           onClick={handleSave}
           style={{
-            width: "100%", height: 48, borderRadius: 12, border: "none",
+            width: "100%", height: 48, borderRadius: 16, border: "none",
             background: "#F5F5F5", color: "#000",
             fontSize: 16, fontWeight: 600, fontFamily: FONT, cursor: "pointer",
           }}

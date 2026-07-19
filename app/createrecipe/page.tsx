@@ -26,7 +26,7 @@ const fieldStyle: React.CSSProperties = {
   background: "rgba(118,118,128,0.24)",
   border: "none",
   outline: "none",
-  borderRadius: 10,
+  borderRadius: 16,
   color: "#F5F5F5",
   fontSize: 15,
   padding: "11px 13px",
@@ -37,14 +37,14 @@ const fieldStyle: React.CSSProperties = {
 const cardStyle: React.CSSProperties = {
   background: "rgba(255,255,255,0.04)",
   border: "0.5px solid rgba(255,255,255,0.08)",
-  borderRadius: 14,
+  borderRadius: 16,
   boxSizing: "border-box",
 };
 
 const primaryBtn: React.CSSProperties = {
   width: "100%",
   height: 48,
-  borderRadius: 12,
+  borderRadius: 16,
   border: "none",
   background: "#F5F5F5",
   color: "#000",
@@ -57,7 +57,7 @@ const primaryBtn: React.CSSProperties = {
 const addBtn: React.CSSProperties = {
   width: "100%",
   height: 46,
-  borderRadius: 14,
+  borderRadius: 16,
   border: "none",
   background: COLORS.surface,
   color: "rgba(235,235,245,0.7)",
@@ -258,7 +258,7 @@ export default function CreateRecipePage() {
           <div
             onClick={() => fileInputRef.current?.click()}
             style={{
-              width: "100%", aspectRatio: "16 / 7", borderRadius: 14,
+              width: "100%", aspectRatio: "16 / 7", borderRadius: 16,
               background: COLORS.surface,
               display: "flex", alignItems: "center", justifyContent: "center",
               cursor: "pointer", overflow: "hidden", boxSizing: "border-box",
@@ -277,7 +277,7 @@ export default function CreateRecipePage() {
         <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Recipe name" style={fieldStyle} />
 
         {/* Mode toggle */}
-        <div style={{ display: "flex", background: "rgba(118,118,128,0.24)", borderRadius: 12, padding: 3 }}>
+        <div style={{ display: "flex", background: "rgba(118,118,128,0.24)", borderRadius: 16, padding: 3 }}>
           {(["manual", "auto"] as const).map((m) => {
             const active = mode === m;
             return (
@@ -350,7 +350,7 @@ export default function CreateRecipePage() {
                       inputMode="decimal"
                       style={{ ...fieldStyle, flex: 1, padding: "10px 12px", fontSize: 15 }}
                     />
-                    <div style={{ display: "flex", background: "rgba(118,118,128,0.24)", borderRadius: 10, padding: 2, flexShrink: 0 }}>
+                    <div style={{ display: "flex", background: "rgba(118,118,128,0.24)", borderRadius: 16, padding: 2, flexShrink: 0 }}>
                       {(["g", "ml"] as const).map((u) => {
                         const active = ing.unit === u;
                         return (

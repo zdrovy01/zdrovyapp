@@ -82,23 +82,22 @@ export default function AuthPage() {
           disabled={loading}
           style={{
             width: "100%",
-            height: 64,
-            borderRadius: 999,
-            background: "#FFFFFF",
-            border: "none",
+            height: 54,
+            borderRadius: 4,
+            background: "rgba(118,118,128,0.24)",
+            border: "0.5px solid rgba(255,255,255,0.12)",
             cursor: loading ? "not-allowed" : "pointer",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             gap: 12,
-            fontSize: 17,
+            fontSize: 16,
             fontWeight: 600,
-            color: "#000",
+            fontFamily: "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif",
+            color: "#F5F5F5",
             opacity: loading ? 0.6 : 1,
             transition: "transform 0.15s, opacity 0.2s",
           }}
-          onMouseEnter={(e) => { if (!loading) e.currentTarget.style.opacity = "0.92"; }}
-          onMouseLeave={(e) => { if (!loading) e.currentTarget.style.opacity = "1"; }}
           onMouseDown={(e) => { if (!loading) e.currentTarget.style.transform = "scale(0.98)"; }}
           onMouseUp={(e) => { if (!loading) e.currentTarget.style.transform = "scale(1)"; }}
         >

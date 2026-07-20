@@ -5,6 +5,7 @@ import Link from "next/link";
 import { getUserStatsForDate } from "@/services/supabase-logs";
 import { useCached } from "@/hooks/use-cached";
 import { useGoals } from "@/config/goals";
+import { COLORS } from "@/config/theme";
 
 interface TrackerProps {
   date?: Date;
@@ -68,7 +69,7 @@ export default function Tracker({ date, href = "/log" }: TrackerProps) {
   const goals = useGoals();
 
   const items = [
-    { label: "Calories", value: Math.round(stats.totalKcal), unit: "", color: "#FFFFFF", total: goals.kcal },
+    { label: "Calories", value: Math.round(stats.totalKcal), unit: "", color: COLORS.text, total: goals.kcal },
     { label: "Protein", value: Math.round(stats.totalProtein), unit: "g", color: "#22C55E", total: goals.protein },
     { label: "Carbs", value: Math.round(stats.totalCarbs), unit: "g", color: "#F97316", total: goals.carbs },
     { label: "Fat", value: Math.round(stats.totalFat), unit: "g", color: "#3B82F6", total: goals.fat },
@@ -96,7 +97,7 @@ export default function Tracker({ date, href = "/log" }: TrackerProps) {
         href={href}
         style={{
           flex: "1 1 0",
-          background: "#0A0A0A",
+          background: COLORS.surface,
           borderRadius: 4,
           padding: "16px 18px",
           boxSizing: "border-box",
@@ -111,15 +112,15 @@ export default function Tracker({ date, href = "/log" }: TrackerProps) {
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
           <ScoreRing pct={score} />
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 12, color: "#888" }}>Day completed</div>
-            <div style={{ fontSize: 26, fontWeight: 800, color: "#FFFFFF", lineHeight: 1.15 }}>
+            <div style={{ fontSize: 12, color: COLORS.textTertiary }}>Day completed</div>
+            <div style={{ fontSize: 26, fontWeight: 800, color: COLORS.text, lineHeight: 1.15 }}>
               {animatedScore}%
             </div>
           </div>
         </div>
 
         {/* Divider */}
-        <div style={{ height: 0.5, background: "rgba(255,255,255,0.08)" }} />
+        <div style={{ height: 0.5, background: COLORS.hairline }} />
 
         {/* Macros */}
         <div style={{ display: "flex", gap: 14 }}>
@@ -180,18 +181,18 @@ function TrackerItem({ label, value, unit, color, total }: TrackerItemProps) {
 
   return (
     <div style={{ flex: 1, minWidth: 0 }}>
-      <div style={{ fontSize: 18, fontWeight: 700, color: "#FFFFFF", lineHeight: 1.1 }}>
+      <div style={{ fontSize: 18, fontWeight: 700, color: COLORS.text, lineHeight: 1.1 }}>
         {animatedValue}
         {unit}
       </div>
-      <div style={{ fontSize: 11, color: "#888", marginTop: 2, marginBottom: 8 }}>
+      <div style={{ fontSize: 11, color: COLORS.textTertiary, marginTop: 2, marginBottom: 8 }}>
         {label}
       </div>
       <div
         style={{
           height: 4,
           borderRadius: 4,
-          background: "#2A2A2A",
+          background: COLORS.track,
           overflow: "hidden",
         }}
       >

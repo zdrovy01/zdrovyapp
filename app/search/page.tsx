@@ -6,6 +6,7 @@ import UserRow from "@/components/userrow";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
 import { getSupabaseClient } from "@/config/supabase";
 import { useState, useEffect, useRef } from "react";
+import { COLORS } from "@/config/theme";
 
 interface Profile {
   user_id: string;
@@ -71,11 +72,11 @@ export default function SearchPage() {
       <Searchbar placeholder="Search people" onChange={setQuery} />
 
       {query.trim().length < 3 ? null : loading ? (
-        <div style={{ padding: "8px 20px", color: "rgba(235,235,245,0.5)", fontFamily: FONT }}>
+        <div style={{ padding: "8px 20px", color: COLORS.textSecondary, fontFamily: FONT }}>
           Searching...
         </div>
       ) : results.length === 0 ? (
-        <div style={{ padding: "20px", textAlign: "center", color: "rgba(235,235,245,0.4)", fontFamily: FONT }}>
+        <div style={{ padding: "20px", textAlign: "center", color: COLORS.textTertiary, fontFamily: FONT }}>
           No people found.
         </div>
       ) : (

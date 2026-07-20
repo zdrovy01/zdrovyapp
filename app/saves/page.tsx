@@ -7,6 +7,7 @@ import { useProtectedRoute } from "@/hooks/use-protected-route";
 import { getSupabaseClient } from "@/config/supabase";
 import { useCached } from "@/hooks/use-cached";
 import { useRouter } from "next/navigation";
+import { COLORS } from "@/config/theme";
 
 interface Recipe {
   id: string;
@@ -80,9 +81,9 @@ export default function SavesPage() {
       <Space size={10} />
 
       {loading ? (
-        <div style={{ padding: "0 20px", color: "rgba(235,235,245,0.6)" }}>Loading...</div>
+        <div style={{ padding: "0 20px", color: COLORS.textSecondary }}>Loading...</div>
       ) : recipes.length === 0 ? (
-        <div style={{ padding: "30px 20px", color: "rgba(235,235,245,0.5)", textAlign: "center" }}>
+        <div style={{ padding: "30px 20px", color: COLORS.textSecondary, textAlign: "center" }}>
           No saved recipes yet.
         </div>
       ) : (

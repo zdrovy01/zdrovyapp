@@ -46,7 +46,7 @@ export default function LogInfo({
   return (
     <div style={{
       width: "100%",
-      background: "#0A0A0A",
+      background: COLORS.surface,
       borderRadius: 4,
       padding: 20,
       boxSizing: "border-box",
@@ -63,8 +63,8 @@ export default function LogInfo({
           <input ref={fileRef} type="file" accept="image/*" capture="environment" onChange={handleFile} style={{ display: "none" }} />
           <button onClick={() => fileRef.current?.click()} style={{
             alignSelf: "flex-start", display: "flex", alignItems: "center", gap: 6,
-            background: "rgba(255,255,255,0.07)", border: "none", borderRadius: 4,
-            padding: "6px 12px", cursor: "pointer", color: "rgba(235,235,245,0.5)",
+            background: COLORS.hairline, border: "none", borderRadius: 4,
+            padding: "6px 12px", cursor: "pointer", color: COLORS.textSecondary,
             fontSize: 13, fontFamily: FONT, fontWeight: 500,
           }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -84,7 +84,7 @@ export default function LogInfo({
             background: "transparent",
             border: "none",
             outline: "none",
-            color: "#F5F5F5",
+            color: COLORS.text,
             fontSize: 22,
             fontWeight: 700,
             fontFamily: FONT,
@@ -93,13 +93,13 @@ export default function LogInfo({
           }}
         />
       ) : (
-        <div style={{ color: "#F5F5F5", fontSize: 22, fontWeight: 700, fontFamily: FONT }}>{name}</div>
+        <div style={{ color: COLORS.text, fontSize: 22, fontWeight: 700, fontFamily: FONT }}>{name}</div>
       )}
 
       {/* Calories */}
       <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
-        <span style={{ color: "#F5F5F5", fontSize: 36, fontWeight: 700, fontFamily: FONT }}>{kcal}</span>
-        <span style={{ color: "rgba(235,235,245,0.45)", fontSize: 15, fontFamily: FONT }}>kcal</span>
+        <span style={{ color: COLORS.text, fontSize: 36, fontWeight: 700, fontFamily: FONT }}>{kcal}</span>
+        <span style={{ color: COLORS.textSecondary, fontSize: 15, fontFamily: FONT }}>kcal</span>
       </div>
 
       {/* Macros row */}
@@ -118,7 +118,7 @@ export default function LogInfo({
             borderLeft: i === 0 ? "none" : "1px solid rgba(255,255,255,0.07)",
           }}>
             <span style={{ color: m.color, fontSize: 18, fontWeight: 700, fontFamily: FONT }}>{m.value}g</span>
-            <span style={{ color: "rgba(235,235,245,0.4)", fontSize: 12, fontFamily: FONT }}>{m.label}</span>
+            <span style={{ color: COLORS.textTertiary, fontSize: 12, fontFamily: FONT }}>{m.label}</span>
           </div>
         ))}
       </div>
@@ -130,10 +130,10 @@ export default function LogInfo({
             <button key={idx} onClick={btn.onClick} style={{
               flex: 1,
               height: 52,
-              background: idx === 0 ? COLORS.accent : "rgba(255,255,255,0.08)",
+              background: idx === 0 ? COLORS.accent : COLORS.hairline,
               border: "none",
               borderRadius: 4,
-              color: idx === 0 ? COLORS.onAccent : "#fff",
+              color: idx === 0 ? COLORS.onAccent : COLORS.text,
               fontSize: 16,
               fontWeight: 600,
               fontFamily: FONT,

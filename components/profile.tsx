@@ -2,6 +2,7 @@
 
 import { useAuth } from "@/config/auth-context";
 import { useRouter } from "next/navigation";
+import { COLORS } from "@/config/theme";
 
 export default function Profile() {
   const { user } = useAuth();
@@ -19,7 +20,7 @@ export default function Profile() {
       style={{
         padding: "20px",
         borderRadius: "20px",
-        background: "#0A0A0A",
+        background: COLORS.surface,
         backdropFilter: "blur(20px)",
         marginBottom: "0px",
         display: "flex",
@@ -36,7 +37,7 @@ export default function Profile() {
           borderRadius: "50%",
           flexShrink: 0,
           overflow: "hidden",
-          background: "rgba(120,120,128,0.3)",
+          background: COLORS.fill,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -51,7 +52,7 @@ export default function Profile() {
             style={{ width: "100%", height: "100%", objectFit: "cover" }}
           />
         ) : (
-          <span style={{ fontSize: 26, fontWeight: 700, color: "#F5F5F5" }}>
+          <span style={{ fontSize: 26, fontWeight: 700, color: COLORS.text }}>
             {initial}
           </span>
         )}
@@ -63,7 +64,7 @@ export default function Profile() {
           style={{
             fontSize: 18,
             fontWeight: 700,
-            color: "#F5F5F5",
+            color: COLORS.text,
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",
@@ -74,7 +75,7 @@ export default function Profile() {
         <div
           style={{
             fontSize: 13,
-            color: "rgba(235,235,245,0.55)",
+            color: COLORS.textSecondary,
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",
@@ -94,7 +95,7 @@ export default function Profile() {
           flexShrink: 0,
           borderRadius: 4,
           border: "none",
-          background: "rgba(120,120,128,0.24)",
+          background: COLORS.fill,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",

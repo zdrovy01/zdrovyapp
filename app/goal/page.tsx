@@ -6,16 +6,17 @@ import ToolbarWin from "@/components/toolbarwin";
 import Space from "@/components/space";
 import { getGoals, setGoals, Goals } from "@/config/goals";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
+import { COLORS } from "@/config/theme";
 
 const FONT = "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif";
 
 const fieldStyle: React.CSSProperties = {
   width: "100%",
-  background: "rgba(118,118,128,0.24)",
+  background: COLORS.fill,
   border: "none",
   outline: "none",
   borderRadius: 4,
-  color: "#F5F5F5",
+  color: COLORS.text,
   fontSize: 15,
   padding: "11px 13px",
   boxSizing: "border-box",
@@ -57,7 +58,7 @@ export default function GoalPage() {
           onClick={handleSave}
           style={{
             width: "100%", height: 48, borderRadius: 4, border: "none",
-            background: "#F5F5F5", color: "#000",
+            background: COLORS.text, color: COLORS.background,
             fontSize: 16, fontWeight: 600, fontFamily: FONT, cursor: "pointer",
           }}
         >

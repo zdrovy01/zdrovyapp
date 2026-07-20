@@ -6,6 +6,7 @@ import ToolbarWin from "@/components/toolbarwin";
 import Space from "@/components/space";
 import { useAuth } from "@/config/auth-context";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
+import { COLORS } from "@/config/theme";
 
 const ZDROVY_HOSTS = ["app.zdrovy.com", "zdrovy.com"];
 
@@ -169,7 +170,7 @@ export default function QrPage() {
     height: isActive ? BTN_BIG : BTN_SMALL,
     borderRadius: 4,
     border: "none",
-    background: isActive ? "#fff" : "rgba(120,120,128,0.3)",
+    background: isActive ? "#fff" : COLORS.fill,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -200,7 +201,7 @@ export default function QrPage() {
             height: BOX,
             borderRadius: 4,
             overflow: "hidden",
-            background: mode === "qr" ? "#FFFFFF" : "#000",
+            background: mode === "qr" ? "#FFFFFF" : COLORS.background,
           }}
         >
           {mode === "qr" ? (
@@ -231,7 +232,7 @@ export default function QrPage() {
                   width: AVATAR_SIZE,
                   height: AVATAR_SIZE,
                   borderRadius: "50%",
-                  background: "#fff",
+                  background: COLORS.text,
                   border: "4px solid #fff",
                   boxSizing: "border-box",
                   overflow: "hidden",
@@ -252,8 +253,8 @@ export default function QrPage() {
                       width: "100%",
                       height: "100%",
                       borderRadius: "50%",
-                      background: "#0A0A0A",
-                      color: "#fff",
+                      background: COLORS.surface,
+                      color: COLORS.text,
                       fontSize: 24,
                       fontWeight: 700,
                       display: "flex",
@@ -284,7 +285,7 @@ export default function QrPage() {
         {/* Explanatory text */}
         <div
           style={{
-            color: "#fff",
+            color: COLORS.text,
             fontSize: 22,
             fontWeight: 700,
             textAlign: "center",
@@ -297,15 +298,15 @@ export default function QrPage() {
             : "Point the camera at a Zdrovy code to open someone's profile"}
         </div>
         {mode === "qr" && (
-          <div style={{ color: "rgba(235,235,245,0.45)", fontSize: 14, marginTop: 8 }}>
+          <div style={{ color: COLORS.textSecondary, fontSize: 14, marginTop: 8 }}>
             {link}
           </div>
         )}
         {mode === "scan" && scanResult && (
           <div style={{
             marginTop: 16, padding: "12px 16px", borderRadius: 4,
-            background: "rgba(255,255,255,0.08)", maxWidth: BOX,
-            color: "rgba(235,235,245,0.7)", fontSize: 13, wordBreak: "break-all", textAlign: "center",
+            background: COLORS.hairline, maxWidth: BOX,
+            color: COLORS.textSecondary, fontSize: 13, wordBreak: "break-all", textAlign: "center",
           }}>
             {scanResult}
           </div>
@@ -320,14 +321,14 @@ export default function QrPage() {
             onClick={() => setMode("qr")}
             style={btnStyle(mode === "qr")}
           >
-            <QrIcon color={mode === "qr" ? "#000" : "#fff"} />
+            <QrIcon color={mode === "qr" ? "#000" : COLORS.text} />
           </button>
           <button
             aria-label="Scan a code"
             onClick={() => setMode("scan")}
             style={btnStyle(mode === "scan")}
           >
-            <ScanIcon color={mode === "scan" ? "#000" : "#fff"} />
+            <ScanIcon color={mode === "scan" ? "#000" : COLORS.text} />
           </button>
         </div>
       </div>

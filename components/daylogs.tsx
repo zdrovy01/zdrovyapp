@@ -4,6 +4,7 @@ import Log from "@/components/log";
 import Title from "@/components/title";
 import { getSupabaseClient } from "@/config/supabase";
 import { useCached } from "@/hooks/use-cached";
+import { COLORS } from "@/config/theme";
 
 interface FoodLogItem {
   id: string;
@@ -97,14 +98,14 @@ export default function DayLogs({ date }: DayLogsProps) {
       <Title text={title} />
 
       {loading ? (
-        <div style={{ padding: "0 20px", color: "rgba(235,235,245,0.6)" }}>
+        <div style={{ padding: "0 20px", color: COLORS.textSecondary }}>
           Loading...
         </div>
       ) : logs.length === 0 ? (
         <div
           style={{
             padding: "30px 20px",
-            color: "rgba(235,235,245,0.5)",
+            color: COLORS.textSecondary,
             textAlign: "center",
           }}
         >

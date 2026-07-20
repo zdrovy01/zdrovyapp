@@ -30,7 +30,7 @@ export default function LanguageSelector() {
               border: "1px solid",
               borderColor: lang === l.code ? COLORS.accent : "rgba(255,255,255,0.2)",
               background: lang === l.code ? "rgba(248,253,3,0.15)" : "transparent",
-              color: lang === l.code ? COLORS.accent : "rgba(235,235,245,0.7)",
+              color: lang === l.code ? COLORS.accent : COLORS.textSecondary,
               fontSize: 14,
               fontFamily: "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif",
               fontWeight: lang === l.code ? 600 : 500,

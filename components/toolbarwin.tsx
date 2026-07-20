@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { COLORS } from "@/config/theme";
 
 interface ToolbarWinProps {
   title?: string;
@@ -27,7 +28,7 @@ const actionStyle: React.CSSProperties = {
   alignItems: "center",
   justifyContent: "center",
   flexShrink: 0,
-  color: "#F5F5F5",
+  color: COLORS.text,
   textDecoration: "none",
   background:
     "linear-gradient(0deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.06) 100%), rgba(0,0,0,0.60)",
@@ -67,7 +68,7 @@ export default function ToolbarWin({
         position: "sticky",
         top: 0,
         zIndex: 50,
-        background: "#000000",
+        background: COLORS.background,
         justifyContent: "space-between",
         alignItems: "center",
         display: "flex",
@@ -94,7 +95,7 @@ export default function ToolbarWin({
         }}
       >
         <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-          <path d="M4 4L14 14M14 4L4 14" stroke="#F5F5F5" strokeWidth="2.2" strokeLinecap="round" />
+          <path d="M4 4L14 14M14 4L4 14" stroke="var(--c-text,#F5F5F5)" strokeWidth="2.2" strokeLinecap="round" />
         </svg>
       </button>
 
@@ -106,7 +107,7 @@ export default function ToolbarWin({
           top: "50%",
           transform: "translate(-50%, -50%)",
           textAlign: "center",
-          color: "#F5F5F5",
+          color: COLORS.text,
           fontSize: 17,
           fontFamily: "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif",
           fontWeight: 590,

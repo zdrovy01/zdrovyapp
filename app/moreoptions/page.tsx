@@ -7,6 +7,7 @@ import { getSupabaseClient } from "@/config/supabase";
 import ToolbarWin from "@/components/toolbarwin";
 import Space from "@/components/space";
 import Option2 from "@/components/option2";
+import { COLORS } from "@/config/theme";
 
 export default function MoreOptionsPage() {
   useProtectedRoute();
@@ -50,11 +51,11 @@ export default function MoreOptionsPage() {
       <ToolbarWin title="More options" />
       <Space size={10} />
 
-      <Option2 text="Sign Out" onClick={logout} style={{ color: "#FF453A" }} />
+      <Option2 text="Sign Out" onClick={logout} style={{ color: COLORS.danger }} />
       <Option2
         text={deleting ? "Deleting..." : "Delete account"}
         onClick={deleting ? () => {} : handleDeleteAccount}
-        style={{ color: "#FF453A" }}
+        style={{ color: COLORS.danger }}
       />
     </>
   );

@@ -41,7 +41,7 @@ export default function CurrencyPage() {
                 width: "100%",
                 height: 56,
                 padding: "0 20px",
-                background: "#0A0A0A",
+                background: COLORS.surface,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
@@ -51,7 +51,7 @@ export default function CurrencyPage() {
                 fontFamily: FONT,
               }}
             >
-              <span style={{ color: "#fff", fontSize: 16, fontWeight: active ? 600 : 400 }}>
+              <span style={{ color: COLORS.text, fontSize: 16, fontWeight: active ? 600 : 400 }}>
                 {c.label}
               </span>
               {active && (

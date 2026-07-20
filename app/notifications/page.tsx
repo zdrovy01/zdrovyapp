@@ -6,6 +6,7 @@ import ToolbarWin from "@/components/toolbarwin";
 import { getSupabaseClient } from "@/config/supabase";
 import { useAuth } from "@/config/auth-context";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
+import { COLORS } from "@/config/theme";
 
 interface Notification {
   id: string;
@@ -69,9 +70,9 @@ function SwipeRow({
             right: 0,
             height: "100%",
             width: DELETE_WIDTH,
-            background: "#FF3B30",
+            background: COLORS.danger,
             border: "none",
-            color: "#fff",
+            color: COLORS.text,
             fontSize: 14,
             fontWeight: 600,
             fontFamily: FONT,
@@ -89,7 +90,7 @@ function SwipeRow({
           position: "relative",
           transform: `translateX(${offset}px)`,
           transition: dragging ? "none" : "transform 0.25s ease",
-          background: "#0A0A0A",
+          background: COLORS.surface,
           borderBottom: "1px solid rgba(235,235,245,0.06)",
           touchAction: "pan-y",
         }}
@@ -193,9 +194,9 @@ export default function NotificationsPage() {
       <Space size={10} />
 
       {loading ? (
-        <div style={{ padding: "0 20px", color: "rgba(235,235,245,0.5)", fontFamily: FONT }}>Loading...</div>
+        <div style={{ padding: "0 20px", color: COLORS.textSecondary, fontFamily: FONT }}>Loading...</div>
       ) : notifications.length === 0 ? (
-        <div style={{ padding: "40px 20px", textAlign: "center", color: "rgba(235,235,245,0.35)", fontFamily: FONT }}>
+        <div style={{ padding: "40px 20px", textAlign: "center", color: COLORS.textTertiary, fontFamily: FONT }}>
           No notifications
         </div>
       ) : (
@@ -213,7 +214,7 @@ export default function NotificationsPage() {
                     {/* Avatar */}
                     <div style={{
                       width: 48, height: 48, borderRadius: "50%", flexShrink: 0,
-                      background: "rgba(120,120,128,0.3)", overflow: "hidden",
+                      background: COLORS.fill, overflow: "hidden",
                       display: "flex", alignItems: "center", justifyContent: "center",
                     }}>
                       {n.from_profile?.avatar_url ? (
@@ -221,16 +222,16 @@ export default function NotificationsPage() {
                         <img src={n.from_profile.avatar_url} alt={name} referrerPolicy="no-referrer"
                           style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                       ) : (
-                        <span style={{ fontSize: 20, fontWeight: 700, color: "#F5F5F5", fontFamily: FONT }}>{initial}</span>
+                        <span style={{ fontSize: 20, fontWeight: 700, color: COLORS.text, fontFamily: FONT }}>{initial}</span>
                       )}
                     </div>
 
                     {/* Text */}
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ color: "#F5F5F5", fontSize: 15, fontWeight: 600, fontFamily: FONT }}>
+                      <div style={{ color: COLORS.text, fontSize: 15, fontWeight: 600, fontFamily: FONT }}>
                         {name}
                       </div>
-                      <div style={{ color: "rgba(235,235,245,0.5)", fontSize: 13, fontFamily: FONT }}>
+                      <div style={{ color: COLORS.textSecondary, fontSize: 13, fontFamily: FONT }}>
                         {n.type === "friend_request"
                           ? isAccepted ? "You are now friends" : "sent you a friend request"
                           : n.type}
@@ -242,14 +243,14 @@ export default function NotificationsPage() {
                       <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
                         <button onClick={() => handleAccept(n)} style={{
                           height: 36, padding: "0 16px", borderRadius: 4, border: "none",
-                          background: "#fff", color: "#000", fontSize: 14, fontWeight: 600,
+                          background: COLORS.text, color: COLORS.background, fontSize: 14, fontWeight: 600,
                           fontFamily: FONT, cursor: "pointer",
                         }}>
                           Accept
                         </button>
                         <button onClick={() => handleDecline(n)} style={{
                           height: 36, padding: "0 16px", borderRadius: 4, border: "none",
-                          background: "rgba(255,255,255,0.1)", color: "#F5F5F5", fontSize: 14, fontWeight: 600,
+                          background: "rgba(255,255,255,0.1)", color: COLORS.text, fontSize: 14, fontWeight: 600,
                           fontFamily: FONT, cursor: "pointer",
                         }}>
                           Decline
@@ -260,8 +261,8 @@ export default function NotificationsPage() {
                     {n.type === "friend_request" && isAccepted && (
                       <div style={{
                         height: 36, padding: "0 14px", borderRadius: 4,
-                        background: "rgba(255,255,255,0.06)", display: "flex", alignItems: "center",
-                        color: "rgba(235,235,245,0.5)", fontSize: 13, fontFamily: FONT, flexShrink: 0,
+                        background: COLORS.hairline, display: "flex", alignItems: "center",
+                        color: COLORS.textSecondary, fontSize: 13, fontFamily: FONT, flexShrink: 0,
                       }}>
                         Friends ✓
                       </div>

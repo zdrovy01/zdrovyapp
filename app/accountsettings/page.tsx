@@ -154,7 +154,7 @@ export default function AccountSettingsPage() {
             borderRadius: "50%",
             flexShrink: 0,
             overflow: "hidden",
-            background: "rgba(120,120,128,0.3)",
+            background: COLORS.fill,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -171,7 +171,7 @@ export default function AccountSettingsPage() {
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
           ) : (
-            <span style={{ fontSize: 28, fontWeight: 700, color: "#F5F5F5" }}>
+            <span style={{ fontSize: 28, fontWeight: 700, color: COLORS.text }}>
               {initial}
             </span>
           )}
@@ -183,7 +183,7 @@ export default function AccountSettingsPage() {
               right: 0,
               height: 22,
               background: "rgba(0,0,0,0.55)",
-              color: "#fff",
+              color: COLORS.text,
               fontSize: 10,
               fontWeight: 600,
               display: "flex",
@@ -200,7 +200,7 @@ export default function AccountSettingsPage() {
             style={{
               fontSize: 16,
               fontWeight: 600,
-              color: "#F5F5F5",
+              color: COLORS.text,
               whiteSpace: "nowrap",
               overflow: "hidden",
               textOverflow: "ellipsis",
@@ -226,7 +226,7 @@ export default function AccountSettingsPage() {
       <div style={{ padding: "0 20px", marginBottom: 24 }}>
         <div
           style={{
-            color: "rgba(235,235,245,0.5)",
+            color: COLORS.textSecondary,
             fontSize: 12,
             marginBottom: 6,
           }}
@@ -239,7 +239,7 @@ export default function AccountSettingsPage() {
               flex: 1,
               display: "flex",
               alignItems: "center",
-              background: "rgba(118,118,128,0.24)",
+              background: COLORS.fill,
               borderRadius: 4,
               padding: "0 12px",
               height: 44,
@@ -257,7 +257,7 @@ export default function AccountSettingsPage() {
                 background: "transparent",
                 border: "none",
                 outline: "none",
-                color: "#F5F5F5",
+                color: COLORS.text,
                 fontSize: 16,
               }}
             />
@@ -292,7 +292,7 @@ export default function AccountSettingsPage() {
       <div style={{ padding: "0 20px", marginBottom: 24 }}>
         <div
           style={{
-            color: "rgba(235,235,245,0.5)",
+            color: COLORS.textSecondary,
             fontSize: 12,
             marginBottom: 6,
           }}
@@ -306,13 +306,13 @@ export default function AccountSettingsPage() {
               display: "flex",
               alignItems: "center",
               gap: 4,
-              background: "rgba(118,118,128,0.24)",
+              background: COLORS.fill,
               borderRadius: 4,
               padding: "0 12px",
               height: 44,
             }}
           >
-            <span style={{ color: "rgba(235,235,245,0.5)", fontSize: 16 }}>
+            <span style={{ color: COLORS.textSecondary, fontSize: 16 }}>
               @
             </span>
             <input
@@ -327,7 +327,7 @@ export default function AccountSettingsPage() {
                 background: "transparent",
                 border: "none",
                 outline: "none",
-                color: "#F5F5F5",
+                color: COLORS.text,
                 fontSize: 16,
               }}
             />

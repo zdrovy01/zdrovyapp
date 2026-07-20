@@ -159,7 +159,7 @@ export default function ProfilePage() {
       <>
         <Space size={8} />
         <ToolbarWin title="" />
-        <div style={{ padding: "40px 20px", textAlign: "center", color: "rgba(235,235,245,0.5)", fontFamily: FONT }}>
+        <div style={{ padding: "40px 20px", textAlign: "center", color: COLORS.textSecondary, fontFamily: FONT }}>
           Loading...
         </div>
       </>
@@ -171,7 +171,7 @@ export default function ProfilePage() {
       <>
         <Space size={8} />
         <ToolbarWin title="Profile" />
-        <div style={{ padding: "40px 20px", textAlign: "center", color: "rgba(235,235,245,0.5)", fontFamily: FONT }}>
+        <div style={{ padding: "40px 20px", textAlign: "center", color: COLORS.textSecondary, fontFamily: FONT }}>
           User not found
         </div>
       </>
@@ -196,7 +196,7 @@ export default function ProfilePage() {
           {/* Right column: name on top, stats below */}
           <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 12 }}>
             {/* Name */}
-            <div style={{ color: "#F5F5F5", fontSize: 17, fontWeight: 700, fontFamily: FONT }}>{profile.name}</div>
+            <div style={{ color: COLORS.text, fontSize: 17, fontWeight: 700, fontFamily: FONT }}>{profile.name}</div>
 
             {/* Stats */}
             <div style={{ display: "flex" }}>
@@ -208,8 +208,8 @@ export default function ProfilePage() {
                 <div key={s.label}
                   onClick={() => s.href && router.push(s.href)}
                   style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 2, cursor: s.href ? "pointer" : "default" }}>
-                  <span style={{ color: "#F5F5F5", fontSize: 18, fontWeight: 700, fontFamily: FONT }}>{s.value}</span>
-                  <span style={{ color: "rgba(235,235,245,0.5)", fontSize: 11, fontFamily: FONT }}>{s.label}</span>
+                  <span style={{ color: COLORS.text, fontSize: 18, fontWeight: 700, fontFamily: FONT }}>{s.value}</span>
+                  <span style={{ color: COLORS.textSecondary, fontSize: 11, fontFamily: FONT }}>{s.label}</span>
                 </div>
               ))}
             </div>
@@ -261,8 +261,8 @@ export default function ProfilePage() {
                 </svg>
               ) : (
                 <svg width="22" height="18" viewBox="0 0 22 18" fill="none">
-                  <path d="M8 9a4 4 0 100-8 4 4 0 000 8zM1.5 17c0-3 2.9-5 6.5-5s6.5 2 6.5 5" stroke="#F5F5F5" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                  <path d="M17.5 6v5M20 8.5h-5" stroke="#F5F5F5" strokeWidth="1.6" strokeLinecap="round" />
+                  <path d="M8 9a4 4 0 100-8 4 4 0 000 8zM1.5 17c0-3 2.9-5 6.5-5s6.5 2 6.5 5" stroke="var(--c-text,#F5F5F5)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M17.5 6v5M20 8.5h-5" stroke="var(--c-text,#F5F5F5)" strokeWidth="1.6" strokeLinecap="round" />
                 </svg>
               )}
             </button>
@@ -270,11 +270,11 @@ export default function ProfilePage() {
         )}
 
         {/* Divider */}
-        <div style={{ height: 0.5, background: "rgba(255,255,255,0.08)", marginTop: 4 }} />
+        <div style={{ height: 0.5, background: COLORS.hairline, marginTop: 4 }} />
 
         {/* Recipes grid — Instagram-style, full-bleed 3 columns */}
         {recipes.length === 0 ? (
-          <div style={{ color: "rgba(235,235,245,0.35)", fontSize: 14, fontFamily: FONT, textAlign: "center", paddingTop: 20 }}>
+          <div style={{ color: COLORS.textTertiary, fontSize: 14, fontFamily: FONT, textAlign: "center", paddingTop: 20 }}>
             No recipes yet
           </div>
         ) : (
@@ -297,7 +297,7 @@ export default function ProfilePage() {
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={r.image_url} alt={r.name} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
                 ) : (
-                  <span style={{ color: "rgba(235,235,245,0.4)", fontSize: 12, fontFamily: FONT, padding: 6, textAlign: "center" }}>
+                  <span style={{ color: COLORS.textTertiary, fontSize: 12, fontFamily: FONT, padding: 6, textAlign: "center" }}>
                     {r.name}
                   </span>
                 )}

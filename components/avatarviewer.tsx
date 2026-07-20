@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { COLORS } from "@/config/theme";
 
 const FONT = "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif";
 
@@ -51,7 +52,7 @@ export default function AvatarViewer({
           height: size,
           borderRadius: "50%",
           flexShrink: 0,
-          background: "rgba(120,120,128,0.3)",
+          background: COLORS.fill,
           overflow: "hidden",
           display: "flex",
           alignItems: "center",
@@ -72,7 +73,7 @@ export default function AvatarViewer({
             style={{
               fontSize: size * 0.4,
               fontWeight: 700,
-              color: "#F5F5F5",
+              color: COLORS.text,
               fontFamily: FONT,
             }}
           >
@@ -119,7 +120,7 @@ export default function AvatarViewer({
               }}
             >
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                <path d="M4 4L14 14M14 4L4 14" stroke="#F5F5F5" strokeWidth="2" strokeLinecap="round" />
+                <path d="M4 4L14 14M14 4L4 14" stroke="var(--c-text,#F5F5F5)" strokeWidth="2" strokeLinecap="round" />
               </svg>
             </button>
 

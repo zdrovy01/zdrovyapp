@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { COLORS } from "@/config/theme";
 
 interface DateStripProps {
   selected: Date;
@@ -119,7 +120,7 @@ export default function DateStrip({
                   ? "rgba(235,235,245,0.95)"
                   : isFuture
                   ? "rgba(235,235,245,0.3)"
-                  : "rgba(235,235,245,0.6)",
+                  : COLORS.textSecondary,
               }}
             >
               {d.getDate()}

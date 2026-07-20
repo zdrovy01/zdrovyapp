@@ -23,11 +23,11 @@ const SEG_ACTIVE = "rgba(120,120,128,0.5)";
 
 const fieldStyle: React.CSSProperties = {
   width: "100%",
-  background: "rgba(118,118,128,0.24)",
+  background: COLORS.fill,
   border: "none",
   outline: "none",
   borderRadius: 4,
-  color: "#F5F5F5",
+  color: COLORS.text,
   fontSize: 15,
   padding: "11px 13px",
   boxSizing: "border-box",
@@ -35,7 +35,7 @@ const fieldStyle: React.CSSProperties = {
 };
 
 const cardStyle: React.CSSProperties = {
-  background: "rgba(255,255,255,0.04)",
+  background: COLORS.surfaceElevated,
   border: "0.5px solid rgba(255,255,255,0.08)",
   borderRadius: 4,
   boxSizing: "border-box",
@@ -46,8 +46,8 @@ const primaryBtn: React.CSSProperties = {
   height: 48,
   borderRadius: 4,
   border: "none",
-  background: "#F5F5F5",
-  color: "#000",
+  background: COLORS.text,
+  color: COLORS.background,
   fontSize: 16,
   fontWeight: 600,
   fontFamily: FONT,
@@ -60,7 +60,7 @@ const addBtn: React.CSSProperties = {
   borderRadius: 4,
   border: "none",
   background: COLORS.surface,
-  color: "rgba(235,235,245,0.7)",
+  color: COLORS.textSecondary,
   fontSize: 14,
   fontWeight: 600,
   fontFamily: FONT,
@@ -277,7 +277,7 @@ export default function CreateRecipePage() {
         <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Recipe name" style={fieldStyle} />
 
         {/* Mode toggle */}
-        <div style={{ display: "flex", background: "rgba(118,118,128,0.24)", borderRadius: 4, padding: 3 }}>
+        <div style={{ display: "flex", background: COLORS.fill, borderRadius: 4, padding: 3 }}>
           {(["manual", "auto"] as const).map((m) => {
             const active = mode === m;
             return (
@@ -287,7 +287,7 @@ export default function CreateRecipePage() {
                 style={{
                   flex: 1, height: 36, borderRadius: 4, border: "none", cursor: "pointer",
                   background: active ? SEG_ACTIVE : "transparent",
-                  color: active ? "#F5F5F5" : "rgba(235,235,245,0.6)",
+                  color: active ? "#F5F5F5" : COLORS.textSecondary,
                   fontSize: 14, fontWeight: 600, fontFamily: FONT,
                   textTransform: "capitalize",
                 }}
@@ -318,7 +318,7 @@ export default function CreateRecipePage() {
                   <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                     <div style={{
                       width: 30, height: 30, flexShrink: 0, borderRadius: 4,
-                      background: "rgba(118,118,128,0.24)", color: "rgba(235,235,245,0.6)",
+                      background: COLORS.fill, color: COLORS.textSecondary,
                       display: "flex", alignItems: "center", justifyContent: "center",
                       fontSize: 13, fontWeight: 700,
                     }}>{i + 1}</div>
@@ -326,14 +326,14 @@ export default function CreateRecipePage() {
                       value={ing.name}
                       onChange={(e) => updateIngredient(i, { name: e.target.value })}
                       placeholder="Ingredient name"
-                      style={{ flex: 1, minWidth: 0, background: "transparent", border: "none", outline: "none", color: "#F5F5F5", fontSize: 16, fontWeight: 600 }}
+                      style={{ flex: 1, minWidth: 0, background: "transparent", border: "none", outline: "none", color: COLORS.text, fontSize: 16, fontWeight: 600 }}
                     />
                     <button
                       onClick={() => removeIngredient(i)}
                       aria-label="Remove"
                       style={{
                         width: 28, height: 28, flexShrink: 0, borderRadius: "50%", border: "none",
-                        background: "rgba(255,255,255,0.08)", cursor: "pointer",
+                        background: COLORS.hairline, cursor: "pointer",
                         display: "flex", alignItems: "center", justifyContent: "center",
                       }}
                     >
@@ -350,7 +350,7 @@ export default function CreateRecipePage() {
                       inputMode="decimal"
                       style={{ ...fieldStyle, flex: 1, padding: "10px 12px", fontSize: 15 }}
                     />
-                    <div style={{ display: "flex", background: "rgba(118,118,128,0.24)", borderRadius: 4, padding: 2, flexShrink: 0 }}>
+                    <div style={{ display: "flex", background: COLORS.fill, borderRadius: 4, padding: 2, flexShrink: 0 }}>
                       {(["g", "ml"] as const).map((u) => {
                         const active = ing.unit === u;
                         return (
@@ -360,7 +360,7 @@ export default function CreateRecipePage() {
                             style={{
                               width: 44, height: 34, borderRadius: 4, border: "none", cursor: "pointer",
                               background: active ? SEG_ACTIVE : "transparent",
-                              color: active ? "#F5F5F5" : "rgba(235,235,245,0.6)",
+                              color: active ? "#F5F5F5" : COLORS.textSecondary,
                               fontSize: 14, fontWeight: 600,
                             }}
                           >{u}</button>
@@ -382,13 +382,13 @@ export default function CreateRecipePage() {
               {steps.map((st, i) => (
                 <div key={i} style={{ ...cardStyle, padding: 12 }}>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
-                    <span style={{ color: "#F5F5F5", fontWeight: 700, fontSize: 14 }}>Step {i + 1}</span>
+                    <span style={{ color: COLORS.text, fontWeight: 700, fontSize: 14 }}>Step {i + 1}</span>
                     <button
                       onClick={() => removeStep(i)}
                       aria-label="Remove"
                       style={{
                         width: 28, height: 28, flexShrink: 0, borderRadius: "50%", border: "none",
-                        background: "rgba(255,255,255,0.08)", cursor: "pointer",
+                        background: COLORS.hairline, cursor: "pointer",
                         display: "flex", alignItems: "center", justifyContent: "center",
                       }}
                     >
@@ -438,7 +438,7 @@ export default function CreateRecipePage() {
         </div>
         </>)}
 
-        {error && <div style={{ color: "#FF453A", fontSize: 13 }}>{error}</div>}
+        {error && <div style={{ color: COLORS.danger, fontSize: 13 }}>{error}</div>}
 
         <button
           onClick={mode === "auto" ? handleAutoSave : handleSave}

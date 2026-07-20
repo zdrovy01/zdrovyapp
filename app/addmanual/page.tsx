@@ -18,7 +18,7 @@ const cameraIcon = (
 );
 
 const labelStyle: React.CSSProperties = {
-  color: "rgba(235,235,245,0.5)",
+  color: COLORS.textSecondary,
   fontSize: 12,
   marginBottom: 6,
   display: "block",
@@ -26,11 +26,11 @@ const labelStyle: React.CSSProperties = {
 
 const fieldStyle: React.CSSProperties = {
   width: "100%",
-  background: "rgba(118,118,128,0.24)",
+  background: COLORS.fill,
   border: "none",
   outline: "none",
   borderRadius: 4,
-  color: "#F5F5F5",
+  color: COLORS.text,
   fontSize: 15,
   padding: "11px 13px",
   boxSizing: "border-box",
@@ -149,14 +149,14 @@ export default function AddManualPage() {
           </div>
         </div>
 
-        {error && <div style={{ color: "#FF453A", fontSize: 13 }}>{error}</div>}
+        {error && <div style={{ color: COLORS.danger, fontSize: 13 }}>{error}</div>}
 
         <button
           onClick={handleSave}
           disabled={saving}
           style={{
             width: "100%", height: 48, borderRadius: 4, border: "none",
-            background: "#F5F5F5", color: "#000",
+            background: COLORS.text, color: COLORS.background,
             fontSize: 16, fontWeight: 600, fontFamily: FONT,
             cursor: "pointer", opacity: saving ? 0.6 : 1,
           }}

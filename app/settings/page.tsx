@@ -5,13 +5,14 @@ import { useProtectedRoute } from "@/hooks/use-protected-route";
 import ToolbarWin from "@/components/toolbarwin";
 import Space from "@/components/space";
 import Option2 from "@/components/option2";
+import { COLORS } from "@/config/theme";
 
 function SectionHeader({ text }: { text: string }) {
   return (
     <div style={{ padding: "0 20px" }}>
       <div
         style={{
-          color: "rgba(235,235,245,0.6)",
+          color: COLORS.textSecondary,
           fontSize: 13,
           fontWeight: 600,
           marginBottom: 12,

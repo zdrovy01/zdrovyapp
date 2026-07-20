@@ -1,3 +1,4 @@
+import { COLORS } from "@/config/theme";
 interface TitleProps {
   text?: string;
 }
@@ -18,7 +19,7 @@ export default function Title({ text = "Title" }: TitleProps) {
     >
       <div
         style={{
-          color: "#FFFFFF",
+          color: COLORS.text,
           fontSize: 17,
           fontFamily: "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif",
           fontWeight: 510,

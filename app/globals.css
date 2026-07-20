@@ -1,3 +1,42 @@
+/* ---- Theme tokens (see config/theme.ts) ---- */
+:root, :root[data-theme="dark"] {
+  --c-accent: #F8FD03;
+  --c-on-accent: #000000;
+  --c-background: #000000;
+  --c-surface: #0A0A0A;
+  --c-surface-2: rgba(255,255,255,0.04);
+  --c-fill: rgba(118,118,128,0.24);
+  --c-seg-active: rgba(120,120,128,0.5);
+  --c-track: #2A2A2A;
+  --c-text: #F5F5F5;
+  --c-text-2: rgba(235,235,245,0.6);
+  --c-text-3: rgba(235,235,245,0.4);
+  --c-hairline: rgba(255,255,255,0.08);
+  --c-hairline-2: rgba(255,255,255,0.15);
+  --c-danger: #FF453A;
+  --c-overlay: rgba(0,0,0,0.5);
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --c-accent: #F8FD03;
+  --c-on-accent: #000000;
+  --c-background: #FFFFFF;
+  --c-surface: #F2F2F7;
+  --c-surface-2: rgba(0,0,0,0.04);
+  --c-fill: rgba(118,118,128,0.16);
+  --c-seg-active: #FFFFFF;
+  --c-track: rgba(0,0,0,0.1);
+  --c-text: #1C1C1E;
+  --c-text-2: rgba(60,60,67,0.6);
+  --c-text-3: rgba(60,60,67,0.4);
+  --c-hairline: rgba(0,0,0,0.1);
+  --c-hairline-2: rgba(0,0,0,0.18);
+  --c-danger: #FF3B30;
+  --c-overlay: rgba(0,0,0,0.4);
+  color-scheme: light;
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -6,7 +45,7 @@
 
 body {
   font-family: var(--font-inter), Inter, sans-serif;
-  background-color: #000;
+  background-color: var(--c-background);
   display: flex;
   justify-content: center;
   min-height: 100vh;
@@ -15,7 +54,7 @@ body {
 main {
   width: 100%;
   min-height: 100vh;
-  background-color: #000;
+  background-color: var(--c-background);
   position: relative;
   /* `clip` hides horizontal overflow without turning <main> into a scroll
      container (which `hidden` would, breaking position: sticky toolbars). */

@@ -4,26 +4,23 @@ import Space from "@/components/space";
 import ToolbarWin from "@/components/toolbarwin";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
 import { COLORS } from "@/config/theme";
+import { getTheme, setTheme as applyThemeMode, ThemeMode } from "@/config/appearance";
 import { useState } from "react";
 
 const FONT = "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif";
 
-const THEMES = [
+const THEMES: { label: string; code: ThemeMode }[] = [
   { label: "Dark", code: "dark" },
   { label: "Light", code: "light" },
 ];
 
 export default function ThemePage() {
   useProtectedRoute();
-  const [theme, setTheme] = useState<string>(() =>
-    typeof window !== "undefined"
-      ? localStorage.getItem("zdrovy-theme") || "dark"
-      : "dark"
-  );
+  const [theme, setThemeState] = useState<ThemeMode>(getTheme);
 
-  const select = (code: string) => {
-    setTheme(code);
-    if (typeof window !== "undefined") localStorage.setItem("zdrovy-theme", code);
+  const select = (code: ThemeMode) => {
+    setThemeState(code);
+    applyThemeMode(code);
   };
 
   return (
@@ -43,7 +40,7 @@ export default function ThemePage() {
                 width: "100%",
                 height: 56,
                 padding: "0 20px",
-                background: "#0A0A0A",
+                background: COLORS.surface,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
@@ -53,7 +50,7 @@ export default function ThemePage() {
                 fontFamily: FONT,
               }}
             >
-              <span style={{ color: "#fff", fontSize: 16, fontWeight: active ? 600 : 400 }}>
+              <span style={{ color: COLORS.text, fontSize: 16, fontWeight: active ? 600 : 400 }}>
                 {t.label}
               </span>
               {active && (

@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useCurrencySymbol } from "@/config/currency";
+import { COLORS } from "@/config/theme";
 
 interface FoodCardProps extends React.HTMLAttributes<HTMLDivElement> {
   image?: string | null;
@@ -40,7 +41,7 @@ export default function FoodCard({
         display: "flex",
         alignItems: "center",
         gap: 12,
-        background: "#0A0A0A",
+        background: COLORS.surface,
         borderRadius: 4,
         padding: 12,
         ...style,
@@ -68,7 +69,7 @@ export default function FoodCard({
       <div style={{ flex: "1 1 0", minWidth: 0, textAlign: "left" }}>
         <div
           style={{
-            color: "#fff",
+            color: COLORS.text,
             fontSize: 16,
             fontFamily: FONT,
             fontWeight: 600,
@@ -82,7 +83,7 @@ export default function FoodCard({
         </div>
         <div
           style={{
-            color: "rgba(235,235,245,0.6)",
+            color: COLORS.textSecondary,
             fontSize: 12,
             fontFamily: FONT,
             fontWeight: 400,
@@ -107,12 +108,12 @@ export default function FoodCard({
           }}
         >
           {showPrice && (
-            <div style={{ color: "#fff", fontSize: 15, fontWeight: 600 }}>
+            <div style={{ color: COLORS.text, fontSize: 15, fontWeight: 600 }}>
               {sym}{(price as number).toFixed(2)}
             </div>
           )}
           {time && (
-            <div style={{ color: "rgba(235,235,245,0.5)", fontSize: 13, fontWeight: 500 }}>
+            <div style={{ color: COLORS.textSecondary, fontSize: 13, fontWeight: 500 }}>
               {time}
             </div>
           )}

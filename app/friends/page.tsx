@@ -7,6 +7,7 @@ import { getSupabaseClient } from "@/config/supabase";
 import { useAuth } from "@/config/auth-context";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
 import { useCached } from "@/hooks/use-cached";
+import { COLORS } from "@/config/theme";
 
 interface Friend {
   user_id: string;
@@ -56,9 +57,9 @@ export default function FriendsPage() {
       <Space size={10} />
 
       {loading ? (
-        <div style={{ padding: "0 20px", color: "rgba(235,235,245,0.5)", fontFamily: FONT }}>Loading...</div>
+        <div style={{ padding: "0 20px", color: COLORS.textSecondary, fontFamily: FONT }}>Loading...</div>
       ) : friends.length === 0 ? (
-        <div style={{ padding: "40px 20px", textAlign: "center", color: "rgba(235,235,245,0.35)", fontFamily: FONT }}>No friends yet</div>
+        <div style={{ padding: "40px 20px", textAlign: "center", color: COLORS.textTertiary, fontFamily: FONT }}>No friends yet</div>
       ) : (
         <div style={{ display: "flex", flexDirection: "column" }}>
           {friends.map((f) => {
@@ -75,7 +76,7 @@ export default function FriendsPage() {
                 {/* Avatar */}
                 <div style={{
                   width: 52, height: 52, borderRadius: "50%", flexShrink: 0,
-                  background: "rgba(120,120,128,0.3)", overflow: "hidden",
+                  background: COLORS.fill, overflow: "hidden",
                   display: "flex", alignItems: "center", justifyContent: "center",
                   position: "relative",
                 }}>
@@ -84,17 +85,17 @@ export default function FriendsPage() {
                     <img src={f.avatar_url} alt={f.name} referrerPolicy="no-referrer"
                       style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                   ) : (
-                    <span style={{ fontSize: 20, fontWeight: 700, color: "#F5F5F5", fontFamily: FONT }}>{initial}</span>
+                    <span style={{ fontSize: 20, fontWeight: 700, color: COLORS.text, fontFamily: FONT }}>{initial}</span>
                   )}
                 </div>
 
                 {/* Name + @username */}
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ color: "#F5F5F5", fontSize: 15, fontWeight: 600, fontFamily: FONT }}>
+                  <div style={{ color: COLORS.text, fontSize: 15, fontWeight: 600, fontFamily: FONT }}>
                     {f.name || f.username}
                   </div>
                   <div style={{
-                    color: "rgba(235,235,245,0.35)", fontSize: 13, fontFamily: FONT,
+                    color: COLORS.textTertiary, fontSize: 13, fontFamily: FONT,
                     whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
                   }}>
                     @{f.username}

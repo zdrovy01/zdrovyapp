@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import { COLORS } from "@/config/theme";
 
 interface ToolbarProps {
   title?: string;
@@ -31,7 +32,7 @@ const iconStyle: React.CSSProperties = {
   justifyContent: "center",
   position: "relative",
   zIndex: 1,
-  color: "#F5F5F5",
+  color: COLORS.text,
   fontSize: 17,
   textDecoration: "none",
   fontFamily: "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif",
@@ -72,7 +73,7 @@ export default function Toolbar({
         position: "sticky",
         top: 0,
         zIndex: 50,
-        background: "#000000",
+        background: COLORS.background,
       }}
     >
       {/* Title */}
@@ -82,7 +83,7 @@ export default function Toolbar({
             left: 0,
             top: 0,
             position: "absolute",
-            color: "#F5F5F5",
+            color: COLORS.text,
             fontSize: 34,
             fontFamily: "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif",
             fontWeight: 700,

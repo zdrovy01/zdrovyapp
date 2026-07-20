@@ -5,6 +5,7 @@ import { getSupabaseClient } from "@/config/supabase";
 import { useAuth } from "@/config/auth-context";
 import { useCached } from "@/hooks/use-cached";
 import { useCurrencySymbol } from "@/config/currency";
+import { COLORS } from "@/config/theme";
 
 const FONT = "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif";
 
@@ -64,17 +65,17 @@ export default function SpendsTotal() {
 
   return (
     <span style={{ display: "flex", width: "100%", alignItems: "flex-end", justifyContent: "space-between", gap: 12 }}>
-      <span style={{ color: "#fff", fontSize: 22, fontWeight: 700, fontFamily: FONT, lineHeight: 1 }}>
+      <span style={{ color: COLORS.text, fontSize: 22, fontWeight: 700, fontFamily: FONT, lineHeight: 1 }}>
         {sym}{anim.toFixed(2)}
       </span>
       {data.last && (
         <span style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 2, minWidth: 0, textAlign: "right" }}>
-          <span style={{ color: "rgba(235,235,245,0.4)", fontSize: 10, fontFamily: FONT, lineHeight: 1 }}>
+          <span style={{ color: COLORS.textTertiary, fontSize: 10, fontFamily: FONT, lineHeight: 1 }}>
             Last
           </span>
           <span
             style={{
-              color: "rgba(235,235,245,0.7)",
+              color: COLORS.textSecondary,
               fontSize: 12,
               fontFamily: FONT,
               lineHeight: 1.1,

@@ -58,7 +58,7 @@ export default function Logo3D({ width = 324 }: Logo3DProps) {
             xmlns="http://www.w3.org/2000/svg"
             style={{ ...svgStyle, transform: "translateZ(1px)" }}
           >
-            <path d={LOGO_PATH} fill="#ffffff" />
+            <path d={LOGO_PATH} fill="var(--c-text,#F5F5F5)" />
           </svg>
         </div>
       </div>

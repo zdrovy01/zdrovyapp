@@ -7,6 +7,7 @@ import UserRow from "@/components/userrow";
 import { getSupabaseClient } from "@/config/supabase";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
 import { useCached } from "@/hooks/use-cached";
+import { COLORS } from "@/config/theme";
 
 interface UserProfile {
   username: string;
@@ -51,9 +52,9 @@ export default function FollowersPage() {
       <ToolbarWin title="Followers" />
       <Space size={10} />
       {loading ? (
-        <div style={{ padding: "0 20px", color: "rgba(235,235,245,0.5)", fontFamily: FONT }}>Loading...</div>
+        <div style={{ padding: "0 20px", color: COLORS.textSecondary, fontFamily: FONT }}>Loading...</div>
       ) : users.length === 0 ? (
-        <div style={{ padding: "40px 20px", textAlign: "center", color: "rgba(235,235,245,0.35)", fontFamily: FONT }}>No followers yet</div>
+        <div style={{ padding: "40px 20px", textAlign: "center", color: COLORS.textTertiary, fontFamily: FONT }}>No followers yet</div>
       ) : (
         users.map((u) => <UserRow key={u.username} {...u} />)
       )}

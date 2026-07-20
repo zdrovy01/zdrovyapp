@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { COLORS } from "@/config/theme";
 
 interface DateTimeProps {
   date?: Date;
@@ -64,7 +65,7 @@ export default function DateTime({ date = new Date(), onChange, showTime = false
             paddingRight: 11,
             paddingTop: 6,
             paddingBottom: 6,
-            background: "rgba(118, 118, 128, 0.24)",
+            background: COLORS.fill,
             borderRadius: 100,
             justifyContent: "center",
             alignItems: "center",
@@ -119,7 +120,7 @@ export default function DateTime({ date = new Date(), onChange, showTime = false
               paddingRight: 11,
               paddingTop: 6,
               paddingBottom: 6,
-              background: "rgba(118, 118, 128, 0.24)",
+              background: COLORS.fill,
               borderRadius: 100,
               justifyContent: "center",
               alignItems: "center",

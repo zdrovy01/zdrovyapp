@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getSupabaseClient } from "@/config/supabase";
+import { COLORS } from "@/config/theme";
 
 export default function AuthCallbackPage() {
   const router = useRouter();
@@ -85,7 +86,7 @@ export default function AuthCallbackPage() {
         justifyContent: "center",
         alignItems: "center",
         minHeight: "100vh",
-        color: "#F5F5F5",
+        color: COLORS.text,
       }}
     >
       Signing in...

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import React from "react";
+import { COLORS } from "@/config/theme";
 
 interface OptionProps {
   buttons?: 1 | 2 | 3;
@@ -23,7 +24,7 @@ const buttonStyle: React.CSSProperties = {
   flex: "1 1 0",
   height: 94,
   padding: 16,
-  background: "#0A0A0A",
+  background: COLORS.surface,
   borderRadius: 4,
   flexDirection: "column",
   justifyContent: "space-between",

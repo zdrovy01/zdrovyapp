@@ -101,7 +101,7 @@ export default function TextInput({ placeholder = "Message", onSend }: TextInput
       {micError && (
         <div style={{
           marginBottom: 8,
-          color: "#FF453A",
+          color: COLORS.danger,
           fontSize: 13,
           fontFamily: "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif",
         }}>
@@ -112,7 +112,7 @@ export default function TextInput({ placeholder = "Message", onSend }: TextInput
       <div style={{
         width: "100%",
         minHeight: 56,
-        background: "#0A0A0A",
+        background: COLORS.surface,
         borderRadius: 4,
         padding: "12px 12px 12px 16px",
         display: "flex",
@@ -127,7 +127,7 @@ export default function TextInput({ placeholder = "Message", onSend }: TextInput
             minHeight: 32,
             display: "flex",
             alignItems: "center",
-            color: "rgba(235,235,245,0.45)",
+            color: COLORS.textSecondary,
             fontSize: 17,
             fontFamily: "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif",
             fontWeight: 400,
@@ -160,7 +160,7 @@ export default function TextInput({ placeholder = "Message", onSend }: TextInput
               outline: "none",
               resize: "none",
               overflow: "hidden",
-              color: "#F5F5F5",
+              color: COLORS.text,
               fontSize: 17,
               fontFamily: "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif",
               fontWeight: 400,
@@ -190,7 +190,7 @@ export default function TextInput({ placeholder = "Message", onSend }: TextInput
             onClick={listening ? stopListening : startListening}
             style={{
               width: 32, height: 32, borderRadius: 100,
-              background: listening ? "#FF453A" : "rgba(255,255,255,0.08)",
+              background: listening ? "#FF453A" : COLORS.hairline,
               border: "none", cursor: "pointer",
               display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
               transition: "background 0.2s",

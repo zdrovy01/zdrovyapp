@@ -4,6 +4,7 @@ import Space from "@/components/space";
 import ToolbarWin from "@/components/toolbarwin";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
 import { useState } from "react";
+import { COLORS } from "@/config/theme";
 
 const FONT = "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif";
 
@@ -34,7 +35,7 @@ export default function ShopsPage() {
               onClick={() => toggle(shop)}
               style={{
                 height: 56,
-                background: "#0A0A0A",
+                background: COLORS.surface,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
@@ -43,7 +44,7 @@ export default function ShopsPage() {
                 boxSizing: "border-box",
               }}
             >
-              <span style={{ color: "#F5F5F5", fontSize: 16, fontWeight: 600, fontFamily: FONT }}>
+              <span style={{ color: COLORS.text, fontSize: 16, fontWeight: 600, fontFamily: FONT }}>
                 {shop}
               </span>
               <div style={{

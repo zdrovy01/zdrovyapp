@@ -7,6 +7,7 @@ import { useProtectedRoute } from "@/hooks/use-protected-route";
 import { getSupabaseClient } from "@/config/supabase";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import { COLORS } from "@/config/theme";
 
 interface Recipe {
   id: string;
@@ -102,14 +103,14 @@ export default function RecipePage() {
 
       {
         loading ? (
-          <div style={{ padding: "0 20px", color: "rgba(235,235,245,0.6)" }}>
+          <div style={{ padding: "0 20px", color: COLORS.textSecondary }}>
             Loading...
           </div>
         ) : recipes.length === 0 ? (
           <div
             style={{
               padding: "30px 20px",
-              color: "rgba(235,235,245,0.5)",
+              color: COLORS.textSecondary,
               textAlign: "center",
             }}
           >

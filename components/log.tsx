@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import FoodCard from "@/components/foodcard";
+import { COLORS } from "@/config/theme";
 
 interface LogProps {
   title?: string;
@@ -84,7 +85,7 @@ export default function Log({
         width: "100%",
         overflow: "hidden",
         borderRadius: 4,
-        background: "#0A0A0A",
+        background: COLORS.surface,
       }}
     >
       {/* Delete button */}
@@ -97,9 +98,9 @@ export default function Log({
             right: 0,
             height: "100%",
             width: DELETE_WIDTH,
-            background: "#FF3B30",
+            background: COLORS.danger,
             border: "none",
-            color: "#fff",
+            color: COLORS.text,
             fontSize: 14,
             fontWeight: 600,
             cursor: "pointer",

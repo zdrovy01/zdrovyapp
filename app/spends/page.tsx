@@ -8,6 +8,7 @@ import { useAuth } from "@/config/auth-context";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
 import { useCached } from "@/hooks/use-cached";
 import { useCurrencySymbol } from "@/config/currency";
+import { COLORS } from "@/config/theme";
 
 const FONT = "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif";
 
@@ -108,7 +109,7 @@ function SpendRow({
           aria-label="Delete"
           style={{
             position: "absolute", top: 0, right: 0, bottom: 0, width: REVEAL,
-            border: "none", background: "#FF453A", color: "#fff",
+            border: "none", background: COLORS.danger, color: COLORS.text,
             fontSize: 13, fontWeight: 600, fontFamily: FONT, cursor: "pointer",
           }}
         >
@@ -124,21 +125,21 @@ function SpendRow({
         onPointerCancel={onPointerUp}
         style={{
           display: "flex", alignItems: "center", justifyContent: "space-between",
-          padding: "13px 16px", background: "#0A0A0A",
+          padding: "13px 16px", background: COLORS.surface,
           transform: `translateX(${offset}px)`,
           transition: dragging ? "none" : "transform 0.22s cubic-bezier(0.2,0.8,0.2,1)",
           touchAction: "pan-y",
         }}
       >
         <div style={{ minWidth: 0, marginRight: 12 }}>
-          <div style={{ color: "#F5F5F5", fontSize: 15, fontWeight: 500, fontFamily: FONT, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+          <div style={{ color: COLORS.text, fontSize: 15, fontWeight: 500, fontFamily: FONT, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
             {it.title}
           </div>
-          <div style={{ color: "rgba(235,235,245,0.4)", fontSize: 12, fontFamily: FONT }}>
+          <div style={{ color: COLORS.textTertiary, fontSize: 12, fontFamily: FONT }}>
             {fmtDate(it.created_at)}
           </div>
         </div>
-        <div style={{ color: "#F5F5F5", fontSize: 15, fontWeight: 600, fontFamily: FONT, flexShrink: 0 }}>
+        <div style={{ color: COLORS.text, fontSize: 15, fontWeight: 600, fontFamily: FONT, flexShrink: 0 }}>
           {sym}{it.amount.toFixed(2)}
         </div>
       </div>
@@ -198,7 +199,7 @@ export default function SpendsPage() {
         href1="/addspend"
         icon1={
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path d="M10 3.5v13M3.5 10h13" stroke="#F5F5F5" strokeWidth="2" strokeLinecap="round" />
+            <path d="M10 3.5v13M3.5 10h13" stroke="var(--c-text,#F5F5F5)" strokeWidth="2" strokeLinecap="round" />
           </svg>
         }
       />
@@ -206,9 +207,9 @@ export default function SpendsPage() {
 
       <div style={{ padding: "0 20px", display: "flex", flexDirection: "column", gap: 12 }}>
         {/* Month total */}
-        <div style={{ background: "#0A0A0A", borderRadius: 4, padding: "18px 20px" }}>
-          <div style={{ color: "rgba(235,235,245,0.5)", fontSize: 13, fontFamily: FONT }}>Last 30 days</div>
-          <div style={{ color: "#F5F5F5", fontSize: 34, fontWeight: 700, fontFamily: FONT, marginTop: 4 }}>
+        <div style={{ background: COLORS.surface, borderRadius: 4, padding: "18px 20px" }}>
+          <div style={{ color: COLORS.textSecondary, fontSize: 13, fontFamily: FONT }}>Last 30 days</div>
+          <div style={{ color: COLORS.text, fontSize: 34, fontWeight: 700, fontFamily: FONT, marginTop: 4 }}>
             {fmt(monthAnim)}
           </div>
         </div>
@@ -219,9 +220,9 @@ export default function SpendsPage() {
             { label: "Today", value: todayAnim },
             { label: "This week", value: weekAnim },
           ].map((s) => (
-            <div key={s.label} style={{ flex: 1, background: "#0A0A0A", borderRadius: 4, padding: "14px 16px" }}>
-              <div style={{ color: "rgba(235,235,245,0.5)", fontSize: 12, fontFamily: FONT }}>{s.label}</div>
-              <div style={{ color: "#F5F5F5", fontSize: 20, fontWeight: 700, fontFamily: FONT, marginTop: 2 }}>
+            <div key={s.label} style={{ flex: 1, background: COLORS.surface, borderRadius: 4, padding: "14px 16px" }}>
+              <div style={{ color: COLORS.textSecondary, fontSize: 12, fontFamily: FONT }}>{s.label}</div>
+              <div style={{ color: COLORS.text, fontSize: 20, fontWeight: 700, fontFamily: FONT, marginTop: 2 }}>
                 {fmt(s.value)}
               </div>
             </div>
@@ -229,20 +230,20 @@ export default function SpendsPage() {
         </div>
 
         {/* Recent purchases */}
-        <div style={{ color: "rgba(235,235,245,0.5)", fontSize: 12, fontFamily: FONT, marginTop: 6 }}>
+        <div style={{ color: COLORS.textSecondary, fontSize: 12, fontFamily: FONT, marginTop: 6 }}>
           Recent purchases
         </div>
 
         {loading && data.items.length === 0 ? (
-          <div style={{ color: "rgba(235,235,245,0.4)", fontSize: 14, fontFamily: FONT, textAlign: "center", padding: "20px 0" }}>
+          <div style={{ color: COLORS.textTertiary, fontSize: 14, fontFamily: FONT, textAlign: "center", padding: "20px 0" }}>
             Loading…
           </div>
         ) : data.items.length === 0 ? (
-          <div style={{ color: "rgba(235,235,245,0.35)", fontSize: 14, fontFamily: FONT, textAlign: "center", padding: "24px 0" }}>
+          <div style={{ color: COLORS.textTertiary, fontSize: 14, fontFamily: FONT, textAlign: "center", padding: "24px 0" }}>
             No spending yet
           </div>
         ) : (
-          <div style={{ background: "#0A0A0A", borderRadius: 4, overflow: "hidden" }}>
+          <div style={{ background: COLORS.surface, borderRadius: 4, overflow: "hidden" }}>
             {data.items.map((it, i) => (
               <SpendRow
                 key={it.id}

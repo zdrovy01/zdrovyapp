@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { COLORS } from "@/config/theme";
 
 interface Option2Props {
   text?: string;
@@ -16,7 +17,7 @@ export default function Option2({ text = "Text", icon, href, onClick, style: sty
     height: 64,
     paddingLeft: 20,
     paddingRight: 20,
-    background: "#0A0A0A",
+    background: COLORS.surface,
     justifyContent: "flex-start",
     alignItems: "center",
     gap: 10,

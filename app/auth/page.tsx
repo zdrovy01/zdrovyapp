@@ -121,7 +121,7 @@ export default function AuthPage() {
                 textAlign: "center",
                 padding: "12px 16px",
                 background: "rgba(255,69,58,0.1)",
-                borderRadius: 16,
+                borderRadius: 4,
                 width: "100%",
                 boxSizing: "border-box",
               }}

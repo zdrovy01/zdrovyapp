@@ -20,7 +20,7 @@ const fieldStyle: React.CSSProperties = {
   background: "rgba(118,118,128,0.24)",
   border: "none",
   outline: "none",
-  borderRadius: 16,
+  borderRadius: 4,
   color: "#F5F5F5",
   fontSize: 15,
   padding: "11px 13px",
@@ -241,7 +241,7 @@ export default function AddPage() {
           <div
             onClick={() => manualPhotoRef.current?.click()}
             style={{
-              width: "100%", aspectRatio: "16 / 7", borderRadius: 16,
+              width: "100%", aspectRatio: "16 / 7", borderRadius: 4,
               background: COLORS.surface,
               display: "flex", alignItems: "center", justifyContent: "center",
               cursor: "pointer", overflow: "hidden", boxSizing: "border-box",
@@ -271,7 +271,7 @@ export default function AddPage() {
           onClick={handleSaveManual}
           disabled={savingManual}
           style={{
-            width: "100%", height: 48, borderRadius: 16, border: "none",
+            width: "100%", height: 48, borderRadius: 4, border: "none",
             background: "#F5F5F5", color: "#000",
             fontSize: 16, fontWeight: 600, fontFamily: FONT,
             cursor: "pointer", opacity: savingManual ? 0.6 : 1,

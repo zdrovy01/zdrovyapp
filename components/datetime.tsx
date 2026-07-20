@@ -51,7 +51,7 @@ export default function DateTime({ date = new Date(), onChange, showTime = false
       <div
         style={{
           height: 34,
-          borderRadius: 6,
+          borderRadius: 4,
           justifyContent: "flex-end",
           alignItems: "center",
           gap: 6,

@@ -36,7 +36,7 @@ const FONT = "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif";
 const btnStyle = (bg: string, color: string, disabled = false): React.CSSProperties => ({
   flex: 1,
   height: 44,
-  borderRadius: 16,
+  borderRadius: 4,
   border: "none",
   background: bg,
   color,
@@ -241,7 +241,7 @@ export default function ProfilePage() {
                 width: 52,
                 height: 44,
                 flexShrink: 0,
-                borderRadius: 16,
+                borderRadius: 4,
                 border: "none",
                 background: "rgba(255,255,255,0.1)",
                 display: "flex",

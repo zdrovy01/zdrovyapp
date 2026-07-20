@@ -41,7 +41,7 @@ export default function FoodCard({
         alignItems: "center",
         gap: 12,
         background: "#0A0A0A",
-        borderRadius: 16,
+        borderRadius: 4,
         padding: 12,
         ...style,
       }}
@@ -57,7 +57,7 @@ export default function FoodCard({
           style={{
             width: 56,
             height: 56,
-            borderRadius: 16,
+            borderRadius: 4,
             objectFit: "cover",
             flexShrink: 0,
           }}

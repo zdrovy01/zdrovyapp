@@ -26,7 +26,7 @@ export default function LanguageSelector() {
             onClick={() => setLang(l.code)}
             style={{
               padding: "8px 16px",
-              borderRadius: 16,
+              borderRadius: 4,
               border: "1px solid",
               borderColor: lang === l.code ? COLORS.accent : "rgba(255,255,255,0.2)",
               background: lang === l.code ? "rgba(248,253,3,0.15)" : "transparent",

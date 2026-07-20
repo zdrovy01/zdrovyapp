@@ -113,7 +113,7 @@ export default function TextInput({ placeholder = "Message", onSend }: TextInput
         width: "100%",
         minHeight: 56,
         background: "#0A0A0A",
-        borderRadius: 16,
+        borderRadius: 4,
         padding: "12px 12px 12px 16px",
         display: "flex",
         alignItems: "flex-end",

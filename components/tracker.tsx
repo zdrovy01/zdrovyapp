@@ -97,7 +97,7 @@ export default function Tracker({ date, href = "/log" }: TrackerProps) {
         style={{
           flex: "1 1 0",
           background: "#0A0A0A",
-          borderRadius: 16,
+          borderRadius: 4,
           padding: "16px 18px",
           boxSizing: "border-box",
           display: "flex",
@@ -190,7 +190,7 @@ function TrackerItem({ label, value, unit, color, total }: TrackerItemProps) {
       <div
         style={{
           height: 4,
-          borderRadius: 2,
+          borderRadius: 4,
           background: "#2A2A2A",
           overflow: "hidden",
         }}
@@ -199,7 +199,7 @@ function TrackerItem({ label, value, unit, color, total }: TrackerItemProps) {
           style={{
             height: "100%",
             width: `${pct}%`,
-            borderRadius: 2,
+            borderRadius: 4,
             background: color,
             transition: "width 0.6s ease-out",
           }}

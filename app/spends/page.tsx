@@ -206,7 +206,7 @@ export default function SpendsPage() {
 
       <div style={{ padding: "0 20px", display: "flex", flexDirection: "column", gap: 12 }}>
         {/* Month total */}
-        <div style={{ background: "#0A0A0A", borderRadius: 16, padding: "18px 20px" }}>
+        <div style={{ background: "#0A0A0A", borderRadius: 4, padding: "18px 20px" }}>
           <div style={{ color: "rgba(235,235,245,0.5)", fontSize: 13, fontFamily: FONT }}>Last 30 days</div>
           <div style={{ color: "#F5F5F5", fontSize: 34, fontWeight: 700, fontFamily: FONT, marginTop: 4 }}>
             {fmt(monthAnim)}
@@ -219,7 +219,7 @@ export default function SpendsPage() {
             { label: "Today", value: todayAnim },
             { label: "This week", value: weekAnim },
           ].map((s) => (
-            <div key={s.label} style={{ flex: 1, background: "#0A0A0A", borderRadius: 16, padding: "14px 16px" }}>
+            <div key={s.label} style={{ flex: 1, background: "#0A0A0A", borderRadius: 4, padding: "14px 16px" }}>
               <div style={{ color: "rgba(235,235,245,0.5)", fontSize: 12, fontFamily: FONT }}>{s.label}</div>
               <div style={{ color: "#F5F5F5", fontSize: 20, fontWeight: 700, fontFamily: FONT, marginTop: 2 }}>
                 {fmt(s.value)}
@@ -242,7 +242,7 @@ export default function SpendsPage() {
             No spending yet
           </div>
         ) : (
-          <div style={{ background: "#0A0A0A", borderRadius: 16, overflow: "hidden" }}>
+          <div style={{ background: "#0A0A0A", borderRadius: 4, overflow: "hidden" }}>
             {data.items.map((it, i) => (
               <SpendRow
                 key={it.id}

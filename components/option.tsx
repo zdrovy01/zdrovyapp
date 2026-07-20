@@ -24,7 +24,7 @@ const buttonStyle: React.CSSProperties = {
   height: 94,
   padding: 16,
   background: "#0A0A0A",
-  borderRadius: 16,
+  borderRadius: 4,
   flexDirection: "column",
   justifyContent: "space-between",
   alignItems: "flex-start",

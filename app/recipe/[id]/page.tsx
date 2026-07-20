@@ -36,7 +36,7 @@ interface ParsedStep {
 
 const cardStyle: React.CSSProperties = {
   background: "#0A0A0A",
-  borderRadius: 16,
+  borderRadius: 4,
   boxSizing: "border-box",
 };
 const labelStyle: React.CSSProperties = {
@@ -196,7 +196,7 @@ export default function RecipeDetailPage() {
           <img
             src={recipe.image_url}
             alt={recipe.name}
-            style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", borderRadius: 16 }}
+            style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", borderRadius: 4 }}
           />
         )}
 
@@ -205,7 +205,7 @@ export default function RecipeDetailPage() {
         {/* Title + price */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
           <h1 style={{ margin: 0, color: "#fff", fontSize: 24, fontWeight: 800 }}>{recipe.name}</h1>
-          <div style={{ ...cardStyle, padding: "8px 14px", borderRadius: 16, color: "#fff", fontWeight: 700, fontSize: 16, flexShrink: 0 }}>
+          <div style={{ ...cardStyle, padding: "8px 14px", borderRadius: 4, color: "#fff", fontWeight: 700, fontSize: 16, flexShrink: 0 }}>
             {sym}{recipe.price.toFixed(2)}
           </div>
         </div>
@@ -276,7 +276,7 @@ export default function RecipeDetailPage() {
             onClick={toggleSave}
             disabled={savingState}
             style={{
-              flex: 1, height: 54, borderRadius: 16,
+              flex: 1, height: 54, borderRadius: 4,
               border: saved ? "1.5px solid rgba(235,235,245,0.3)" : "none",
               background: saved ? "transparent" : "#fff",
               color: saved ? "#fff" : "#000",
@@ -290,7 +290,7 @@ export default function RecipeDetailPage() {
           <button
             onClick={() => router.push(`/cook?recipe=${recipe.id}`)}
             style={{
-              flex: 1, height: 54, borderRadius: 16, border: "none",
+              flex: 1, height: 54, borderRadius: 4, border: "none",
               background: COLORS.accent, color: COLORS.onAccent, fontSize: 16, fontWeight: 600, cursor: "pointer",
             }}
           >

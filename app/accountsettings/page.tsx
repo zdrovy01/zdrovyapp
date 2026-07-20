@@ -240,7 +240,7 @@ export default function AccountSettingsPage() {
               display: "flex",
               alignItems: "center",
               background: "rgba(118,118,128,0.24)",
-              borderRadius: 16,
+              borderRadius: 4,
               padding: "0 12px",
               height: 44,
             }}
@@ -270,7 +270,7 @@ export default function AccountSettingsPage() {
             style={{
               height: 44,
               padding: "0 16px",
-              borderRadius: 16,
+              borderRadius: 4,
               border: "none",
               background: COLORS.accent,
               color: COLORS.onAccent,
@@ -307,7 +307,7 @@ export default function AccountSettingsPage() {
               alignItems: "center",
               gap: 4,
               background: "rgba(118,118,128,0.24)",
-              borderRadius: 16,
+              borderRadius: 4,
               padding: "0 12px",
               height: 44,
             }}
@@ -343,7 +343,7 @@ export default function AccountSettingsPage() {
             style={{
               height: 44,
               padding: "0 16px",
-              borderRadius: 16,
+              borderRadius: 4,
               border: "none",
               background: COLORS.accent,
               color: COLORS.onAccent,

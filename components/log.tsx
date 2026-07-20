@@ -83,7 +83,7 @@ export default function Log({
         position: "relative",
         width: "100%",
         overflow: "hidden",
-        borderRadius: 16,
+        borderRadius: 4,
         background: "#0A0A0A",
       }}
     >

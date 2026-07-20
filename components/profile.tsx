@@ -92,7 +92,7 @@ export default function Profile() {
           width: 40,
           height: 40,
           flexShrink: 0,
-          borderRadius: 16,
+          borderRadius: 4,
           border: "none",
           background: "rgba(120,120,128,0.24)",
           display: "flex",

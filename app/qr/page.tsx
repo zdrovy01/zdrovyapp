@@ -167,7 +167,7 @@ export default function QrPage() {
     left: isActive ? activeLeft : inactiveLeft,
     width: isActive ? BTN_BIG : BTN_SMALL,
     height: isActive ? BTN_BIG : BTN_SMALL,
-    borderRadius: 16,
+    borderRadius: 4,
     border: "none",
     background: isActive ? "#fff" : "rgba(120,120,128,0.3)",
     display: "flex",
@@ -198,7 +198,7 @@ export default function QrPage() {
             position: "relative",
             width: BOX,
             height: BOX,
-            borderRadius: 16,
+            borderRadius: 4,
             overflow: "hidden",
             background: mode === "qr" ? "#FFFFFF" : "#000",
           }}
@@ -303,7 +303,7 @@ export default function QrPage() {
         )}
         {mode === "scan" && scanResult && (
           <div style={{
-            marginTop: 16, padding: "12px 16px", borderRadius: 16,
+            marginTop: 16, padding: "12px 16px", borderRadius: 4,
             background: "rgba(255,255,255,0.08)", maxWidth: BOX,
             color: "rgba(235,235,245,0.7)", fontSize: 13, wordBreak: "break-all", textAlign: "center",
           }}>

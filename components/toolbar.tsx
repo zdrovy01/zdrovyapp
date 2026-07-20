@@ -112,7 +112,7 @@ export default function Toolbar({
               display: "flex",
             }}
           >
-            {/* Liquid glass background */}
+            {/* Themed pill background */}
             <div
               style={{
                 width: "100%",
@@ -120,10 +120,7 @@ export default function Toolbar({
                 left: 0,
                 top: 0,
                 position: "absolute",
-                opacity: 0.67,
-                background:
-                  "linear-gradient(0deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.06) 100%), rgba(0,0,0,0.60)",
-                boxShadow: "0px 8px 40px rgba(0,0,0,0.12)",
+                background: COLORS.fill,
                 borderRadius: 1000,
               }}
             />

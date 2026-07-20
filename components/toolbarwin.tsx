@@ -30,9 +30,7 @@ const actionStyle: React.CSSProperties = {
   flexShrink: 0,
   color: COLORS.text,
   textDecoration: "none",
-  background:
-    "linear-gradient(0deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.06) 100%), rgba(0,0,0,0.60)",
-  boxShadow: "0px 8px 40px rgba(0,0,0,0.12)",
+  background: COLORS.fill,
 };
 
 export default function ToolbarWin({

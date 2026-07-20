@@ -50,13 +50,13 @@ export default function ShopsPage() {
               <div style={{
                 width: 24, height: 24, borderRadius: "50%",
                 border: active ? "none" : "2px solid rgba(235,235,245,0.3)",
-                background: active ? "#fff" : "transparent",
+                background: active ? COLORS.text : "transparent",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 flexShrink: 0,
               }}>
                 {active && (
                   <svg width="12" height="9" viewBox="0 0 12 9" fill="none">
-                    <path d="M1 4L4.5 7.5L11 1" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    <path d="M1 4L4.5 7.5L11 1" stroke="var(--c-text,#F5F5F5)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 )}
               </div>

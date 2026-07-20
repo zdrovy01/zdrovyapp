@@ -167,7 +167,7 @@ export default function RecipeDetailPage() {
   };
 
   if (loading) {
-    return <div style={{ color: "white", padding: 20 }}>Loading...</div>;
+    return <div style={{ color: COLORS.text, padding: 20 }}>Loading...</div>;
   }
 
   if (!recipe) {
@@ -278,7 +278,7 @@ export default function RecipeDetailPage() {
               flex: 1, height: 54, borderRadius: 4,
               border: saved ? "1.5px solid rgba(235,235,245,0.3)" : "none",
               background: saved ? "transparent" : COLORS.text,
-              color: saved ? "#fff" : COLORS.background,
+              color: saved ? COLORS.text : COLORS.background,
               fontSize: 16, fontWeight: 600,
               cursor: savingState ? "default" : "pointer",
               opacity: savingState ? 0.6 : 1,

@@ -32,12 +32,12 @@ export default function Option2({ text = "Text", icon, href, onClick, style: sty
   const content = (
     <>
       {icon && (
-        <div style={{ color: "white", fontSize: 22, display: "flex", alignItems: "center", flexShrink: 0 }}>
+        <div style={{ color: COLORS.text, fontSize: 22, display: "flex", alignItems: "center", flexShrink: 0 }}>
           {icon}
         </div>
       )}
       <div style={{
-        color: styleProp?.color || "white",
+        color: styleProp?.color || COLORS.text,
         fontSize: 16,
         fontFamily: "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif",
         fontWeight: 600,

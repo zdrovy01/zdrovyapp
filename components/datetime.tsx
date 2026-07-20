@@ -90,7 +90,7 @@ export default function DateTime({ date = new Date(), onChange, showTime = false
           <div
             style={{
               textAlign: "center",
-              color: "white",
+              color: COLORS.text,
               fontSize: 17,
               fontFamily: "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif",
               fontWeight: 400,
@@ -102,7 +102,7 @@ export default function DateTime({ date = new Date(), onChange, showTime = false
           <div
             style={{
               textAlign: "center",
-              color: "white",
+              color: COLORS.text,
               fontSize: 17,
               fontFamily: "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif",
               fontWeight: 400,
@@ -144,7 +144,7 @@ export default function DateTime({ date = new Date(), onChange, showTime = false
             <div
               style={{
                 textAlign: "center",
-                color: "white",
+                color: COLORS.text,
                 fontSize: 17,
                 fontFamily: "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif",
                 fontWeight: 400,

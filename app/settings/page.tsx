@@ -31,7 +31,7 @@ export default function SettingsPage() {
   const { user, loading, loginWithGoogle } = useAuth();
 
   if (loading) {
-    return <div style={{ color: "white", padding: 20 }}>Loading...</div>;
+    return <div style={{ color: COLORS.text, padding: 20 }}>Loading...</div>;
   }
 
   return (

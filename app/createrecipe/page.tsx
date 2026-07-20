@@ -287,7 +287,7 @@ export default function CreateRecipePage() {
                 style={{
                   flex: 1, height: 36, borderRadius: 4, border: "none", cursor: "pointer",
                   background: active ? SEG_ACTIVE : "transparent",
-                  color: active ? "#F5F5F5" : COLORS.textSecondary,
+                  color: active ? COLORS.text : COLORS.textSecondary,
                   fontSize: 14, fontWeight: 600, fontFamily: FONT,
                   textTransform: "capitalize",
                 }}
@@ -360,7 +360,7 @@ export default function CreateRecipePage() {
                             style={{
                               width: 44, height: 34, borderRadius: 4, border: "none", cursor: "pointer",
                               background: active ? SEG_ACTIVE : "transparent",
-                              color: active ? "#F5F5F5" : COLORS.textSecondary,
+                              color: active ? COLORS.text : COLORS.textSecondary,
                               fontSize: 14, fontWeight: 600,
                             }}
                           >{u}</button>

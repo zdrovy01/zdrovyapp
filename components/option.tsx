@@ -35,7 +35,7 @@ const buttonStyle: React.CSSProperties = {
 };
 
 const textStyle: React.CSSProperties = {
-  color: "white",
+  color: COLORS.text,
   fontSize: 16,
   fontFamily: "-apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif",
   fontWeight: 400,
@@ -66,14 +66,14 @@ export default function Option({
       return (
         <button onClick={onClick} style={{ ...buttonStyle, border: "none", cursor: "pointer" }}>
           <div style={textStyle}>{text}</div>
-          <div style={{ color: "white", display: "flex", width: "100%" }}>{icon}</div>
+          <div style={{ color: COLORS.text, display: "flex", width: "100%" }}>{icon}</div>
         </button>
       );
     }
     return (
       <Link href={href} style={buttonStyle}>
         <div style={textStyle}>{text}</div>
-        <div style={{ color: "white", display: "flex", width: "100%" }}>{icon}</div>
+        <div style={{ color: COLORS.text, display: "flex", width: "100%" }}>{icon}</div>
       </Link>
     );
   };

@@ -93,9 +93,9 @@ export default function DateStrip({
                 justifyContent: "center",
                 fontSize: 14,
                 fontWeight: 600,
-                background: isSelected ? "#000000" : "transparent",
+                background: isSelected ? COLORS.background : "transparent",
                 color: isSelected
-                  ? "#FFFFFF"
+                  ? COLORS.text
                   : isFuture
                   ? "rgba(235,235,245,0.3)"
                   : "rgba(235,235,245,0.85)",
@@ -115,7 +115,7 @@ export default function DateStrip({
                 fontSize: 14,
                 fontWeight: isSelected ? 700 : 500,
                 color: isSelected
-                  ? "#FFFFFF"
+                  ? COLORS.text
                   : isToday
                   ? "rgba(235,235,245,0.95)"
                   : isFuture

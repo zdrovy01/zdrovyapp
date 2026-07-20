@@ -41,7 +41,7 @@ export default function MoreOptionsPage() {
   };
 
   if (loading) {
-    return <div style={{ color: "white", padding: 20 }}>Loading...</div>;
+    return <div style={{ color: COLORS.text, padding: 20 }}>Loading...</div>;
   }
   if (!user) return null;
 

@@ -19,21 +19,23 @@
 }
 
 :root[data-theme="light"] {
+  /* Base palette from the reference screenshot:
+     white background · light-grey surface · near-black text */
   --c-accent: #F8FD03;
   --c-on-accent: #000000;
-  --c-background: #FFFFFF;
-  --c-surface: #F2F2F7;
-  --c-surface-2: rgba(0,0,0,0.04);
-  --c-fill: rgba(118,118,128,0.16);
+  --c-background: #FFFFFF;   /* white */
+  --c-surface: #F4F4F6;      /* light-grey card */
+  --c-surface-2: rgba(15,17,24,0.05);
+  --c-fill: rgba(15,17,24,0.06);
   --c-seg-active: #FFFFFF;
-  --c-track: rgba(0,0,0,0.1);
-  --c-text: #1C1C1E;
-  --c-text-2: rgba(60,60,67,0.6);
-  --c-text-3: rgba(60,60,67,0.4);
-  --c-hairline: rgba(0,0,0,0.1);
-  --c-hairline-2: rgba(0,0,0,0.18);
+  --c-track: rgba(15,17,24,0.1);
+  --c-text: #14161C;         /* near-black */
+  --c-text-2: rgba(20,22,28,0.6);
+  --c-text-3: rgba(20,22,28,0.4);
+  --c-hairline: rgba(15,17,24,0.08);
+  --c-hairline-2: rgba(15,17,24,0.16);
   --c-danger: #FF3B30;
-  --c-overlay: rgba(0,0,0,0.4);
+  --c-overlay: rgba(15,17,24,0.4);
   color-scheme: light;
 }
 

@@ -5,7 +5,6 @@ import { useParams, useRouter } from "next/navigation";
 import ToolbarWin from "@/components/toolbarwin";
 import Space from "@/components/space";
 import { getSupabaseClient } from "@/config/supabase";
-import { COLORS } from "@/config/theme";
 import { useCurrencySymbol } from "@/config/currency";
 import { useProtectedRoute } from "@/hooks/use-protected-route";
 
@@ -187,19 +186,18 @@ export default function RecipeDetailPage() {
     <>
       <Space size={8} />
       <ToolbarWin title={`@${creator}`} />
-      <Space size={10} />
+
+      {/* Photo — full-bleed, edge to edge */}
+      {recipe.image_url && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={recipe.image_url}
+          alt={recipe.name}
+          style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", display: "block" }}
+        />
+      )}
 
       <div style={{ padding: "0 20px" }}>
-        {/* Photo */}
-        {recipe.image_url && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={recipe.image_url}
-            alt={recipe.name}
-            style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", borderRadius: 4 }}
-          />
-        )}
-
         <Space size={14} />
 
         {/* Title + price */}
@@ -237,7 +235,7 @@ export default function RecipeDetailPage() {
                     </div>
                   )}
                   {ing.price != null && (
-                    <div style={{ color: COLORS.accent, fontWeight: 700, fontSize: 14, marginTop: 8 }}>
+                    <div style={{ color: "#F5F5F5", fontWeight: 700, fontSize: 14, marginTop: 8 }}>
                       {sym}{ing.price.toFixed(2)}
                     </div>
                   )}
@@ -255,7 +253,7 @@ export default function RecipeDetailPage() {
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {steps.map((st, i) => (
                 <div key={i} style={{ ...cardStyle, padding: 14 }}>
-                  <div style={{ color: COLORS.accent, fontWeight: 700, fontSize: 14, marginBottom: 4 }}>Step {i + 1}</div>
+                  <div style={{ color: "rgba(235,235,245,0.5)", fontWeight: 700, fontSize: 14, marginBottom: 4 }}>Step {i + 1}</div>
                   <div style={{ color: "#F5F5F5", fontSize: 15, lineHeight: 1.45 }}>{st.text}</div>
                   {st.ingredient && (
                     <div style={{ color: "rgba(235,235,245,0.5)", fontSize: 12, marginTop: 6 }}>
@@ -291,7 +289,7 @@ export default function RecipeDetailPage() {
             onClick={() => router.push(`/cook?recipe=${recipe.id}`)}
             style={{
               flex: 1, height: 54, borderRadius: 4, border: "none",
-              background: COLORS.accent, color: COLORS.onAccent, fontSize: 16, fontWeight: 600, cursor: "pointer",
+              background: "#F5F5F5", color: "#000", fontSize: 16, fontWeight: 600, cursor: "pointer",
             }}
           >
             Start cooking

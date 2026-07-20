@@ -26,9 +26,9 @@
   --c-background: #F4F4F6;   /* light-grey page */
   --c-surface: #FFFFFF;      /* white card */
   --c-surface-2: rgba(15,17,24,0.05);
-  --c-fill: rgba(15,17,24,0.06);
+  --c-fill: #E2E2E8;         /* controls / inputs — distinct on both page & card */
   --c-seg-active: #FFFFFF;
-  --c-track: rgba(15,17,24,0.1);
+  --c-track: rgba(15,17,24,0.12);
   --c-text: #14161C;         /* near-black */
   --c-text-2: rgba(20,22,28,0.6);
   --c-text-3: rgba(20,22,28,0.4);

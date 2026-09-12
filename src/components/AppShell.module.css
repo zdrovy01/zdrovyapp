@@ -188,20 +188,35 @@
   left: 0;
   right: 0;
   bottom: 0;
-  height: 83dvh;
+  height: 100dvh;
   z-index: 2000;
   background: #2a2a2c;
   border-radius: 22px 22px 0 0;
   transform: translateY(100%);
   transition: transform 0.38s cubic-bezier(0.32, 0.72, 0, 1);
-  padding-top: 10px;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
 }
 
-.settingsOverlayOpen {
-  transform: translateY(0);
+.settingsDragZone {
+  flex-shrink: 0;
+  padding: 10px 0 6px;
+  display: flex;
+  justify-content: center;
+  touch-action: none;
+  cursor: grab;
+}
+
+.settingsDragZone:active {
+  cursor: grabbing;
+}
+
+.settingsHandle {
+  width: 40px;
+  height: 5px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.35);
 }
 
 .settingsClose {

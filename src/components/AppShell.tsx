@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import styles from "./AppShell.module.css";
 
 const stroke = {
@@ -13,24 +13,6 @@ const stroke = {
   strokeLinecap: "round",
   strokeLinejoin: "round",
 } as const;
-
-const MainIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 27 27" fill="none" aria-hidden>
-    <path
-      d="M4.99219 18.4834C4.30078 18.4834 3.65332 18.3545 3.0498 18.0967C2.45215 17.833 1.92188 17.4727 1.45898 17.0156C1.00195 16.5527 0.644531 16.0225 0.386719 15.4248C0.128906 14.8213 0 14.1797 0 13.5C0 12.8203 0.128906 12.1816 0.386719 11.584C0.644531 10.9805 1.00195 10.4502 1.45898 9.99316C1.92188 9.53613 2.45215 9.17871 3.0498 8.9209C3.65332 8.65723 4.30078 8.52539 4.99219 8.52539C5.67773 8.52539 6.31934 8.65723 6.91699 8.9209C7.52051 9.17871 8.05078 9.53613 8.50781 9.99316C8.96484 10.4502 9.32227 10.9805 9.58008 11.584C9.83789 12.1816 9.9668 12.8203 9.9668 13.5C9.9668 14.1797 9.83789 14.8213 9.58008 15.4248C9.32227 16.0225 8.96484 16.5527 8.50781 17.0156C8.05078 17.4727 7.52051 17.833 6.91699 18.0967C6.31934 18.3545 5.67773 18.4834 4.99219 18.4834ZM13.2275 9.9668C12.5361 9.9668 11.8887 9.83789 11.2852 9.58008C10.6816 9.31641 10.1514 8.95605 9.69434 8.49902C9.2373 8.03613 8.87695 7.50586 8.61328 6.9082C8.35547 6.30469 8.22656 5.66309 8.22656 4.9834C8.22656 4.29785 8.35547 3.65625 8.61328 3.05859C8.87695 2.46094 9.2373 1.93359 9.69434 1.47656C10.1514 1.01367 10.6816 0.65332 11.2852 0.395508C11.8887 0.131836 12.5361 0 13.2275 0C13.9072 0 14.5459 0.131836 15.1436 0.395508C15.7471 0.65332 16.2773 1.01367 16.7344 1.47656C17.1973 1.93359 17.5576 2.46094 17.8154 3.05859C18.0732 3.65625 18.2021 4.29785 18.2021 4.9834C18.2021 5.66309 18.0732 6.30469 17.8154 6.9082C17.5576 7.50586 17.1973 8.03613 16.7344 8.49902C16.2773 8.95605 15.7471 9.31641 15.1436 9.58008C14.5459 9.83789 13.9072 9.9668 13.2275 9.9668ZM21.4805 18.4834C20.7891 18.4834 20.1416 18.3545 19.5381 18.0967C18.9346 17.833 18.4043 17.4727 17.9473 17.0156C17.4902 16.5527 17.1299 16.0225 16.8662 15.4248C16.6084 14.8213 16.4795 14.1797 16.4795 13.5C16.4795 12.8203 16.6084 12.1816 16.8662 11.584C17.1299 10.9805 17.4902 10.4502 17.9473 9.99316C18.4043 9.53613 18.9346 9.17871 19.5381 8.9209C20.1416 8.65723 20.7891 8.52539 21.4805 8.52539C22.1602 8.52539 22.7988 8.65723 23.3965 8.9209C24 9.17871 24.5303 9.53613 24.9873 9.99316C25.4443 10.4502 25.8018 10.9805 26.0596 11.584C26.3232 12.1816 26.4551 12.8203 26.4551 13.5C26.4551 14.1797 26.3232 14.8213 26.0596 15.4248C25.8018 16.0225 25.4443 16.5527 24.9873 17.0156C24.5303 17.4727 24 17.833 23.3965 18.0967C22.7988 18.3545 22.1602 18.4834 21.4805 18.4834ZM13.2275 27C12.5361 27 11.8887 26.8682 11.2852 26.6045C10.6816 26.3467 10.1514 25.9893 9.69434 25.5322C9.2373 25.0752 8.87695 24.5449 8.61328 23.9414C8.35547 23.3379 8.22656 22.6963 8.22656 22.0166C8.22656 21.3369 8.35547 20.6953 8.61328 20.0918C8.87695 19.4941 9.2373 18.9668 9.69434 18.5098C10.1514 18.0469 10.6816 17.6865 11.2852 17.4287C11.8887 17.1709 12.5361 17.042 13.2275 17.042C13.9072 17.042 14.5459 17.1709 15.1436 17.4287C15.7471 17.6865 16.2773 18.0469 16.7344 18.5098C17.1973 18.9668 17.5576 19.4941 17.8154 20.0918C18.0732 20.6953 18.2021 21.3369 18.2021 22.0166C18.2021 22.6963 18.0732 23.3379 17.8154 23.9414C17.5576 24.5449 17.1973 25.0752 16.7344 25.5322C16.2773 25.9893 15.7471 26.3467 15.1436 26.6045C14.5459 26.8682 13.9072 27 13.2275 27Z"
-      fill="currentColor"
-    />
-  </svg>
-);
-
-const StatsIcon = () => (
-  <svg width="20" height="15" viewBox="0 0 30 22" fill="none" aria-hidden>
-    <path
-      d="M2.61035 21.375C1.7666 21.375 1.11914 21.1553 0.667969 20.7158C0.222656 20.2764 0 19.6465 0 18.8262V9.14062C0 8.32031 0.222656 7.69336 0.667969 7.25977C1.11914 6.82031 1.7666 6.60059 2.61035 6.60059H5.79199C6.6416 6.60059 7.28906 6.82031 7.73438 7.25977C8.18555 7.69336 8.41113 8.32031 8.41113 9.14062V18.8262C8.41113 19.6465 8.18555 20.2764 7.73438 20.7158C7.28906 21.1553 6.6416 21.375 5.79199 21.375H2.61035ZM13.1572 21.375C12.3135 21.375 11.666 21.1553 11.2148 20.7158C10.7695 20.2764 10.5469 19.6465 10.5469 18.8262V5.83594C10.5469 5.02148 10.7695 4.39453 11.2148 3.95508C11.666 3.51562 12.3135 3.2959 13.1572 3.2959H16.3389C17.1826 3.2959 17.8301 3.51562 18.2812 3.95508C18.7324 4.39453 18.958 5.02148 18.958 5.83594V18.8262C18.958 19.6465 18.7324 20.2764 18.2812 20.7158C17.8301 21.1553 17.1826 21.375 16.3389 21.375H13.1572ZM23.7041 21.375C22.8604 21.375 22.2129 21.1553 21.7617 20.7158C21.3105 20.2764 21.085 19.6465 21.085 18.8262V2.54004C21.085 1.71973 21.3105 1.09277 21.7617 0.65918C22.2129 0.219727 22.8604 0 23.7041 0H26.877C27.7324 0 28.3828 0.219727 28.8281 0.65918C29.2793 1.09277 29.5049 1.71973 29.5049 2.54004V18.8262C29.5049 19.6465 29.2793 20.2764 28.8281 20.7158C28.3828 21.1553 27.7324 21.375 26.877 21.375H23.7041Z"
-      fill="currentColor"
-    />
-  </svg>
-);
 
 const GearIcon = () => (
   <svg width="22" height="22" viewBox="0 0 25 25" fill="none" aria-hidden>
@@ -47,18 +29,68 @@ const ChevronIcon = ({ dir }: { dir: "left" | "right" }) => (
   </svg>
 );
 
-type NavItem = { label: string; href: string; icon: () => React.ReactElement };
+type NavItem = { label: string; href: string };
 
 const NAV: NavItem[] = [
-  { label: "Main", href: "/", icon: MainIcon },
-  { label: "Statistics", href: "/statistics", icon: StatsIcon },
+  { label: "Main", href: "/" },
+  { label: "Statistics", href: "/statistics" },
 ];
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false); // desktop expanded rail
   const [mobileOpen, setMobileOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [sheetPct, setSheetPct] = useState(100); // 0 = full, PEEK = default, 100 = closed
+  const sheetRef = useRef<HTMLDivElement>(null);
+  const drag = useRef({ active: false, startY: 0, startPct: 0, lastPct: 100 });
   const pathname = usePathname();
+
+  const PEEK = 17; // % from top when the sheet rests (shows ~83% of the screen)
+
+  const openSettings = () => {
+    setSettingsOpen(true);
+    setSheetPct(PEEK);
+  };
+  const closeSettings = () => {
+    setSheetPct(100);
+    setSettingsOpen(false);
+  };
+
+  const onSheetPointerDown = (e: React.PointerEvent) => {
+    const el = sheetRef.current;
+    if (!el) return;
+    e.currentTarget.setPointerCapture(e.pointerId);
+    drag.current = {
+      active: true,
+      startY: e.clientY,
+      startPct: sheetPct,
+      lastPct: sheetPct,
+    };
+    el.style.transition = "none";
+  };
+  const onSheetPointerMove = (e: React.PointerEvent) => {
+    if (!drag.current.active) return;
+    const el = sheetRef.current;
+    if (!el) return;
+    const dyPct = ((e.clientY - drag.current.startY) / window.innerHeight) * 100;
+    const pct = Math.min(100, Math.max(0, drag.current.startPct + dyPct));
+    drag.current.lastPct = pct;
+    el.style.transform = `translateY(${pct}%)`;
+  };
+  const onSheetPointerUp = () => {
+    if (!drag.current.active) return;
+    drag.current.active = false;
+    const el = sheetRef.current;
+    if (el) el.style.transition = ""; // re-enable CSS transition for the snap
+    const pct = drag.current.lastPct;
+    // snap to the nearest of full (0), peek (PEEK), closed (100)
+    let target: number;
+    if (pct <= PEEK / 2) target = 0;
+    else if (pct >= (PEEK + 100) / 2) target = 100;
+    else target = PEEK;
+    if (target === 100) closeSettings();
+    else setSheetPct(target);
+  };
 
   const expanded = open || mobileOpen;
 
@@ -115,10 +147,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                   expanded ? styles.itemExpanded : styles.itemCollapsed
                 }`}
               >
-                <span className={styles.itemIcon}>
-                  <item.icon />
-                </span>
-                {expanded && <span className={styles.itemLabel}>{item.label}</span>}
+                <span className={styles.itemLabel}>{item.label}</span>
               </Link>
             );
           })}
@@ -136,7 +165,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 type="button"
                 className={styles.settingsBtn}
                 aria-label="Settings"
-                onClick={() => setSettingsOpen(true)}
+                onClick={openSettings}
               >
                 <GearIcon />
               </button>
@@ -164,21 +193,30 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         className={`${styles.settingsBackdrop} ${
           settingsOpen ? styles.settingsBackdropOpen : ""
         }`}
-        onClick={() => setSettingsOpen(false)}
+        onClick={closeSettings}
         aria-hidden
       />
 
       <div
-        className={`${styles.settingsOverlay} ${
-          settingsOpen ? styles.settingsOverlayOpen : ""
-        }`}
+        ref={sheetRef}
+        className={styles.settingsOverlay}
+        style={{ transform: `translateY(${sheetPct}%)` }}
         aria-hidden={!settingsOpen}
       >
+        <div
+          className={styles.settingsDragZone}
+          onPointerDown={onSheetPointerDown}
+          onPointerMove={onSheetPointerMove}
+          onPointerUp={onSheetPointerUp}
+          onPointerCancel={onSheetPointerUp}
+        >
+          <span className={styles.settingsHandle} aria-hidden />
+        </div>
         <button
           type="button"
           className={styles.settingsClose}
           aria-label="Close settings"
-          onClick={() => setSettingsOpen(false)}
+          onClick={closeSettings}
         >
           <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden>
             <path {...stroke} d="M6 6l12 12M18 6L6 18" />

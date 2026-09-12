@@ -1,0 +1,157 @@
+.track {
+  margin-top: 28px;
+  display: inline-block;
+  padding: 13px 34px;
+  border-radius: 100px;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  background: transparent;
+  color: #fff;
+  font-size: 17px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.track:active {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Big square option buttons inside the sheet */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.square {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: flex-end;
+  padding: 18px;
+  border: none;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-size: 19px;
+  font-weight: 600;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.square:active {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Food form */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.fieldLabel {
+  font-size: 16px;
+  color: #fff;
+}
+
+.inputWrap {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.input {
+  width: 80px;
+  border: none;
+  background: transparent;
+  color: #fff;
+  font-size: 17px;
+  font-weight: 600;
+  font-family: inherit;
+  text-align: right;
+  outline: none;
+}
+
+.input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.unit {
+  font-size: 14px;
+  color: #8a8a8e;
+}
+
+.save {
+  margin-top: 8px;
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 14px;
+  background: #0091ff;
+  color: #fff;
+  font-size: 17px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.save:active {
+  background: #007ad6;
+}
+
+/* Water field with +/- stepper */
+.waterInput {
+  width: 110px;
+  border: none;
+  background: transparent;
+  color: #fff;
+  font-size: 22px;
+  font-weight: 650;
+  font-family: inherit;
+  text-align: left;
+  outline: none;
+}
+
+.waterInput::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.stepper {
+  display: flex;
+  gap: 8px;
+}
+
+.stepBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-size: 24px;
+  line-height: 1;
+  font-family: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.stepBtn:active {
+  background: rgba(255, 255, 255, 0.22);
+}

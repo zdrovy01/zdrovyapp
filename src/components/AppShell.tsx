@@ -3,7 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useRef, useState } from "react";
+import { useState } from "react";
+import Sheet from "./Sheet";
+import sheetStyles from "./Sheet.module.css";
 import styles from "./AppShell.module.css";
 
 const stroke = {
@@ -40,57 +42,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false); // desktop expanded rail
   const [mobileOpen, setMobileOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [sheetPct, setSheetPct] = useState(100); // 0 = full, PEEK = default, 100 = closed
-  const sheetRef = useRef<HTMLDivElement>(null);
-  const drag = useRef({ active: false, startY: 0, startPct: 0, lastPct: 100 });
   const pathname = usePathname();
-
-  const PEEK = 17; // % from top when the sheet rests (shows ~83% of the screen)
-
-  const openSettings = () => {
-    setSettingsOpen(true);
-    setSheetPct(PEEK);
-  };
-  const closeSettings = () => {
-    setSheetPct(100);
-    setSettingsOpen(false);
-  };
-
-  const onSheetPointerDown = (e: React.PointerEvent) => {
-    const el = sheetRef.current;
-    if (!el) return;
-    e.currentTarget.setPointerCapture(e.pointerId);
-    drag.current = {
-      active: true,
-      startY: e.clientY,
-      startPct: sheetPct,
-      lastPct: sheetPct,
-    };
-    el.style.transition = "none";
-  };
-  const onSheetPointerMove = (e: React.PointerEvent) => {
-    if (!drag.current.active) return;
-    const el = sheetRef.current;
-    if (!el) return;
-    const dyPct = ((e.clientY - drag.current.startY) / window.innerHeight) * 100;
-    const pct = Math.min(100, Math.max(0, drag.current.startPct + dyPct));
-    drag.current.lastPct = pct;
-    el.style.transform = `translateY(${pct}%)`;
-  };
-  const onSheetPointerUp = () => {
-    if (!drag.current.active) return;
-    drag.current.active = false;
-    const el = sheetRef.current;
-    if (el) el.style.transition = ""; // re-enable CSS transition for the snap
-    const pct = drag.current.lastPct;
-    // snap to the nearest of full (0), peek (PEEK), closed (100)
-    let target: number;
-    if (pct <= PEEK / 2) target = 0;
-    else if (pct >= (PEEK + 100) / 2) target = 100;
-    else target = PEEK;
-    if (target === 100) closeSettings();
-    else setSheetPct(target);
-  };
 
   const expanded = open || mobileOpen;
 
@@ -165,7 +117,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 type="button"
                 className={styles.settingsBtn}
                 aria-label="Settings"
-                onClick={openSettings}
+                onClick={() => setSettingsOpen(true)}
               >
                 <GearIcon />
               </button>
@@ -189,59 +141,28 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         <div className={styles.content}>{children}</div>
       </div>
 
-      <div
-        className={`${styles.settingsBackdrop} ${
-          settingsOpen ? styles.settingsBackdropOpen : ""
-        }`}
-        onClick={closeSettings}
-        aria-hidden
-      />
-
-      <div
-        ref={sheetRef}
-        className={styles.settingsOverlay}
-        style={{ transform: `translateY(${sheetPct}%)` }}
-        aria-hidden={!settingsOpen}
+      <Sheet
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        title="Settings"
       >
-        <div
-          className={styles.settingsDragZone}
-          onPointerDown={onSheetPointerDown}
-          onPointerMove={onSheetPointerMove}
-          onPointerUp={onSheetPointerUp}
-          onPointerCancel={onSheetPointerUp}
-        >
-          <span className={styles.settingsHandle} aria-hidden />
+        <div className={sheetStyles.list}>
+          {["Account Settings", "Preferences", "Metrics"].map((label) => (
+            <button key={label} type="button" className={sheetStyles.row}>
+              <span>{label}</span>
+              <svg
+                className={sheetStyles.chevron}
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                aria-hidden
+              >
+                <path {...stroke} d="M9 6l6 6-6 6" />
+              </svg>
+            </button>
+          ))}
         </div>
-        <button
-          type="button"
-          className={styles.settingsClose}
-          aria-label="Close settings"
-          onClick={closeSettings}
-        >
-          <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden>
-            <path {...stroke} d="M6 6l12 12M18 6L6 18" />
-          </svg>
-        </button>
-        <div className={styles.settingsBody}>
-          <h1 className={styles.settingsTitle}>Settings</h1>
-          <div className={styles.settingsList}>
-            {["Account Settings", "Preferences", "Metrics"].map((label) => (
-              <button key={label} type="button" className={styles.settingsRow}>
-                <span>{label}</span>
-                <svg
-                  className={styles.settingsChevron}
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  aria-hidden
-                >
-                  <path {...stroke} d="M9 6l6 6-6 6" />
-                </svg>
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
+      </Sheet>
     </div>
   );
 }
